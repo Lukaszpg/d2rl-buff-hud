@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Run Python tests
+        shell: pwsh
+        run: |
+          $tests = Get-ChildItem "tests" -Filter "*_test.py" | Sort-Object Name
+          foreach ($test in $tests) {
+            Write-Host "==> $($test.Name)"
+            python $test.FullName
+            if ($LASTEXITCODE -ne 0) {
+              throw "Python test failed: $($test.Name)"
+            }
+          }
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          cmake -S . -B build -DBUFF_PANEL_BUILD_TESTS=ON
+
+      - name: Build
+        shell: pwsh
+        run: |
+          cmake --build build --config Release --parallel
+
+      - name: Run C++ tests
+        shell: pwsh
+        run: |
+          ctest --test-dir build -C Release --output-on-failure
+
+      - name: Verify DLL
+        shell: pwsh
+        run: |
+          $dll = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.dll"
+          if (-not (Test-Path $dll)) { throw "d2rl-buff-panel.dll was not produced at $dll" }
+
+      - name: Upload CI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buff-panel-ci-${{ github.sha }}
+          path: build/stage/Release/d2rloader/plugins/d2rl-buff-panel.dll
+          if-no-files-found: error
