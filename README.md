@@ -32,7 +32,7 @@ bone_armor\t14\tresource\t132\t133\t68\t8\t1
 
 The `\t` escapes above indicate tab separators; use actual tabs in the text file. For timer entries, `skill_id=0` uses native attribution; a nonzero ID is a fallback when the native skill is missing. The live state must still provide a valid expiration frame. Skill level is not required. `value_stat`, `max_stat`, and `value_shift` stay zero for timers. For resource entries, `value_stat` and `max_stat` are live stat IDs, `skill_id` supplies the icon/name, and `value_shift` scales the displayed value.
 
-This fork's bundled resource mapping targets Reimagined: Psychic Ward uses stats **427/428**. Stock IDs 361/362 are corruption flags in Reimagined. Other mods may need different mappings. Resource entries require their attached native state as well as positive pool values; unrelated item stats cannot activate a buff entry.
+Other mods may need different mappings. Resource entries require their attached native state as well as positive pool values; unrelated item stats cannot activate a buff entry.
 
 Custom buffs are supported through the same table: add the mod's state ID and an optional fallback skill ID, enable the row, and rebuild the companion MPQ. For example, a mod with state 350 and skill 510 could add `custom_buff\t350\ttimer\t0\t0\t510\t0\t1` (replace `\t` with tabs and use the actual mod IDs). Icons/names resolve from the active mod's Skills/SkillDesc tables. Unlisted states, curses, permanent effects, and states without a finite expiration are not automatically displayed. No mod MPQ edits are required.
 
@@ -41,12 +41,9 @@ Custom buffs are supported through the same table: add the mod's state ID and an
 Build this fork or use its `dist/` output. Copy **both** `d2rl-buff-panel.dll` and `d2rl-buff-panel.mpq` into one plugin scope:
 
 ```text
-<game>/mods/ReimaginedLadder/d2rloader/plugins/
 <game>/mods/<mod-name>/d2rloader/plugins/
 <game>/d2rloader/plugins/
 ```
-
-For the ladder bundle, place the pair in its mod-scoped `d2rloader/plugins/` directory. No files need to be copied into `Reimagined.mpq` or `ReimaginedLadder.mpq`. The original project's DLL-only/data.zip instructions do not apply to this fork. See [INSTALL.md](INSTALL.md) for the recipient instructions included in `dist/`.
 
 The companion contains exactly the plugin-owned resources:
 
@@ -85,7 +82,7 @@ cmake --build build/vs --config Release --target dist
 
 The `buff_panel` target builds the DLL. The explicit `buff_panel_companion` target validates and packs the MPQ beside it under `build/<preset>/stage/Release/d2rloader/plugins/`; `dist` depends on both. This separation lets ordinary CI compile/test the DLL without requiring the private packer, while release builds still fail closed if `D2RLCompiler.exe` is unavailable or companion resources are invalid. Like MoveOnly's resource packaging, the companion target uses `D2RLCompiler pack`, which requires no per-user linked game installation. Debug builds cannot publish `dist`.
 
-`dist/` includes the DLL/MPQ pair, SHA-256 checksums, installation instructions, and both license notices. It is a relative install overlay: copy its `d2rloader` folder beneath the chosen game/mod root. The build does not install into the game or publish a ladder bundle.
+`dist/` includes the DLL/MPQ pair, SHA-256 checksums, installation instructions, and both license notices. It is a relative install overlay: copy its `d2rloader` folder beneath the chosen game/mod root.
 
 Optional archive verification (Python plus `mpyq==0.2.5`): run `python tests/verify_package.py dist/d2rloader/plugins/d2rl-buff-panel.mpq`. This checks that only the two expected payloads and the MPQ listfile are present, and compares both payloads byte-for-byte with `companion/`.
 
