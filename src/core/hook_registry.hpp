@@ -19,50 +19,11 @@ struct HookRecord final {
     std::string_view owner{}; // Install callers must pass static-lifetime names.
 };
 
-struct HookSnapshot final {
-    std::array<HookRecord, 64> records{};
-    std::size_t count{};
-};
-
 class HookRegistry final {
 public:
     HookRegistry() = default;
     HookRegistry(const HookRegistry&) = delete;
     HookRegistry& operator=(const HookRegistry&) = delete;
-
-    template <typename Function, std::size_t N>
-    [[nodiscard]] bool Install(
-        std::string_view owner,
-        std::uintptr_t rva,
-        const std::array<std::uint8_t, N>& expected,
-        Function target,
-        Function* original = nullptr) noexcept {
-        const auto* context = Services().context;
-        if (context == nullptr || target == nullptr || owner.empty()) return false;
-
-        // Plugin initialization is serialized by D2RLoader. The mutex also makes
-        // console diagnostics safe if they are queried while a future system is
-        // still being initialized.
-        std::lock_guard<std::mutex> lock(mutex_);
-        for (std::size_t i = 0; i < count_; ++i) {
-            if (records_[i].rva == rva) {
-                char message[256]{};
-                std::snprintf(
-                    message,
-                    sizeof(message),
-                    "BuffPanel Core: duplicate native-hook ownership at RVA 0x%llX requested by '%.*s'; already owned by '%.*s'.",
-                    static_cast<unsigned long long>(rva),
-                    static_cast<int>(owner.size()), owner.data(),
-                    static_cast<int>(records_[i].owner.size()), records_[i].owner.data());
-                context->LogError(message);
-                return false;
-            }
-        }
-        if (count_ >= records_.size()) {
-            context->LogError("BuffPanel Core: native-hook registry capacity exhausted; hook refused.");
-            return false;
-        }
-
         Function trampoline{};
         Function* trampolineOut = original != nullptr ? original : &trampoline;
         if (!context->InstallInlineHook(
@@ -166,22 +127,10 @@ public:
 
         *previous = reinterpret_cast<Function>(bridge.targetAddress);
         records_[count_++] = HookRecord{rva, owner};
-
-        char message[384]{};
-        std::snprintf(
-            message,
-            sizeof(message),
-            "BuffPanel Core: chained '%.*s' through D2RLoader RIP-indirect bridge entry RVA 0x%llX (slot RVA 0x%llX, qualified slot delta=%+lld).",
-            static_cast<int>(owner.size()), owner.data(),
-            static_cast<unsigned long long>(rva),
-            static_cast<unsigned long long>(bridge.slotRva),
-            static_cast<long long>(bridge.slotDelta));
-        context->LogInfo(message);
         return true;
     }
 
     void Reset() noexcept;
-    [[nodiscard]] HookSnapshot Snapshot() const noexcept;
 
 private:
     mutable std::mutex mutex_;

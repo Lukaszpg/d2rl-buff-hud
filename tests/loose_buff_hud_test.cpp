@@ -1,5 +1,8 @@
 #include "systems/buff_tracker/loose_buff_hud.hpp"
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -22,6 +25,16 @@ void Write(const fs::path& target, std::string_view content) {
 }
 
 int main() {
+    const auto header = std::string(Default.substr(0, Default.find('\n') + 1));
+    std::string error;
+    auto timer = header + "custom_buff\t350\ttimer\t0\t0\t510\t0\t1\n";
+    assert(B::ValidateAndNormalize(timer, error));
+    timer = header + "battle_orders\t32\ttimer\t0\t0\t149\t0\t1\n";
+    assert(B::ValidateAndNormalize(timer, error));
+    for (const auto* invalid : {"1\t0\t149\t0", "0\t1\t149\t0", "0\t0\t4096\t0", "0\t0\t149\t8"}) {
+        timer = header + "bad\t32\ttimer\t" + invalid + "\t1\n";
+        assert(!B::ValidateAndNormalize(timer, error));
+    }
     auto base = fs::temp_directory_path() / "buff-panel-loose-test";
     fs::remove_all(base);
     fs::create_directories(base / "test-mod");

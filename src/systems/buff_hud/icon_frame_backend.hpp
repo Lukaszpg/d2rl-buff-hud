@@ -12,7 +12,7 @@ enum class IconFrameBackendState : std::uint8_t {
 };
 
 // Validates the exact D2R build-93847 ButtonWidget frame descriptors and live
-// apply callsites qualified by Skill Icon HUD Probe 0.7.0. No hook is installed;
+// apply callsites runtime-qualified on D2R build 93847. No hook is installed;
 // production invokes the qualified setter/refresh path only from BuffHud's UI
 // thread when assigning a slot.
 [[nodiscard]] bool InitializeIconFrameBackend(

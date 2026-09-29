@@ -18,6 +18,7 @@
 using namespace BuffPanel::Systems::BuffHud::Internal;
 
 int main() {
+    assert(!StoreTooltipText(nullptr, "Bone Armor"));
     std::array<char, TooltipReserveBytes> reserve{};
     for (std::size_t n = 0; n < 42; ++n) std::memcpy(reserve.data() + n * 3, "\xE2\x80\x8B", 3);
     // Live native buffer: 126 bytes + NUL, followed by an unrelated byte.

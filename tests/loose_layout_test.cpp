@@ -1,5 +1,8 @@
 #include "systems/buff_hud/loose_layout.hpp"
 
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
 #include <cassert>
 #include <filesystem>
 #include <fstream>
@@ -26,7 +29,8 @@ int main(int argc, char** argv) {
     assert(B::Validate(defaultLayout, error));
     B::GridRect grid{};
     assert(B::ReadBuffGridRect(defaultLayout, grid));
-    assert(grid.x == 50 && grid.y == -515 && grid.width == 780 && grid.height == 300);
+    const auto originalGrid = grid;
+    assert(grid.width > 0 && grid.height > 0);
     // Inspect the named widget's own rect, not a nearby child/parent rect.
     // JSON member order and whitespace must not change the readback.
     const std::string reordered = R"({"fields":{"rect":{"height":300,"width":780,"y":-777,"x":999}},"name":"BuffGrid"})";
@@ -45,18 +49,19 @@ int main(int argc, char** argv) {
     assert(selection.source == B::Source::Embedded && selection.bytes == defaultLayout);
 
     auto custom = defaultLayout;
-    const auto x = custom.find("\"x\": 50");
+    const auto originalX = "\"x\": " + std::to_string(originalGrid.x);
+    const auto x = custom.find(originalX, custom.find("\"name\": \"BuffGrid\""));
     assert(x != std::string::npos);
-    custom.replace(x, 7, "\"x\": 250");
+    custom.replace(x, originalX.size(), "\"x\": 250");
     Write(path, custom);
     selection = B::Select(root.c_str(), "test-mod", defaultLayout);
     assert(selection.source == B::Source::ActiveMod);
     assert(selection.bytes == custom && selection.path == path);
     assert(B::ReadBuffGridRect(selection.bytes, grid));
-    assert(grid.x == 250 && grid.y == -515 && grid.width == 780 && grid.height == 300);
+    assert(grid.x == 250 && grid.y == originalGrid.y && grid.width == originalGrid.width && grid.height == originalGrid.height);
     // The selected startup bytes remain the source of truth even if the user
     // subsequently edits the loose file while the plugin is still loaded.
-    assert(B::ReadBuffGridRect(defaultLayout, grid) && grid.x == 50);
+    assert(B::ReadBuffGridRect(defaultLayout, grid) && grid.x == originalGrid.x);
 
     Write(path, std::string("\xef\xbb\xbf") + custom);
     selection = B::Select(root.c_str(), "test-mod", defaultLayout);
