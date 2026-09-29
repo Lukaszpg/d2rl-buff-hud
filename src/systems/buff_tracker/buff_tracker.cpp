@@ -978,7 +978,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
         return false;
     }
     Context->LogInfo(
-        "Buff HUD 1.0.11 BuffTracker initialized: companion whitelist tracking with native skill attribution, configured skill fallback, exact-state lifetime checks, and finite native expiry validation.");
+        "Buff HUD 1.1.0 BuffTracker initialized: companion whitelist tracking with native skill attribution, configured skill fallback, exact-state lifetime checks, and finite native expiry validation.");
     return true;
 }
 

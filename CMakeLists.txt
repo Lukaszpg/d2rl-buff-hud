@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.29)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    project(BuffPanel VERSION 1.0.11 LANGUAGES CXX RC)
+    project(BuffPanel VERSION 1.1.0 LANGUAGES CXX RC)
 elseif(WIN32)
     enable_language(RC)
 endif()
