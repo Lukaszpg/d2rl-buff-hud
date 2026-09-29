@@ -24,22 +24,6 @@ public:
     HookRegistry() = default;
     HookRegistry(const HookRegistry&) = delete;
     HookRegistry& operator=(const HookRegistry&) = delete;
-        Function trampoline{};
-        Function* trampolineOut = original != nullptr ? original : &trampoline;
-        if (!context->InstallInlineHook(
-                rva,
-                expected.data(),
-                static_cast<std::uint32_t>(expected.size()),
-                target,
-                trampolineOut)) {
-            return false;
-        }
-
-        records_[count_++] = HookRecord{rva, owner};
-        return true;
-    }
-
-
 
     // D2RLoader rewrites several public D2R entries into FF 25 rel32
     // bridges. The bridge-table slot is loader layout, not part of the D2R

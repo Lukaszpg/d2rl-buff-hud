@@ -68,10 +68,7 @@ target_compile_features(buff_panel_validate PRIVATE cxx_std_20)
 target_compile_options(buff_panel_validate PRIVATE /utf-8 /EHsc)
 
 set(BUFF_PANEL_SDK_LICENSE_FILE "${BUFF_PANEL_SDK_DIR}/LICENSE" CACHE FILEPATH "PluginSDK license to include in dist")
-set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/../d2rl-compiler/D2RLCompiler.exe" CACHE FILEPATH "D2RLCompiler.exe used to pack the companion MPQ")
-if(NOT EXISTS "${D2RL_COMPILER}")
-    message(FATAL_ERROR "Set D2RL_COMPILER to D2RLCompiler.exe. A real companion MPQ is required for this build.")
-endif()
+set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/external/D2RLCompiler/D2RLCompiler.exe" CACHE FILEPATH "Repository-pinned D2RLCompiler.exe used to pack the companion MPQ")
 set(BUFF_PANEL_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHudhd.json")
 set(BUFF_PANEL_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt")
 # Run on every build so an asset-only edit (or deletion) cannot leave a stale MPQ.
@@ -79,13 +76,14 @@ set(BUFF_PANEL_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2
 add_custom_target(buff_panel_companion
     COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_TABLE}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:buff_panel>"
-    COMMAND "${D2RL_COMPILER}" pack "${CMAKE_CURRENT_SOURCE_DIR}/companion"
-        --output "$<TARGET_FILE_DIR:buff_panel>/d2rl-buff-panel.mpq"
+    COMMAND "${CMAKE_COMMAND}"
+        "-DD2RL_COMPILER=${D2RL_COMPILER}"
+        "-DBUFF_PANEL_COMPANION_DIR=${CMAKE_CURRENT_SOURCE_DIR}/companion"
+        "-DBUFF_PANEL_COMPANION_OUTPUT=$<TARGET_FILE_DIR:buff_panel>/d2rl-buff-panel.mpq"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PackCompanion.cmake"
     DEPENDS buff_panel_validate
     COMMENT "Validating and packing Buff Panel companion resources"
     VERBATIM)
-add_dependencies(buff_panel buff_panel_companion)
-
 add_custom_target(dist
     COMMAND "${CMAKE_COMMAND}"
         "-DBUFF_PANEL_CONFIG=$<CONFIG>"
@@ -94,7 +92,7 @@ add_custom_target(dist
         "-DBUFF_PANEL_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
         "-DBUFF_PANEL_DIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}/dist"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PublishDist.cmake"
-    DEPENDS buff_panel
+    DEPENDS buff_panel_companion buff_panel
     COMMENT "Publishing the Buff Panel DLL and MPQ pair"
     VERBATIM)
 
