@@ -68,7 +68,7 @@ target_compile_features(buff_panel_validate PRIVATE cxx_std_20)
 target_compile_options(buff_panel_validate PRIVATE /utf-8 /EHsc)
 
 set(BUFF_PANEL_SDK_LICENSE_FILE "${BUFF_PANEL_SDK_DIR}/LICENSE" CACHE FILEPATH "PluginSDK license to include in dist")
-set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/../d2rl-compiler/D2RLCompiler.exe" CACHE FILEPATH "D2RLCompiler.exe used to pack the companion MPQ")
+set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/external/D2RLCompiler/D2RLCompiler.exe" CACHE FILEPATH "Repository-pinned D2RLCompiler.exe used to pack the companion MPQ")
 set(BUFF_PANEL_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHudhd.json")
 set(BUFF_PANEL_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt")
 # Run on every build so an asset-only edit (or deletion) cannot leave a stale MPQ.
