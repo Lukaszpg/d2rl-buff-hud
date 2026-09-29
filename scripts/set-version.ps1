@@ -36,9 +36,9 @@ Rewrite 'CMakeLists.txt' {
 
 Rewrite 'src/plugin.cpp' {
     param($text)
-    $text = [regex]::Replace($text, 'Buff Panel \d+\.\d+\.\d+ requires', "Buff Panel $Version requires")
+    $text = [regex]::Replace($text, 'Buff HUD \d+\.\d+\.\d+ requires', "Buff HUD $Version requires")
     $text = [regex]::Replace($text, '\.version = "\d+\.\d+\.\d+"', ".version = `"$Version`"")
-    [regex]::Replace($text, 'Buff Panel \d+\.\d+\.\d+ loaded', "Buff Panel $Version loaded")
+    [regex]::Replace($text, 'Buff HUD \d+\.\d+\.\d+ loaded', "Buff HUD $Version loaded")
 }
 
 Rewrite 'src/plugin.rc' {
@@ -55,8 +55,8 @@ foreach ($relative in @(
 )) {
     Rewrite $relative {
         param($text)
-        [regex]::Replace($text, 'Buff Panel \d+\.\d+\.\d+', "Buff Panel $Version")
+        [regex]::Replace($text, 'Buff HUD \d+\.\d+\.\d+', "Buff HUD $Version")
     }
 }
 
-Write-Host "Buff Panel version synchronized to $Version"
+Write-Host "Buff HUD version synchronized to $Version"

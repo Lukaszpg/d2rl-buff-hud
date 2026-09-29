@@ -405,7 +405,7 @@ void InvalidateWidgetHandles() noexcept {
     disable(GridWidget);
     disable(HudPanel);
     if (!allSucceeded) Context->LogWarn(
-        "Buff Panel: one or more widget enabled-state updates failed; gameplay input isolation may be incomplete.");
+        "Buff HUD: one or more widget enabled-state updates failed; gameplay input isolation may be incomplete.");
     return allSucceeded;
 }
 
@@ -987,7 +987,7 @@ void __cdecl RebuildIconsOnGameThread(const D2RL::PluginContext*, void*) noexcep
         std::snprintf(
             line,
             sizeof(line),
-            "BuffPanel BuffHud: manual skill presentation cache rebuild %s bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
+            "Buff HUD: manual skill presentation cache rebuild %s bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
             ready ? "succeeded" : "FAILED",
             status.bank,
             status.skillCount,
@@ -1018,7 +1018,7 @@ void __cdecl OnDataTablesLoaded(
     std::snprintf(
         line,
         sizeof(line),
-        "BuffPanel BuffHud: skill presentation table resolver %s revision=%llu bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
+        "Buff HUD: skill presentation table resolver %s revision=%llu bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
         ready ? "ready" : "not-qualified",
         static_cast<unsigned long long>(event->revision),
         status.bank,
@@ -1076,7 +1076,7 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     const auto icons = Internal::SkillIconStatus();
     char line[512]{};
     std::snprintf(line, sizeof(line),
-        "Buff Panel 1.0.11: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
+        "Buff HUD 1.0.11: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
@@ -1115,7 +1115,7 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
     };
     if (Panels->registerPanel(Context, &panel, &RegisteredPanel)
         != D2RL::Panels::Result::Success) {
-        Context->LogError("BuffPanel BuffHud: failed to register plugin-owned BuffHud panel.");
+        Context->LogError("Buff HUD: failed to register plugin-owned BuffHud panel.");
         return false;
     }
     return true;
@@ -1166,7 +1166,7 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
             Native::Contract::FindChildWidgetByNameRva,
             Native::Contract::FindChildWidgetByNameExpected.data(),
             static_cast<std::uint32_t>(Native::Contract::FindChildWidgetByNameExpected.size()))) {
-        Context->LogError("BuffPanel BuffHud: native UI resolver fingerprint mismatch; refusing BuffHud initialization.");
+        Context->LogError("Buff HUD: native UI resolver fingerprint mismatch; refusing BuffHud initialization.");
         return false;
     }
     FindTopLevelPanel = reinterpret_cast<FindTopLevelPanelFn>(
@@ -1203,7 +1203,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
         std::snprintf(
             serviceLine,
             sizeof(serviceLine),
-            "BuffPanel BuffHud: required PluginSDK service unavailable/undersized: Panel=%d Widget=%d Thread=%d Lifecycle=%d.",
+            "Buff HUD: required PluginSDK service unavailable/undersized: Panel=%d Widget=%d Thread=%d Lifecycle=%d.",
             panelsReady ? 1 : 0,
             widgetsReady ? 1 : 0,
             threadsReady ? 1 : 0,
@@ -1221,7 +1221,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     const bool localizationReady = Core::LocalizationService() != nullptr;
     if (!localizationReady) {
         Context->LogWarn(
-            "BuffPanel BuffHud: LocalizationService unavailable at plugin initialization; BuffHud remains enabled and localized hover names will be retried when the skill cache is rebuilt.");
+            "Buff HUD: LocalizationService unavailable at plugin initialization; BuffHud remains enabled and localized hover names will be retried when the skill cache is rebuilt.");
     }
 
     if (!ValidateNativeUiContract()
@@ -1235,11 +1235,11 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     if (!Context->RegisterConsoleCommand(
             "buff-panel",
             &BuffCommand,
-            "Show/test Buff Panel temporary-buff HUD state.")) {
-        Context->LogWarn("BuffPanel BuffHud: console command 'buff-panel' could not be registered.");
+            "Show Buff HUD status.")) {
+        Context->LogWarn("Buff HUD: console command 'buff-panel' could not be registered.");
     }
     Context->LogInfo(
-        "Buff Panel 1.0.11 BuffHud initialized: 21 display-only slots, companion-resource layout, fixed gameplay input isolation, timer/resource rendering, and runtime skill icon/name resolution.");
+        "Buff HUD 1.0.11 BuffHud initialized: 21 display-only slots, companion-resource layout, fixed gameplay input isolation, timer/resource rendering, and runtime skill icon/name resolution.");
     return true;
 }
 

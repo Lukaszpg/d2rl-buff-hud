@@ -52,7 +52,7 @@ public:
                 std::snprintf(
                     message,
                     sizeof(message),
-                    "BuffPanel Core: duplicate native-hook ownership at RVA 0x%llX requested by '%.*s'; already owned by '%.*s'.",
+                    "Buff HUD: duplicate native-hook ownership at RVA 0x%llX requested by '%.*s'; already owned by '%.*s'.",
                     static_cast<unsigned long long>(rva),
                     static_cast<int>(owner.size()), owner.data(),
                     static_cast<int>(records_[i].owner.size()), records_[i].owner.data());
@@ -61,7 +61,7 @@ public:
             }
         }
         if (count_ >= records_.size()) {
-            context->LogError("BuffPanel Core: native-hook registry capacity exhausted; hook refused.");
+            context->LogError("Buff HUD: native-hook registry capacity exhausted; hook refused.");
             return false;
         }
 
@@ -76,7 +76,7 @@ public:
             std::snprintf(
                 message,
                 sizeof(message),
-                "BuffPanel Core: '%.*s' expected a structurally qualified D2RLoader RIP-indirect bridge at RVA 0x%llX near slot RVA 0x%llX; chain refused.",
+                "Buff HUD: '%.*s' expected a structurally qualified D2RLoader RIP-indirect bridge at RVA 0x%llX near slot RVA 0x%llX; chain refused.",
                 static_cast<int>(owner.size()), owner.data(),
                 static_cast<unsigned long long>(rva),
                 static_cast<unsigned long long>(expectedSlotRva));
@@ -86,7 +86,7 @@ public:
 
         const auto replacementAddress = reinterpret_cast<std::uintptr_t>(target);
         if (bridge.targetAddress == replacementAddress) {
-            context->LogError("BuffPanel Core: D2RLoader bridge already points at the requested BuffPanel hook; chain refused.");
+            context->LogError("Buff HUD: D2RLoader bridge already points at the requested Buff HUD hook; chain refused.");
             return false;
         }
 
@@ -102,7 +102,7 @@ public:
             std::snprintf(
                 message,
                 sizeof(message),
-                "BuffPanel Core: failed to chain '%.*s' through D2RLoader bridge slot RVA 0x%llX.",
+                "Buff HUD: failed to chain '%.*s' through D2RLoader bridge slot RVA 0x%llX.",
                 static_cast<int>(owner.size()), owner.data(),
                 static_cast<unsigned long long>(bridge.slotRva));
             context->LogError(message);

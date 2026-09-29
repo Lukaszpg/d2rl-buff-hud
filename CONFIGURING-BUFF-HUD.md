@@ -1,6 +1,6 @@
-# Buff Panel 1.0.11 — buff-hud.txt
+# Buff HUD 1.0.11 — buff-hud.txt
 
-The runtime override is optional. Without it, Buff Panel uses the catalog embedded in `src/systems/buff_tracker/buff_tracker.cpp`.
+The runtime override is optional. Without it, Buff HUD uses the catalog embedded in `src/systems/buff_tracker/buff_tracker.cpp`.
 
 Place an override at:
 

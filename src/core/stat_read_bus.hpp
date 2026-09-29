@@ -12,7 +12,7 @@ using RawGetUnitStatFn = std::int32_t(__fastcall*)(
     std::int32_t statId,
     std::uint16_t layer) noexcept;
 
-// Buff Panel only reads unit stats. Resolve D2RLoader's already-qualified
+// Buff HUD only reads unit stats. Resolve D2RLoader's already-qualified
 // GetUnitStat bridge and keep the callable target; never install a read hook or
 // intercept another plugin's stat queries.
 class StatReadBus final {

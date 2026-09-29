@@ -12,11 +12,11 @@ BEGIN
       VALUE "CompanyName", "MindH1ve"
       VALUE "Author", "MindH1ve"
       VALUE "LegalCopyright", "Copyright (C) MindH1ve"
-      VALUE "FileDescription", "D2RLoader configurable buff panel and timer plugin"
+      VALUE "FileDescription", "D2RLoader configurable buff HUD and timer plugin"
       VALUE "FileVersion", "1.0.11"
       VALUE "InternalName", "buff-panel"
       VALUE "OriginalFilename", "d2rl-buff-panel.dll"
-      VALUE "ProductName", "Buff Panel"
+      VALUE "ProductName", "Buff HUD"
       VALUE "ProductVersion", "1.0.11"
     END
   END

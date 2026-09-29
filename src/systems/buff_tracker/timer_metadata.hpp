@@ -5,9 +5,9 @@
 
 namespace BuffPanel::Systems::BuffTracker::Internal {
 
-// Logical timer metadata consumed by Buff Panel. The qualified native StatList
+// Logical timer metadata consumed by Buff HUD. The qualified native StatList
 // readable-range boundary remains 0x30 bytes, but skillLevel at +0x2C is not
-// part of this model because Buff Panel does not use it for identity, expiry,
+// part of this model because Buff HUD does not use it for identity, expiry,
 // presentation, or qualification.
 struct TimerMetadata final {
     std::uint32_t flags{};
