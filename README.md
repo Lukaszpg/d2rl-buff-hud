@@ -38,7 +38,7 @@ Custom buffs are supported through the same table: add the mod's state ID and an
 
 ## Installation
 
-Build this fork or use its `dist/` output. Copy **both** `d2rl-buff-panel.dll` and `d2rl-buff-panel.mpq` into one plugin scope:
+Build from source or head to [releases](https://github.com/Lukaszpg/d2rl-buff-hud/releases). Copy **both** `d2rl-buff-panel.dll` and `d2rl-buff-panel.mpq` into one plugin scope:
 
 ```text
 <game>/mods/<mod-name>/d2rloader/plugins/
