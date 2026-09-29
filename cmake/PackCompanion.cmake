@@ -5,7 +5,7 @@ if(NOT EXISTS "${D2RL_COMPILER}")
     message(FATAL_ERROR "D2RLCompiler.exe not found at: ${D2RL_COMPILER}")
 endif()
 if(NOT DEFINED BUFF_PANEL_COMPANION_DIR OR NOT IS_DIRECTORY "${BUFF_PANEL_COMPANION_DIR}")
-    message(FATAL_ERROR "Buff Panel companion directory is missing: ${BUFF_PANEL_COMPANION_DIR}")
+    message(FATAL_ERROR "Buff HUD companion directory is missing: ${BUFF_PANEL_COMPANION_DIR}")
 endif()
 if(NOT DEFINED BUFF_PANEL_COMPANION_OUTPUT OR BUFF_PANEL_COMPANION_OUTPUT STREQUAL "")
     message(FATAL_ERROR "BUFF_PANEL_COMPANION_OUTPUT was not provided.")
@@ -17,6 +17,7 @@ file(MAKE_DIRECTORY "${output_dir}")
 execute_process(
     COMMAND "${D2RL_COMPILER}" pack "${BUFF_PANEL_COMPANION_DIR}"
         --output "${BUFF_PANEL_COMPANION_OUTPUT}"
+        --include-excel-txt
     RESULT_VARIABLE pack_result
     OUTPUT_VARIABLE pack_stdout
     ERROR_VARIABLE pack_stderr
