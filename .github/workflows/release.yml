@@ -38,19 +38,33 @@ jobs:
         shell: pwsh
         run: |
           $current = (Get-Content VERSION -Raw).Trim()
-          if ($current -notmatch '^(\d+)\.(\d+)\.(\d+)$') { throw "Invalid VERSION: $current" }
-          $major=[int]$Matches[1]; $minor=[int]$Matches[2]; $patch=[int]$Matches[3]
+          if ($current -notmatch '^(\d+)\.(\d+)\.(\d+)$') {
+            throw "Invalid VERSION: $current"
+          }
+          $major = [int]$Matches[1]
+          $minor = [int]$Matches[2]
+          $patch = [int]$Matches[3]
+
           switch ('${{ inputs.bump }}') {
-            'major' { $major++; $minor=0; $patch=0 }
-            'minor' { $minor++; $patch=0 }
+            'major' { $major++; $minor = 0; $patch = 0 }
+            'minor' { $minor++; $patch = 0 }
             'patch' { $patch++ }
           }
-          $next="$major.$minor.$patch"; $tag="v$next"
+
+          $next = "$major.$minor.$patch"
+          $tag = "v$next"
+
           git fetch --tags origin
           $existingTag = git tag --list $tag
-          if ($existingTag -eq $tag) { throw "Tag $tag already exists" }
+          if ($existingTag -eq $tag) {
+            throw "Tag $tag already exists"
+          }
+
           & .\scripts\set-version.ps1 -Version $next
-          if ($LASTEXITCODE -ne 0) { throw "Version synchronization failed" }
+          if ($LASTEXITCODE -ne 0) {
+            throw "Version synchronization failed"
+          }
+
           "version=$next" | Out-File $env:GITHUB_OUTPUT -Encoding utf8 -Append
           "tag=$tag" | Out-File $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
@@ -61,7 +75,9 @@ jobs:
           foreach ($test in $tests) {
             Write-Host "==> $($test.Name)"
             python $test.FullName
-            if ($LASTEXITCODE -ne 0) { throw "Python test failed: $($test.Name)" }
+            if ($LASTEXITCODE -ne 0) {
+              throw "Python test failed: $($test.Name)"
+            }
           }
 
       - name: Verify repository D2RLCompiler
@@ -72,97 +88,7 @@ jobs:
             throw "Repository-pinned D2RLCompiler.exe is missing at $compiler"
           }
           $sumLine = (Get-Content "external\D2RLCompiler\SHA256SUMS.txt" | Select-Object -First 1).Trim()
-          if ($sumLine -notmatch '^([0-9A-Fa-f]{64})\s+D2RLCompiler\.exe
-      - name: Configure
-        shell: pwsh
-        run: |
-          $compiler = Join-Path $PWD "external\D2RLCompiler\D2RLCompiler.exe"
-          cmake -S . -B build -DBUFF_PANEL_BUILD_TESTS=ON "-DD2RL_COMPILER=$compiler"
-
-      - name: Pack companion MPQ
-        shell: pwsh
-        run: |
-          cmake --build build --config Release --target buff_panel_companion
-          $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
-
-      - name: Verify companion MPQ
-        shell: pwsh
-        run: |
-          python -m pip install --disable-pip-version-check mpyq==0.2.5
-          python tests/verify_package.py "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-
-      - name: Build DLL
-        shell: pwsh
-        run: |
-          cmake --build build --config Release --target buff_panel --parallel
-          $dll = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.dll"
-          if (-not (Test-Path $dll)) { throw "d2rl-buff-panel.dll was not produced at $dll" }
-
-      - name: Build regression tests
-        shell: pwsh
-        run: |
-          cmake --build build --config Release --parallel
-
-      - name: Run C++ tests
-        shell: pwsh
-        run: |
-          ctest --test-dir build -C Release --output-on-failure
-
-      - name: Commit and tag
-        shell: pwsh
-        run: |
-          $tag='${{ steps.version.outputs.tag }}'
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add VERSION CMakeLists.txt src/plugin.cpp src/plugin.rc src/systems/buff_hud/buff_hud.cpp src/systems/buff_tracker/buff_tracker.cpp
-          git commit -m "chore(release): $tag"
-          git tag -a $tag -m "Buff HUD $tag"
-          git push --atomic origin HEAD:main "refs/tags/$tag"
-
-      - name: Prepare release assets
-        shell: pwsh
-        run: |
-          $version='${{ steps.version.outputs.version }}'
-          $pluginDir = "build\stage\Release\d2rloader\plugins"
-          New-Item -ItemType Directory -Force dist | Out-Null
-          Copy-Item "$pluginDir\d2rl-buff-panel.dll" "dist\d2rl-buff-panel.dll"
-          Copy-Item "$pluginDir\d2rl-buff-panel.mpq" "dist\d2rl-buff-panel.mpq"
-          git archive --format=zip --prefix="d2rl-buff-hud-$version/" -o "dist\d2rl-buff-hud-$version-source.zip" HEAD
-          $names=@(
-            "d2rl-buff-panel.dll",
-            "d2rl-buff-panel.mpq",
-            "d2rl-buff-hud-$version-source.zip"
-          )
-          $lines=foreach($name in $names){
-            $h=(Get-FileHash (Join-Path dist $name) -Algorithm SHA256).Hash.ToLowerInvariant()
-            "$h  $name"
-          }
-          [IO.File]::WriteAllLines((Join-Path $PWD "dist\SHA256SUMS.txt"),$lines,[Text.UTF8Encoding]::new($false))
-
-      - name: Create GitHub Release
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $version='${{ steps.version.outputs.version }}'
-          $tag='${{ steps.version.outputs.tag }}'
-          gh release create $tag `
-            "dist\d2rl-buff-panel.dll" `
-            "dist\d2rl-buff-panel.mpq" `
-            "dist\d2rl-buff-hud-$version-source.zip" `
-            "dist\SHA256SUMS.txt" `
-            --verify-tag `
-            --title "Buff HUD $tag" `
-            --generate-notes
-
-      - name: Upload release artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: buff-hud-release-${{ steps.version.outputs.version }}
-          path: dist/
-          if-no-files-found: error
-) {
+          if ($sumLine -notmatch '^([0-9A-Fa-f]{64})\s+D2RLCompiler\.exe$') {
             throw "Invalid external/D2RLCompiler/SHA256SUMS.txt"
           }
           $expected = $Matches[1].ToLowerInvariant()
@@ -182,7 +108,9 @@ jobs:
         run: |
           cmake --build build --config Release --target buff_panel_companion
           $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
+          if (-not (Test-Path $mpq)) {
+            throw "d2rl-buff-panel.mpq was not produced at $mpq"
+          }
 
       - name: Verify companion MPQ
         shell: pwsh
@@ -195,7 +123,9 @@ jobs:
         run: |
           cmake --build build --config Release --target buff_panel --parallel
           $dll = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.dll"
-          if (-not (Test-Path $dll)) { throw "d2rl-buff-panel.dll was not produced at $dll" }
+          if (-not (Test-Path $dll)) {
+            throw "d2rl-buff-panel.dll was not produced at $dll"
+          }
 
       - name: Build regression tests
         shell: pwsh
@@ -210,7 +140,7 @@ jobs:
       - name: Commit and tag
         shell: pwsh
         run: |
-          $tag='${{ steps.version.outputs.tag }}'
+          $tag = '${{ steps.version.outputs.tag }}'
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add VERSION CMakeLists.txt src/plugin.cpp src/plugin.rc src/systems/buff_hud/buff_hud.cpp src/systems/buff_tracker/buff_tracker.cpp
@@ -221,30 +151,36 @@ jobs:
       - name: Prepare release assets
         shell: pwsh
         run: |
-          $version='${{ steps.version.outputs.version }}'
+          $version = '${{ steps.version.outputs.version }}'
           $pluginDir = "build\stage\Release\d2rloader\plugins"
           New-Item -ItemType Directory -Force dist | Out-Null
+
           Copy-Item "$pluginDir\d2rl-buff-panel.dll" "dist\d2rl-buff-panel.dll"
           Copy-Item "$pluginDir\d2rl-buff-panel.mpq" "dist\d2rl-buff-panel.mpq"
+
           git archive --format=zip --prefix="d2rl-buff-hud-$version/" -o "dist\d2rl-buff-hud-$version-source.zip" HEAD
-          $names=@(
+
+          $names = @(
             "d2rl-buff-panel.dll",
             "d2rl-buff-panel.mpq",
             "d2rl-buff-hud-$version-source.zip"
           )
-          $lines=foreach($name in $names){
-            $h=(Get-FileHash (Join-Path dist $name) -Algorithm SHA256).Hash.ToLowerInvariant()
-            "$h  $name"
+          $lines = foreach ($name in $names) {
+            $hash = (Get-FileHash (Join-Path dist $name) -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $name"
           }
-          [IO.File]::WriteAllLines((Join-Path $PWD "dist\SHA256SUMS.txt"),$lines,[Text.UTF8Encoding]::new($false))
+          [IO.File]::WriteAllLines(
+            (Join-Path $PWD "dist\SHA256SUMS.txt"),
+            $lines,
+            [Text.UTF8Encoding]::new($false))
 
       - name: Create GitHub Release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $version='${{ steps.version.outputs.version }}'
-          $tag='${{ steps.version.outputs.tag }}'
+          $version = '${{ steps.version.outputs.version }}'
+          $tag = '${{ steps.version.outputs.tag }}'
           gh release create $tag `
             "dist\d2rl-buff-panel.dll" `
             "dist\d2rl-buff-panel.mpq" `
