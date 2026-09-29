@@ -11,7 +11,6 @@ void HookRegistry::Reset() noexcept {
     count_ = 0;
 }
 
-
 HookRegistry& Hooks() noexcept {
     return Registry;
 }

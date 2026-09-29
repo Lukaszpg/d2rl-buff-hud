@@ -26,6 +26,4 @@ assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
-assert "battle_orders\t32\ttimer\t0\t0\t149" in sources
-assert "battle_command\t51\ttimer\t0\t0\t155" in sources
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")

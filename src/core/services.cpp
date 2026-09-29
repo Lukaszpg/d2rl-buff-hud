@@ -29,7 +29,6 @@ bool InitializeServices(const D2RL::PluginContext* context) noexcept {
     }
 
     Registry.context = context;
-    Registry.resources = Query<D2RL::ResourceService>(context);
     Registry.panels = Query<D2RL::PanelService>(context);
     Registry.customTables = Query<D2RL::CustomTableService>(context);
     Registry.lifecycle = Query<D2RL::LifecycleService>(context);

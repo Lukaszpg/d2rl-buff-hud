@@ -34,3 +34,10 @@
 # Other
 BUFF-CATALOG-REPORT.md
 EXTRACTION.md
+
+# Local IDE and build outputs
+.idea/
+cmake-build-*/
+build/
+dist/
+__pycache__/

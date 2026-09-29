@@ -9,11 +9,12 @@
 #include "systems/buff_hud/buff_hud.hpp"
 #include "systems/buff_tracker/buff_tracker.hpp"
 
+
 namespace BuffPanel {
 namespace {
 
 static_assert(D2RL_PLUGIN_ABI_VERSION == 4,
-    "Buff Panel 1.0.11 requires D2RLoader PluginSDK 0.2.x / plugin ABI 4.");
+    "Buff Panel 1.0.11 requires D2RLoader PluginSDK 0.3.0 / plugin ABI 4.");
 
 constexpr D2RL::PluginInfo Info{
     .infoSize = D2RL::PluginInfoSize,
@@ -65,7 +66,7 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
         ShutdownRuntime();
         return false;
     }
-    context->LogInfo("Buff Panel 1.0.11 loaded (D2R build 93847; PluginSDK 0.2.x/ABI 4).");
+    context->LogInfo("Buff Panel 1.0.11 loaded (D2R build 93847; PluginSDK 0.3.0/ABI 4).");
     return true;
 }
 

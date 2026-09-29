@@ -45,7 +45,6 @@ bool BuffDisplayBus::Remove(std::uint64_t key) noexcept {
     return false;
 }
 
-
 void BuffDisplayBus::PublishGameFrame(
     std::uint64_t sessionGeneration,
     std::uint32_t frame) noexcept {
@@ -93,7 +92,6 @@ BuffDisplaySnapshot BuffDisplayBus::Snapshot() const noexcept {
     snapshot.hasGameFrame = hasGameFrame_;
     return snapshot;
 }
-
 
 BuffDisplayBus& BuffDisplays() noexcept {
     return Bus;
