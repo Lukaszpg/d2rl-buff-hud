@@ -86,7 +86,7 @@ public:
 
         const auto replacementAddress = reinterpret_cast<std::uintptr_t>(target);
         if (bridge.targetAddress == replacementAddress) {
-            context->LogError("Buff HUD: D2RLoader bridge already points at the requested BuffPanel hook; chain refused.");
+            context->LogError("Buff HUD: D2RLoader bridge already points at the requested Buff HUD hook; chain refused.");
             return false;
         }
 
