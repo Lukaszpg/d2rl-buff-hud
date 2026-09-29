@@ -1,248 +1,154 @@
 # Buff Panel — D2RLoader plugin
 
-A standalone 3×7 temporary-buff panel and countdown tracker.
+**1.0.11 production cleanup (2026-09-29):** removes development-only display tests, the synthetic debug clock, mouse-policy A/B modes, tracker/HUD telemetry counters, duplicate diagnostic commands, unused PluginSDK services, and the unused stat-read interception layer. The proven gameplay input-isolation behavior is now fixed rather than switchable. Native fingerprints, readable-range checks, hook chaining, finite-expiry validation, CTA skill fallbacks, tooltip bounds protection, and regression tests remain.
 
-## Acknowledgements
-
-Many thanks to [RuffnecKk](https://github.com/RuffDood) for being a great teacher and awesome dude.
-Make sure to check out his amazing plugin [suite](https://github.com/RuffDood/RuffnecKk-D2RLoader-Suite)!
+Buff Panel is a standalone 3×7 temporary-buff panel and countdown tracker for D2R build **93847**.
 
 ## What it provides
 
-- 21 reusable display-only buff slots in a 3×7, lower-left-fill panel.
-- Timed entries with countdowns based on the game's authoritative 25-frame-per-second clock.
-- Resource entries with an optional current/max stat counter (e.g. Bone Armor), independent of time remaining.
-- Automatic icon and localized name discovery using game Skills/SkillDesc and original skill icon atlases (Amazon through Warlock and Global).
-- Table-driven whitelist from `buff-hud.txt`: `name`, `state_id`, `display_type`, `value_stat`, `max_stat`, `skill_id`, `value_shift`, `enabled`.
-- Excludes curses and shared-stash proxy states; built-in semantic checks on native buff metadata.
+- 21 reusable display-only buff slots in a lower-left-fill 3×7 panel.
+- Timed entries based on D2R's authoritative 25-frame-per-second game clock.
+- Resource entries with current/max counters such as Bone Armor.
+- Runtime Skills→SkillDesc icon resolution using the active compiled data tables.
+- Localized skill-name resolution with bounded native tooltip storage.
+- A table-driven whitelist from `buff-hud.txt`.
+- Fail-closed native byte/range qualification and shared-stash/curse exclusions.
+- Fixed gameplay input isolation: Buff Panel widgets are never made interactive.
 
-### Default table
+## Timer metadata
 
-Timed self-skill, shrine, temporary potion and resource candidates are included; auras/permanent passives are recorded with `enabled=0` because they are **not** finite countdowns. A row's presence does **not** guarantee that the game emits the metadata necessary for a HUD countdown. In particular, shrine/potion rows can be enabled but remain invisible if `skill=0`. Absorb pools have independent resource presentation and state disambiguation.
-
-`buff-hud.txt` with tabs:
+`buff-hud.txt` uses these tab-separated columns:
 
 ```text
-name\tstate_id\tdisplay_type\tvalue_stat\tmax_stat\tskill_id\tvalue_shift\tenabled
-fade\t159\ttimer\t0\t0\t0\t0\t1
-bone_armor\t14\tresource\t132\t133\t68\t8\t1
+name	state_id	display_type	value_stat	max_stat	skill_id	value_shift	enabled
 ```
 
-The `\t` escapes above indicate tab separators; use actual tabs in the text file. For resource entries, `value_stat` and `max_stat` are live stat IDs, `skill_id` supplies the icon/name, and `value_shift` scales the displayed value.
+There is no skill-level field.
+
+For `display_type=timer`:
+
+- `value_stat`, `max_stat`, and `value_shift` must be `0`.
+- Native StatList `skill` is preferred when nonzero.
+- Configured `skill_id` is a fallback only when native `skill` is zero.
+- A finite future native expiry is always required; Buff Panel does not invent durations.
+
+The embedded defaults include:
+
+```text
+shout	26	timer	0	0	138	0	1
+battle_orders	32	timer	0	0	149	0	1
+battle_command	51	timer	0	0	155	0	1
+```
+
+For `display_type=resource`, `value_stat`, `max_stat`, and `skill_id` are required; `value_shift` scales the raw values.
 
 ## Installation
 
-Either head to [releases](https://github.com/Lukaszpg/buff-hud/releases) and download the newest version of the plugin or [build](https://github.com/Lukaszpg/buff-hud/edit/main/README.md#building) it from source.
-
-Copy `d2rl-buff-panel.dll` to **one** of these paths (create the `plugins` directory if necessary):
+Copy `d2rl-buff-panel.dll` to one D2RLoader plugin scope:
 
 ```text
 <Diablo II Resurrected>/d2rloader/plugins/d2rl-buff-panel.dll
+```
+
+or:
+
+```text
 <Diablo II Resurrected>/mods/<mod-name>/d2rloader/plugins/d2rl-buff-panel.dll
 ```
 
-Unzip `data.zip` from releases or copy files mentioned below from `data` folder found wherevcer you have cloned the repository.
-Copy the files to your active mod directory under D2RLoader. 
+The default layout and buff catalog are embedded in the DLL. Loose files are **optional overrides**, not required runtime dependencies.
 
-```
+To override them for one mod, place them under the active mod data root:
+
+```text
 data/global/ui/layouts/buff-panel/BuffHudhd.json
 data/global/excel/d2rloader/buff-panel/buff-hud.txt
 ```
 
-## Building
+Restart D2R after changing either file.
 
-Buff Panel is a standalone D2RLoader plugin.
+## Moving Buff Panel
 
-### Requirements
-
-- Windows x64, with a C++20-capable MSVC toolchain and Windows SDK (Visual Studio with **Desktop development with C++** is sufficient).
-- CMake 3.29 or newer.
-- Official [D2RLoader PluginSDK](https://github.com/D2RLoader/PluginSDK), release **0.2.x**, plugin ABI **4**.
-- A D2RLoader runtime supporting plugin ABI 4 and the services used by Buff Panel.
-
-**Compatibility:** Buff Panel 1.0.6's native addresses and byte contracts are qualified only for D2R build **93847**. Building successfully does not qualify it for other game builds. The plugin is not a universal-build release.
-
-### Option A — Build Buff Panel by itself (recommended for distribution)
-
-1. Clone the master branch. The project root is `plugins/buff-panel/`, the directory containing `CMakeLists.txt`.
-2. Open **Developer PowerShell for Visual Studio** (x64 environment) and change directory to the extracted project root.
-3. Download the official PluginSDK into `third_party/PluginSDK` beneath that project root:
-
-   ```powershell
-   git clone --depth 1 https://github.com/D2RLoader/PluginSDK.git third_party/PluginSDK
-   ```
-
-   The expected header path is `third_party/PluginSDK/include/D2RLPlugin/version.h`. Check it defines `D2RL_SDK_VERSION "0.2.x"` and `D2RL_PLUGIN_ABI_VERSION 4`. Do not replace just `version.h`: the whole SDK must match.
-
-4. Configure and build with the Visual Studio generator:
-
-   ```powershell
-   cmake -S . -B build -A x64
-   cmake --build build --config Release --target buff_panel --parallel
-   ```
-
-   If CMake selects a non-Visual-Studio generator, specify an installed generator with `-G`, e.g. `-G "Visual Studio 17 2022" -A x64` for Visual Studio 2022. A developer using Ninja may instead run `cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release` followed by `cmake --build build --target buff_panel --parallel` from an MSVC developer environment. Do not reuse one build directory when switching generators.
-
-5. Find `d2rl-buff-panel.dll` in the build tree. Visual Studio multi-configuration builds normally place it at `build/Release/d2rl-buff-panel.dll`; Ninja normally places it at `build/d2rl-buff-panel.dll`. The exact output directory can differ if a parent build overrides it.
-
-**Already installed PluginSDK as a CMake package?** Skip cloning when CMake can resolve `find_package(D2RLPlugin 0.2.0 CONFIG)` through `CMAKE_PREFIX_PATH` or `D2RLPlugin_DIR`.
-
-### Option B — Integrate with an existing D2RLoader CMake workspace
-
-Copy the project folder to `<workspace>/plugins/buff-panel/`. Ensure the parent CMake project includes the plugin, for example:
-
-```cmake
-add_subdirectory(plugins/buff-panel)
-```
-
-If the parent already provides `D2RLPlugin::D2RLPlugin` (or a compatible ABI-4 SDK target), Buff Panel reuses it. Otherwise, place the official PluginSDK at `<workspace>/third_party/PluginSDK`, install it as a CMake package, or use the plugin-local SDK location described in Option A.
-
-From the **workspace root**, run:
-
-```powershell
-cmake -S . -B build
-cmake --build build --config Release --target buff_panel --parallel
-```
-
-For a new workspace using a Visual Studio generator, add `-A x64` to the initial configure command. The parent project may set a different DLL output directory.
-
-### Verify and troubleshoot
-
-Start a compatible game build and inspect D2RLoader logs. While a listed buff is active, use:
-
-```text
-buff-panel status
-buff-panel-tracker
-```
-
-Try Fade (`state_id=159`) or another enabled native timer state. The 1.0.6 expanded catalog contains candidates that still require runtime qualification; see `BUFF-CATALOG-REPORT.md` and `buff-hud-audit.tsv`.
-
-- **CMake cannot find PluginSDK:** verify the location of its `CMakeLists.txt` and `include/D2RLPlugin/version.h`, or set `CMAKE_PREFIX_PATH` for an installed package.
-- **`min`/`max` macro errors (`C4003`, `C2589`, `C2059`):** use Buff Panel 1.0.6's included CMake configuration, which defines `NOMINMAX` and `WIN32_LEAN_AND_MEAN` on the plugin target. Reconfigure after modifying CMake.
-- **Wrong compiler/generator or architecture:** open a Visual Studio C++ developer shell and select x64. Use a fresh build directory when switching generators.
-- **The DLL builds but refuses to initialize:** inspect build qualification / service availability. Do not bypass native-byte safety checks or assume an unrelated D2R build is supported.
-- **No buff appears:** confirm `buff-hud.txt` has the state enabled, the corresponding state is actually active, and `buff-panel-tracker` reports successful publication. Not every enabled catalog entry guarantees a usable native timer.
-
-## Moving Buff Panel in the game UI
-
-Layout customization for players and mod authors
-
-Buff Panel does **not** currently have a drag-to-move control or an in-game position setting. To change where it appears, edit its UI layout JSON and rebuild the plugin. You do **not** need to modify `buff-hud.txt`: that file selects which buffs are tracked, not where the panel is drawn.
-
-### 1. Find the panel layout
-
-In the **your active mod where you have installed the plugin** directory, open:
-
-```text
-data/global/ui/layouts/buff-panel/BuffHudhd.json
-```
-
-### 2. Change the `BuffGrid` rectangle
-
-Near the start of the file you will find:
+Override `BuffHudhd.json` and edit only `BuffGrid.fields.rect.x` / `y` to move the whole panel. The default grid is:
 
 ```json
-{
-  "type": "Panel",
-  "name": "buff-panel/BuffHud",
-  "fields": {
-    "anchor": { "x": 0.5, "y": 1.0 },
-    "priority": 101
-  },
-  "children": [
-    {
-      "type": "Widget",
-      "name": "BuffGrid",
-      "fields": {
-        "rect": {
-          "x": 50,
-          "y": -515,
-          "width": 780,
-          "height": 300
-        }
-      }
-    }
-  ]
+"rect": {
+  "x": 50,
+  "y": -515,
+  "width": 780,
+  "height": 300
 }
 ```
 
-This is an **excerpt** to help you locate the settings; do not replace the complete JSON with this shortened example. In the original file, `BuffGrid` also contains all 21 buff slots and their icon/text widgets.
+Increase `x` to move right; decrease it to move left. More-negative `y` moves upward; less-negative `y` moves downward. Leave the outer anchor and individual slot rectangles unchanged for ordinary repositioning.
 
-Change only `BuffGrid.fields.rect.x` and `BuffGrid.fields.rect.y` to reposition the **whole 3 × 7 panel**:
+## Console command
 
-| Change | Result |
-|---|---|
-| Increase `x` | Move right |
-| Decrease `x` | Move left |
-| Make `y` more negative | Move up |
-| Make `y` less negative | Move down |
-
-For example, starting from `x: 50, y: -515`:
-
-- Move right by 100 layout units: `x: 150, y: -515`.
-- Move left by 100 layout units: `x: -50, y: -515`.
-- Move up by 100 layout units: `x: 50, y: -615`.
-- Move down by 100 layout units: `x: 50, y: -415`.
-
-Use smaller increments (such as 20–50) to fine-tune. These are **D2R UI layout coordinates**; their apparent on-screen pixel distance may vary with game resolution and UI scaling.
-
-### What about the anchor?
-
-The outer panel currently declares:
-
-```json
-"anchor": { "x": 0.5, "y": 1.0 }
-```
-
-This provides the panel's horizontal-center / bottom-screen anchoring context. For ordinary repositioning, **leave the anchor alone** and move `BuffGrid` with `x`/`y` instead. Do not change the individual `BuffSlot00`–`BuffSlot20` rectangles unless you want to redesign the grid itself. Leave `width: 780` and `height: 300` unchanged if you only want to move it.
-
-## 3. Reconfigure and rebuild
-
-The layout is **embedded into `d2rl-buff-panel.dll` at build time**. Editing this source JSON by itself does not change the installed DLL, and rebuilding without a CMake reconfigure may reuse the previously generated layout header.
-
-Head to [build](https://github.com/Lukaszpg/buff-hud/edit/main/README.md#building) section to learn about rebuilding the project. 
-
-To test your changes, start the game and activate several buffs. For a repeatable visual test, use the plugin's console command:
+Production exposes one compact status surface:
 
 ```text
-buff-panel test 15 3
-```
-
-This draws three temporary **display-only** test entries for 15 seconds. It does not apply three actual game buffs. Adjust the coordinates and rebuild again if needed.
-
-## Troubleshooting
-
-- **The panel did not move:** confirm you edited `BuffGrid.fields.rect` in the source package, re-ran CMake configuration, rebuilt the DLL, copied it over the installed DLL, and restarted the game.
-- **Only one icon moved:** you edited an individual `BuffSlot` instead of the parent `BuffGrid`.
-- **The panel is partly off-screen:** reduce the offset and test at the resolution/UI scale you intend to use.
-- **The panel is hidden behind another interface:** choose a different `x`/`y`; the layout also has `priority: 101`, but positioning is the intended adjustment here.
-- **You only have a compiled DLL:** the stock Buff Panel 1.0.6 has no in-game position editor; use the source package to customize and rebuild. Loose JSON overrides should not be assumed to replace the embedded plugin-owned layout on every D2RLoader installation.
-
-**Compatibility note:** changing UI position alone does not make the native hook code compatible with a different D2R executable build. Buff Panel 1.0.6's native code remains qualified for D2R build 93847.
-
-
-## Commands
-
-```text
+buff-panel
 buff-panel status
-buff-panel test 15 3
-buff-panel clear
-buff-panel rebuild-icons
-buff-panel-tracker
-buff-panel-status
 ```
 
-Test while a configured buff is **currently active**. `buff-panel-tracker` reports whether the whitelist loaded, whether a timed state was discovered, and whether its live expiry was published; `buff-panel status` reports currently displayed entries and the HUD frame clock.
+It reports current display/session state, panel registration, active layout source, skill resolver readiness, and fixed input isolation. Development commands such as fake buff tests, display clearing, mouse-policy switching, manual resolver rebuilds, and tracker telemetry are intentionally not part of the production DLL.
 
-## Known limitations / verification
+## Building
 
-- It is not a generic arbitrary-D2R-build plugin: qualified low-level offsets and bridge signatures are used and fail closed on mismatch.
-- `buff-panel` owns native patching; do not run it alongside another uncoordinated plugin that changes the same bridge without safe chaining.
+### Requirements
 
-## Source provenance
+- Windows x64 with MSVC/C++20 and Windows SDK.
+- CMake 3.29 or newer.
+- D2RLoader PluginSDK 0.2.x, plugin ABI 4.
+- D2RLoader runtime providing the Resource, Panel, Widget, Thread, Lifecycle, CustomTable, DataTable and Localization services used by the plugin.
 
-`src/systems/buff_hud/`, `src/systems/buff_tracker/`, the relevant shared display/stat buses, the native qualification constants. The copy was renamed and isolated under `BuffPanel::`, given its own plugin entry point/CMake/resource paths/console commands, and the *standalone-only* read-only getter resolver was added.
+The native addresses and byte contracts are qualified for D2R build **93847** only.
 
-## Distributing
+### Standalone build
 
-Publish the built DLL with the matching version, supported-game-build information, installation instructions, and a license covering the Buff Panel source you are distributing. PluginSDK is a separate dependency with its own license; it is not included in this source archive.
+Place the official PluginSDK at `third_party/PluginSDK`, then run from the Buff Panel project root:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build --config Release --target buff_panel --parallel
+```
+
+An installed `D2RLPlugin` CMake package may be used instead. If Buff Panel is included from a parent workspace that already defines `D2RLPlugin::D2RLPlugin` or `D2RLPluginV4::D2RLPluginV4`, the existing target is reused.
+
+### Regression tests
+
+Tests are disabled by default and are not part of the production DLL. Enable them explicitly:
+
+```powershell
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DBUFF_PANEL_BUILD_TESTS=ON
+cmake --build build --config Release --parallel
+ctest --test-dir build -C Release --output-on-failure
+```
+
+Coverage includes CTA timer fallback/expiry semantics, Skills→SkillDesc ambiguity, tooltip exact-capacity storage/binding, and loose override validation.
+
+## Runtime behavior and safety
+
+Buff Panel intentionally retains the native safety mechanisms required by its runtime work:
+
+- executable-build byte fingerprints;
+- loader RIP-indirect bridge qualification;
+- readable/writable memory-range checks;
+- exact-state StatList lookup qualification;
+- finite future expiry validation;
+- curse/shared-stash exclusion;
+- bounded tooltip backing-buffer writes.
+
+These are production safety boundaries, not probe remnants, and should not be bypassed when updating the plugin for another game/loader build.
+
+## Known limitation
+
+The fixed production input-isolation policy disables HUD focus surfaces so the overlay cannot consume world clicks. Consequently native hover interaction is not enabled by a debug/A-B mode in production. The backing tooltip path remains bounded and tested for future presentation work.
+
+## Acknowledgements
+
+Many thanks to RuffnecKk and the D2RLoader/PluginSDK project for the loader infrastructure and guidance that made the standalone plugin possible.
+
+## Distribution
+
+Ship the DLL with matching source/version information and the supported D2R build. PluginSDK is a separate dependency with its own license and is not bundled in this source archive.

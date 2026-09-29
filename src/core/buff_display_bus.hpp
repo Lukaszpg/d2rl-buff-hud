@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <mutex>
-#include <string_view>
 
 namespace BuffPanel::Core {
 
@@ -67,7 +66,6 @@ public:
     // sequence so refreshes do not reorder an already-visible buff.
     [[nodiscard]] bool Upsert(BuffDisplayEntry entry) noexcept;
     [[nodiscard]] bool Remove(std::uint64_t key) noexcept;
-    void Clear() noexcept;
 
     // Gameplay systems publish D2's authoritative 25-Hz frame counter here.
     // BuffHud never invents a gameplay clock. sessionGeneration=0 is rejected.
@@ -76,7 +74,6 @@ public:
     void EndSession(std::uint64_t sessionGeneration = 0) noexcept;
 
     [[nodiscard]] BuffDisplaySnapshot Snapshot() const noexcept;
-    [[nodiscard]] std::size_t Count() const noexcept;
 
 private:
     mutable std::mutex mutex_;
@@ -91,15 +88,5 @@ private:
 
 [[nodiscard]] BuffDisplayBus& BuffDisplays() noexcept;
 
-// Stable compile-time/runtime FNV-1a helper for producers that want readable
-// static keys without allocating strings on the gameplay path.
-[[nodiscard]] constexpr std::uint64_t MakeBuffKey(std::string_view text) noexcept {
-    std::uint64_t hash = 14695981039346656037ULL;
-    for (const unsigned char ch : text) {
-        hash ^= ch;
-        hash *= 1099511628211ULL;
-    }
-    return hash == 0 ? 1 : hash;
-}
 
 } // namespace BuffPanel::Core

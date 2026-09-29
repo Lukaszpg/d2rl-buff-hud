@@ -34,13 +34,8 @@ bool InitializeServices(const D2RL::PluginContext* context) noexcept {
     Registry.customTables = Query<D2RL::CustomTableService>(context);
     Registry.lifecycle = Query<D2RL::LifecycleService>(context);
     Registry.threads = Query<D2RL::ThreadService>(context);
-    Registry.items = Query<D2RL::ItemService>(context);
-    Registry.inventory = Query<D2RL::InventoryService>(context);
-    Registry.interactions = Query<D2RL::ItemInteractionService>(context);
-    Registry.sharedEvents = Query<D2RL::SharedEventService>(context);
     Registry.widgets = Query<D2RL::WidgetService>(context);
     Registry.dataTables = Query<D2RL::DataTableService>(context);
-    Registry.diagnostics = Query<D2RL::DiagnosticsService>(context);
     Registry.localization = Query<D2RL::LocalizationService>(context);
 
     return true;

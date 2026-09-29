@@ -265,13 +265,10 @@ struct LinkCandidate final {
         }
     }
 
-    // `str name` is the first WORD-aligned field after the icon byte(s). This
-    // remains layout-derived rather than an absolute hardcode: classic rows put
-    // IconCel at +0x07 and D2R build 93847 puts IconCel at +0x06 followed by the
-    // HireableIconCel byte at +0x07; both layouts therefore resolve the first
-    // WORD after the icon region to +0x08. The previous scanner additionally
-    // required str-short and str-long to be populated for every witness skill,
-    // which is not true for the active D2R table and left names unqualified.
+    // `str name` is the first WORD-aligned field after the icon byte(s). Keep
+    // this layout-derived rather than hardcoded: classic rows put IconCel at
+    // +0x07 while D2R build 93847 uses +0x06 followed by HireableIconCel at
+    // +0x07; both resolve the first WORD after the icon region to +0x08.
     const std::uint32_t candidate = (link.iconOffset + 2U) & ~1U;
     if (candidate + sizeof(std::uint16_t) > skillDesc.rowSize) return {};
 
@@ -432,7 +429,7 @@ bool RebuildSkillIconCache(std::uint64_t tableRevision) noexcept {
                 Cache = std::move(next);
                 return true;
             }
-            // Preserve the most useful failure diagnostics from the first bank that
+            // Preserve the most useful qualification context from the first bank that
             // exposed real tables, even if its runtime layout did not qualify.
             if (next.status.skillCount != 0) break;
         }

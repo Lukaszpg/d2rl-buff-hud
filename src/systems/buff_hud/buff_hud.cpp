@@ -15,8 +15,6 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
-#include <charconv>
-#include <cctype>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -24,7 +22,6 @@
 #include <limits>
 #include <string>
 #include <string_view>
-#include <system_error>
 
 // Compile-time defaults are kept here, not in generated headers or
 // authoring TXT/JSON. Charsi may strip non-C++ asset files.
@@ -4314,7 +4311,6 @@ static_assert(TooltipReserveCodepoints * 3 == TooltipReserveLength);
 constexpr std::size_t TooltipNativeScanBytes = 0x1000;
 constexpr std::uint32_t NoRenderedSeconds = std::numeric_limits<std::uint32_t>::max();
 constexpr std::int32_t NoRenderedValue = std::numeric_limits<std::int32_t>::min();
-constexpr std::uint64_t DebugKeyBase = 0x4250464255460000ULL; // "BP FBUF" + slot
 
 enum class TooltipStorageEncoding : std::uint8_t {
     Unknown = 0,
@@ -4358,9 +4354,6 @@ const D2RL::ThreadService* Threads{};
 const D2RL::LifecycleService* Lifecycle{};
 D2RL::Resources::RegistrationHandle LayoutResource{D2RL::Resources::InvalidHandle};
 LooseLayout::Source LayoutSource{LooseLayout::Source::Embedded};
-std::size_t LayoutBytes{};
-LooseLayout::GridRect LoadedGridRect{};
-bool LoadedGridRectKnown{};
 D2RL::Panels::RegistrationHandle RegisteredPanel{D2RL::Panels::InvalidHandle};
 D2RL::Lifecycle::ListenerHandle DataTablesListener{D2RL::Lifecycle::InvalidHandle};
 std::array<D2RL::Lifecycle::ListenerHandle, 3> GameplayListeners{};
@@ -4370,50 +4363,9 @@ FindChildWidgetByNameFn FindChildWidgetByName{};
 
 std::atomic<std::uint64_t> CurrentSessionGeneration{};
 std::atomic<bool> PollScheduled{};
-std::atomic<bool> DebugClockActive{};
-std::atomic<std::uint64_t> DebugClockStartTick{};
-std::atomic<std::uint32_t> DebugClockStartFrame{1};
-std::atomic<std::uint64_t> DebugClockSession{};
 
-std::atomic<std::uint64_t> Polls{};
-std::atomic<std::uint64_t> PollQueueFailures{};
-std::atomic<std::uint64_t> LayoutRefreshes{};
-std::atomic<std::uint64_t> TimerWrites{};
-std::atomic<std::uint64_t> TimerWriteFailures{};
-std::atomic<std::uint64_t> IconResolveFailures{};
-std::atomic<std::uint64_t> IconFrameFallbacks{};
-std::atomic<std::uint64_t> ExpiredEntriesRemoved{};
-std::atomic<std::uint64_t> PanelOpenFailures{};
-std::atomic<std::uint64_t> WidgetResolveFailures{};
-std::atomic<std::uint64_t> WidgetEnableFailures{};
-// Native FocusableWidget hover targets and the panel/grid may prevent D2R
-// gameplay input despite atlas ButtonWidgets being disabled. SDK V1 has no
-// explicit "do not intercept world clicks" flag for plugin panels, so keep a
-// reversible, UI-thread-only A/B policy while diagnosing native hit testing.
-enum class MousePolicy : std::uint8_t {
-    Gameplay = 0,     // disable all HUD hit-test candidates (default)
-    NoTooltips = 1,   // disable tooltip FocusableWidgets only
-    Original = 2,     // restore pre-1.0.7 behavior for comparison
-};
-std::atomic<MousePolicy> CurrentMousePolicy{MousePolicy::Gameplay};
-std::atomic<std::uint64_t> MousePolicyApplications{};
-std::atomic<std::uint64_t> MousePolicyFailures{};
-std::atomic<bool> MousePolicyLastApplied{};
-
-[[nodiscard]] const char* MousePolicyName(MousePolicy policy) noexcept {
-    switch (policy) {
-    case MousePolicy::Gameplay: return "gameplay";
-    case MousePolicy::NoTooltips: return "no-tooltips";
-    case MousePolicy::Original: return "original";
-    }
-    return "unknown";
-}
-
-std::atomic<std::uint64_t> TooltipNameResolveFailures{};
-std::atomic<std::uint64_t> TooltipQualificationFailures{};
-std::atomic<std::uint64_t> TooltipWrites{};
-std::atomic<std::uint64_t> TooltipWriteFailures{};
-
+// BuffHud is display-only. Production permanently disables HUD focus surfaces
+// after resolving widget handles so the overlay cannot consume gameplay input.
 struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
@@ -4433,7 +4385,6 @@ struct SlotRenderState final {
     std::int32_t maximumValue{NoRenderedValue};
     std::int32_t sourceSkillId{Core::NoSourceSkillId};
     bool timerVisible{};
-    bool tooltipVisible{};
     std::uintptr_t qualifiedTimerBuffer{};
     std::uintptr_t qualifiedTooltipWidget{};
     std::uintptr_t qualifiedTooltipBuffer{};
@@ -4446,32 +4397,8 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
-std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
-[[nodiscard]] const char* AtlasName(Core::BuffIconAtlas atlas) noexcept {
-    switch (atlas) {
-    case Core::BuffIconAtlas::Amazon: return "amazon";
-    case Core::BuffIconAtlas::Sorceress: return "sorceress";
-    case Core::BuffIconAtlas::Necromancer: return "necromancer";
-    case Core::BuffIconAtlas::Paladin: return "paladin";
-    case Core::BuffIconAtlas::Barbarian: return "barbarian";
-    case Core::BuffIconAtlas::Druid: return "druid";
-    case Core::BuffIconAtlas::Assassin: return "assassin";
-    case Core::BuffIconAtlas::Warlock: return "warlock";
-    case Core::BuffIconAtlas::Global: return "global";
-    case Core::BuffIconAtlas::Auto:
-    default: return "auto";
-    }
-}
 
-[[nodiscard]] const char* TooltipEncodingName(TooltipStorageEncoding encoding) noexcept {
-    switch (encoding) {
-    case TooltipStorageEncoding::BlizzardUtf8: return "blz-utf8";
-    case TooltipStorageEncoding::BlizzardUtf16: return "blz-utf16";
-    case TooltipStorageEncoding::Unknown:
-    default: return "unknown";
-    }
-}
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
     for (std::size_t i = 0; i < AtlasOrder.size(); ++i) {
@@ -4603,7 +4530,7 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 
 [[nodiscard]] bool SetVisible(D2RL::Widgets::WidgetHandle handle, bool visible) noexcept;
 [[nodiscard]] bool SetEnabled(D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept;
-[[nodiscard]] bool ApplyMousePolicy() noexcept;
+[[nodiscard]] bool ApplyInputIsolation() noexcept;
 
 [[nodiscard]] bool ResolveWidgetHandles() noexcept {
     if (HandlesResolved) return true;
@@ -4615,7 +4542,6 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 
     if (Widgets->findPanel(Context, "buff-panel/BuffHud", &HudPanel) != D2RL::Widgets::Result::Success
         || Widgets->findWidget(Context, HudPanel, "BuffGrid", &GridWidget) != D2RL::Widgets::Result::Success) {
-        WidgetResolveFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4625,28 +4551,24 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         auto& slot = Handles[i];
         if (Widgets->findWidget(Context, GridWidget, slotName, &slot.slot)
             != D2RL::Widgets::Result::Success) {
-            WidgetResolveFailures.fetch_add(1, std::memory_order_relaxed);
             Handles = {};
             return false;
         }
         for (std::size_t atlas = 0; atlas < AtlasCount; ++atlas) {
             if (Widgets->findWidget(Context, slot.slot, AtlasWidgetNames[atlas], &slot.icons[atlas])
                 != D2RL::Widgets::Result::Success) {
-                WidgetResolveFailures.fetch_add(1, std::memory_order_relaxed);
                 Handles = {};
                 return false;
             }
         }
         if (Widgets->findWidget(Context, slot.slot, "Countdown", &slot.countdown)
             != D2RL::Widgets::Result::Success) {
-            WidgetResolveFailures.fetch_add(1, std::memory_order_relaxed);
             Handles = {};
             return false;
         }
 
         if (Widgets->findWidget(Context, slot.slot, "Tooltip", &slot.tooltip)
             != D2RL::Widgets::Result::Success) {
-            WidgetResolveFailures.fetch_add(1, std::memory_order_relaxed);
             Handles = {};
             return false;
         }
@@ -4656,17 +4578,15 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         // every atlas button as soon as handles are resolved. Occupied slots
         // keep the selected atlas visible but disabled. A separate slot-local
         // FocusableWidget owns optional hover-only tooltip presentation.
-        // In default gameplay mode ApplyMousePolicy also disables the tooltip,
-        // all slots, the grid and the panel to prioritize world input.
+        // Production input isolation also disables the tooltip, every slot,
+        // the grid and the panel as hit-test surfaces while leaving rendering intact.
         for (const auto icon : slot.icons) {
-            if (!SetEnabled(icon, false)) {
-                WidgetEnableFailures.fetch_add(1, std::memory_order_relaxed);
-            }
+            (void)SetEnabled(icon, false);
         }
     }
 
     HandlesResolved = true;
-    (void)ApplyMousePolicy();
+    (void)ApplyInputIsolation();
     return true;
 }
 
@@ -4732,7 +4652,6 @@ void InvalidateWidgetHandles() noexcept {
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
-    LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
 }
 
 [[nodiscard]] bool SetVisible(D2RL::Widgets::WidgetHandle handle, bool visible) noexcept {
@@ -4746,44 +4665,27 @@ void InvalidateWidgetHandles() noexcept {
 }
 
 // Call only on the UI thread, after ResolveWidgetHandles. A disabled widget
-// can still be drawn in D2R (this is already how the atlas ButtonWidgets are
-// rendered), but it cannot be relied on for native hover. Do not pretend that
-// this proves end-to-end click-through: the test must also cover Panel hit-test
-// behavior in the running game.
-[[nodiscard]] bool ApplyMousePolicy() noexcept {
+// can still be drawn in D2R while remaining outside gameplay hit testing. This
+// fixed policy preserves the input-isolation behavior qualified on build 93847.
+
+[[nodiscard]] bool ApplyInputIsolation() noexcept {
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return false;
-    const auto policy = CurrentMousePolicy.load(std::memory_order_acquire);
-    const bool gameplay = policy == MousePolicy::Gameplay;
-    const bool nativeTooltips = policy == MousePolicy::Original;
     bool allSucceeded = true;
-    auto set = [&](D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept {
-        if (!SetEnabled(handle, enabled)) {
-            MousePolicyFailures.fetch_add(1, std::memory_order_relaxed);
-            WidgetEnableFailures.fetch_add(1, std::memory_order_relaxed);
-            allSucceeded = false;
-        }
+    auto disable = [&](D2RL::Widgets::WidgetHandle handle) noexcept {
+        if (!SetEnabled(handle, false)) allSucceeded = false;
     };
 
-    // Restore child/parent enabled flags in the reverse order of disabling.
-    // This is a diagnostic A/B switch, not a new panel or a native hook.
-    if (!gameplay) {
-        set(HudPanel, true);
-        set(GridWidget, true);
-    }
     for (auto& slot : Handles) {
-        set(slot.slot, !gameplay);
-        set(slot.tooltip, nativeTooltips);
-        // Never make atlas buttons interactive, including in original mode.
-        for (const auto icon : slot.icons) set(icon, false);
+        disable(slot.slot);
+        disable(slot.tooltip);
+        for (const auto icon : slot.icons) disable(icon);
     }
-    if (gameplay) {
-        set(GridWidget, false);
-        set(HudPanel, false);
+    disable(GridWidget);
+    disable(HudPanel);
+    if (!allSucceeded) {
+        Context->LogWarn(
+            "Buff Panel: one or more widget enabled-state updates failed; gameplay input isolation may be incomplete.");
     }
-    MousePolicyApplications.fetch_add(1, std::memory_order_relaxed);
-    MousePolicyLastApplied.store(allSucceeded, std::memory_order_release);
-    if (!allSucceeded) Context->LogWarn(
-        "Buff Panel: one or more widget enabled-state updates failed; gameplay input isolation has NOT been established.");
     return allSucceeded;
 }
 
@@ -4810,20 +4712,17 @@ void InvalidateWidgetHandles() noexcept {
     if (widget == nullptr
         || !ReadNativeField(widget, Native::Contract::HudTextPointerOffset, pointer)
         || pointer == 0) {
-        TimerWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
     auto* buffer = reinterpret_cast<char*>(pointer);
     if (!IsWritableRange(buffer, TimerReserveBytes)) {
-        TimerWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
     auto& state = RenderStates[slotIndex];
     if (state.qualifiedTimerBuffer != pointer) {
         if (!IsTimerReserve(buffer)) {
-            TimerWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         state.qualifiedTimerBuffer = pointer;
@@ -4832,10 +4731,8 @@ void InvalidateWidgetHandles() noexcept {
     std::memcpy(buffer, TimerReserve, TimerReserveBytes);
     std::memcpy(buffer, text, length + 1);
     if (std::memcmp(buffer, text, length + 1) != 0) {
-        TimerWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
-    TimerWrites.fetch_add(1, std::memory_order_relaxed);
     return true;
 }
 
@@ -4856,14 +4753,10 @@ void InvalidateWidgetHandles() noexcept {
     std::uintptr_t candidateBuffer{};
     TooltipStorageEncoding candidateEncoding{TooltipStorageEncoding::Unknown};
 
-    // Build 93847 already has one independently runtime-qualified Blizzard
-    // string layout: TooltipsPanel+0x180. It is {data@+0x00, size@+0x08,
-    // capacity/flags@+0x10}, not an MSVC std::string. The previous BuffHud
-    // implementation searched FocusableWidget for an MSVC basic_string tuple,
-    // which explains the runtime witness tooltipQualFailures>0 with
-    // skillNames=ready/name=Fade. Qualify the same blz::basic_string layout
-    // here. Accept both char and 16-bit character storage because UI layout
-    // fields are not guaranteed to use the same character width.
+    // Build 93847 uses Blizzard string storage shaped as
+    // {data@+0x00, size@+0x08, capacity/flags@+0x10}, not an MSVC std::string.
+    // Qualify that layout from the per-slot reserve token before writing. Accept
+    // both char and 16-bit storage because UI fields may use either width.
     for (std::size_t offset = 0;
          offset + Native::Contract::BlizzardStringCapacityFlagsOffset + sizeof(std::uint64_t) <= TooltipNativeScanBytes;
          offset += alignof(std::uintptr_t)) {
@@ -4905,7 +4798,6 @@ void InvalidateWidgetHandles() noexcept {
     }
 
     if (candidateCount != 1) {
-        TooltipQualificationFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4920,7 +4812,6 @@ void InvalidateWidgetHandles() noexcept {
     if (slotIndex >= SlotCount) return false;
     void* widget = ResolveNativeSlotChild(slotIndex, "Tooltip");
     if (widget == nullptr) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4944,13 +4835,11 @@ void InvalidateWidgetHandles() noexcept {
     if (slotIndex >= SlotCount || text == nullptr) return false;
     const auto utf8Length = std::strlen(text);
     if (utf8Length > TooltipReserveLength) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
     auto& state = RenderStates[slotIndex];
     if (!EnsureTooltipQualified(slotIndex, state)) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4967,7 +4856,6 @@ void InvalidateWidgetHandles() noexcept {
             capacityFlags)
         || dataPointer == 0
         || dataPointer != state.qualifiedTooltipBuffer) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4977,7 +4865,6 @@ void InvalidateWidgetHandles() noexcept {
         || !IsWritableRange(
             reinterpret_cast<void*>(stringObject + Native::Contract::BlizzardStringSizeOffset),
             sizeof(std::uint64_t))) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -4985,33 +4872,27 @@ void InvalidateWidgetHandles() noexcept {
     if (state.qualifiedTooltipEncoding == TooltipStorageEncoding::BlizzardUtf8) {
         if (capacity < TooltipReserveLength
             || !IsWritableRange(reinterpret_cast<void*>(dataPointer), TooltipReserveBytes)) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         auto* buffer = reinterpret_cast<char*>(dataPointer);
         if (!Internal::StoreTooltipText(buffer, std::string_view(text, utf8Length))) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         nativeLength = utf8Length;
         if (std::memcmp(buffer, text, utf8Length + 1) != 0) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
     } else if (state.qualifiedTooltipEncoding == TooltipStorageEncoding::BlizzardUtf16) {
         if (capacity < TooltipReserveCodepoints) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         std::array<std::uint16_t, TooltipReserveCodepoints + 1> converted{};
         std::size_t convertedLength{};
         if (!Utf8ToUtf16(text, converted, convertedLength)) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         constexpr std::size_t Utf16Bytes = (TooltipReserveCodepoints + 1) * sizeof(std::uint16_t);
         if (!IsWritableRange(reinterpret_cast<void*>(dataPointer), Utf16Bytes)) {
-            TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
             return false;
         }
         std::memset(reinterpret_cast<void*>(dataPointer), 0, Utf16Bytes);
@@ -5020,7 +4901,6 @@ void InvalidateWidgetHandles() noexcept {
         }
         nativeLength = convertedLength;
     } else {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
 
@@ -5035,19 +4915,14 @@ void InvalidateWidgetHandles() noexcept {
             state.qualifiedTooltipFieldOffset + Native::Contract::BlizzardStringSizeOffset,
             verifyLength)
         || verifyLength != nativeLength) {
-        TooltipWriteFailures.fetch_add(1, std::memory_order_relaxed);
         return false;
     }
-
-    TooltipWrites.fetch_add(1, std::memory_order_relaxed);
     return true;
 }
 
 void ClearTooltip(std::size_t slotIndex) noexcept {
     if (slotIndex >= SlotCount) return;
-    if (WriteTooltipText(slotIndex, "")) {
-        RenderStates[slotIndex].tooltipVisible = false;
-    }
+    (void)WriteTooltipText(slotIndex, "");
 }
 
 void ApplyTooltip(
@@ -5058,21 +4933,17 @@ void ApplyTooltip(
     char localizedName[TooltipReserveBytes]{};
     if (sourceSkillId == Core::NoSourceSkillId
         || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))) {
-        TooltipNameResolveFailures.fetch_add(1, std::memory_order_relaxed);
         ClearTooltip(slotIndex);
         return;
     }
 
     if (!WriteTooltipText(slotIndex, localizedName)) {
-        RenderStates[slotIndex].tooltipVisible = false;
         return;
     }
 
-    // Atlas buttons remain disabled. Tooltip text is still populated, but the
-    // FocusableWidget is disabled in default gameplay input mode. Use the
-    // reversible "buff-panel mouse original" test mode to restore native hover;
-    // do not claim that a tooltip without a click action is hit-test transparent.
-    RenderStates[slotIndex].tooltipVisible = true;
+    // Atlas buttons and the FocusableWidget remain disabled in production so
+    // BuffHud cannot consume world input. Keep the localized native backing text
+    // correct for future presentation changes without making the HUD interactive.
 }
 
 [[nodiscard]] bool ResolveEntryIcon(
@@ -5125,9 +4996,7 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
         // BuffHud is display-only. Even when a buff is active, its atlas button
         // must stay click-through, so keep every ButtonWidget disabled and only
         // use visibility to choose the currently rendered atlas.
-        if (!SetEnabled(handles.icons[i], false)) {
-            WidgetEnableFailures.fetch_add(1, std::memory_order_relaxed);
-        }
+        (void)SetEnabled(handles.icons[i], false);
         (void)SetVisible(handles.icons[i], selectedIcon);
     }
 
@@ -5136,9 +5005,7 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
     if (Internal::TryApplyIconFrame(nativeIcon, icon.frame, declaredFrame)) return true;
 
     // Fail closed if the qualified live-frame path cannot be applied. The atlas
-    // selection remains valid, but the slot keeps its JSON witness frame and the
-    // fallback counter makes the failure visible in `buff-panel status`.
-    IconFrameFallbacks.fetch_add(1, std::memory_order_relaxed);
+    // selection remains valid and the slot keeps its JSON witness frame.
     return false;
 }
 
@@ -5151,12 +5018,9 @@ void HideSlot(std::size_t slotIndex) noexcept {
     // occupied slot becomes empty, disable every atlas child before hiding it.
     // Initial empty slots were already disabled by ResolveWidgetHandles().
     for (const auto icon : Handles[slotIndex].icons) {
-        if (!SetEnabled(icon, false)) {
-            WidgetEnableFailures.fetch_add(1, std::memory_order_relaxed);
-        }
+        (void)SetEnabled(icon, false);
     }
     ClearTooltip(slotIndex);
-    state.tooltipVisible = false;
 
     (void)SetVisible(Handles[slotIndex].slot, false);
     const auto qualifiedTimerBuffer = state.qualifiedTimerBuffer;
@@ -5180,7 +5044,7 @@ void RenderSlot(
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
     SkillIconDescriptor icon{};
-    const bool iconResolved = ResolveEntryIcon(entry, icon);
+    (void)ResolveEntryIcon(entry, icon);
     auto& state = RenderStates[slotIndex];
     const bool assignmentChanged = !state.visible
         || state.key != entry.key
@@ -5190,7 +5054,6 @@ void RenderSlot(
         || state.sourceSkillId != entry.sourceSkillId;
 
     if (assignmentChanged) {
-        if (!iconResolved) IconResolveFailures.fetch_add(1, std::memory_order_relaxed);
         (void)SetVisible(Handles[slotIndex].slot, false);
         const bool iconApplied = ApplyIcon(slotIndex, icon);
         state.key = entry.key;
@@ -5205,11 +5068,9 @@ void RenderSlot(
         state.currentValue = NoRenderedValue;
         state.maximumValue = NoRenderedValue;
         state.timerVisible = false;
-        state.tooltipVisible = false;
         ApplyTooltip(slotIndex, entry.sourceSkillId);
         state.visible = true;
         (void)SetVisible(Handles[slotIndex].slot, true);
-        LayoutRefreshes.fetch_add(1, std::memory_order_relaxed);
     }
 
     if (entry.displayMode == Core::BuffDisplayMode::Resource) {
@@ -5264,27 +5125,15 @@ void RenderSlot(
     }
 }
 
+
 [[nodiscard]] bool EffectiveFrame(
     const Core::BuffDisplaySnapshot& snapshot,
     std::uint32_t& frame) noexcept {
-    if (snapshot.hasGameFrame) {
-        frame = snapshot.currentGameFrame;
-        DebugClockActive.store(false, std::memory_order_release);
-        return true;
-    }
-
-    if (!DebugClockActive.load(std::memory_order_acquire)
-        || DebugClockSession.load(std::memory_order_acquire) != snapshot.sessionGeneration) {
+    if (!snapshot.hasGameFrame) {
         frame = 0;
         return false;
     }
-
-    const auto startTick = DebugClockStartTick.load(std::memory_order_acquire);
-    const auto nowTick = GetTickCount64();
-    const auto elapsed = nowTick >= startTick ? nowTick - startTick : 0;
-    const auto advanced = static_cast<std::uint64_t>(elapsed) * FramesPerSecond / 1000ULL;
-    frame = DebugClockStartFrame.load(std::memory_order_acquire)
-        + static_cast<std::uint32_t>(advanced);
+    frame = snapshot.currentGameFrame;
     return true;
 }
 
@@ -5310,14 +5159,9 @@ void RenderSnapshot() noexcept {
         }
         if (expiredCount != 0) {
             for (std::size_t i = 0; i < expiredCount; ++i) {
-                if (Core::BuffDisplays().Remove(expired[i])) {
-                    ExpiredEntriesRemoved.fetch_add(1, std::memory_order_relaxed);
-                }
+                (void)Core::BuffDisplays().Remove(expired[i]);
             }
             snapshot = Core::BuffDisplays().Snapshot();
-            if (snapshot.count == 0 && !snapshot.hasGameFrame) {
-                DebugClockActive.store(false, std::memory_order_release);
-            }
         }
     }
 
@@ -5338,7 +5182,6 @@ void RenderSnapshot() noexcept {
     }
     for (std::size_t i = visibleCount; i < SlotCount; ++i) HideSlot(i);
 
-    LastRenderedRevision = snapshot.revision;
 }
 
 void QueuePoll() noexcept;
@@ -5349,8 +5192,6 @@ void __cdecl PollOnUiThread(const D2RL::PluginContext* context, void*) noexcept 
         || CurrentSessionGeneration.load(std::memory_order_acquire) == 0) {
         return;
     }
-
-    Polls.fetch_add(1, std::memory_order_relaxed);
     RenderSnapshot();
     QueuePoll();
 }
@@ -5371,7 +5212,6 @@ void QueuePoll() noexcept {
     if (Threads->runOnUiThread(Context, &PollOnUiThread, nullptr)
         != D2RL::Threads::Result::Success) {
         PollScheduled.store(false, std::memory_order_release);
-        PollQueueFailures.fetch_add(1, std::memory_order_relaxed);
     }
 }
 
@@ -5380,7 +5220,6 @@ void OpenPanel() noexcept {
         || RegisteredPanel == D2RL::Panels::InvalidHandle) return;
     const auto result = Panels->openPanel(Context, RegisteredPanel);
     if (result != D2RL::Panels::Result::Success) {
-        PanelOpenFailures.fetch_add(1, std::memory_order_relaxed);
         return;
     }
     InvalidateWidgetHandles();
@@ -5402,34 +5241,15 @@ void ClosePanel() noexcept {
     InvalidateWidgetHandles();
 }
 
+
 void __cdecl RebuildIconsOnGameThread(const D2RL::PluginContext*, void*) noexcept {
     const auto previous = Internal::SkillIconStatus();
     const auto revision = previous.tableRevision == 0 ? 1 : previous.tableRevision;
-    const bool ready = Internal::RebuildSkillIconCache(revision);
-    if (Context != nullptr) {
-        const auto status = Internal::SkillIconStatus();
-        char line[384]{};
-        std::snprintf(
-            line,
-            sizeof(line),
-            "BuffPanel BuffHud: manual skill presentation cache rebuild %s bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
-            ready ? "succeeded" : "FAILED",
-            status.bank,
-            status.skillCount,
-            status.skillDescCount,
-            status.skillsRowSize,
-            status.skillDescRowSize,
-            status.linkCandidateCount,
-            status.classCandidateCount,
-            status.nameCandidateCount,
-            status.skillDescLinkOffset,
-            status.skillClassOffset,
-            status.iconCelOffset,
-            status.skillNameStringIdOffset,
-            status.namesReady ? "ready" : "not-qualified");
-        ready ? Context->LogInfo(line) : Context->LogWarn(line);
+    if (!Internal::RebuildSkillIconCache(revision) && Context != nullptr) {
+        Context->LogWarn("BuffPanel BuffHud: skill presentation cache retry failed qualification.");
     }
 }
+
 
 void __cdecl OnDataTablesLoaded(
     const D2RL::PluginContext*,
@@ -5437,29 +5257,10 @@ void __cdecl OnDataTablesLoaded(
     void*) noexcept {
     if (event == nullptr) return;
     const bool ready = Internal::RebuildSkillIconCache(event->revision);
-    if (Context == nullptr) return;
-    const auto status = Internal::SkillIconStatus();
-    char line[384]{};
-    std::snprintf(
-        line,
-        sizeof(line),
-        "BuffPanel BuffHud: skill presentation table resolver %s revision=%llu bank=%u skills=%u desc=%u rowSize=%u/%u candidates(link=%u class=%u name=%u) offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) names=%s.",
-        ready ? "ready" : "not-qualified",
-        static_cast<unsigned long long>(event->revision),
-        status.bank,
-        status.skillCount,
-        status.skillDescCount,
-        status.skillsRowSize,
-        status.skillDescRowSize,
-        status.linkCandidateCount,
-        status.classCandidateCount,
-        status.nameCandidateCount,
-        status.skillDescLinkOffset,
-        status.skillClassOffset,
-        status.iconCelOffset,
-        status.skillNameStringIdOffset,
-        status.namesReady ? "ready" : "not-qualified");
-    ready ? Context->LogInfo(line) : Context->LogWarn(line);
+    if (Context != nullptr) {
+        ready ? Context->LogInfo("BuffPanel BuffHud: skill presentation cache ready.")
+              : Context->LogWarn("BuffPanel BuffHud: skill presentation cache could not be qualified.");
+    }
 }
 
 void __cdecl OnGameplayEvent(
@@ -5472,7 +5273,6 @@ void __cdecl OnGameplayEvent(
     case D2RL::Lifecycle::GameplayEventKind::GameJoined:
         CurrentSessionGeneration.store(event->sessionGeneration, std::memory_order_release);
         Core::BuffDisplays().BeginSession(event->sessionGeneration);
-        DebugClockActive.store(false, std::memory_order_release);
         break;
     case D2RL::Lifecycle::GameplayEventKind::LocalPlayerReady:
         if (CurrentSessionGeneration.load(std::memory_order_acquire) != event->sessionGeneration) {
@@ -5488,7 +5288,6 @@ void __cdecl OnGameplayEvent(
     case D2RL::Lifecycle::GameplayEventKind::GameLeft:
         Core::BuffDisplays().EndSession(event->sessionGeneration);
         CurrentSessionGeneration.store(0, std::memory_order_release);
-        DebugClockActive.store(false, std::memory_order_release);
         PollScheduled.store(false, std::memory_order_release);
         ClosePanel();
         break;
@@ -5497,247 +5296,35 @@ void __cdecl OnGameplayEvent(
     }
 }
 
-[[nodiscard]] std::string_view Trim(std::string_view value) noexcept {
-    while (!value.empty() && std::isspace(static_cast<unsigned char>(value.front())) != 0) value.remove_prefix(1);
-    while (!value.empty() && std::isspace(static_cast<unsigned char>(value.back())) != 0) value.remove_suffix(1);
-    return value;
-}
 
-[[nodiscard]] bool NextToken(std::string_view& input, std::string_view& token) noexcept {
-    input = Trim(input);
-    if (input.empty()) {
-        token = {};
-        return false;
-    }
-    std::size_t length{};
-    while (length < input.size()
-        && std::isspace(static_cast<unsigned char>(input[length])) == 0) ++length;
-    token = input.substr(0, length);
-    input.remove_prefix(length);
-    return true;
-}
 
-[[nodiscard]] bool ParseU32(std::string_view token, std::uint32_t& value) noexcept {
-    token = Trim(token);
-    if (token.empty()) return false;
-    const auto result = std::from_chars(token.data(), token.data() + token.size(), value);
-    return result.ec == std::errc{} && result.ptr == token.data() + token.size();
-}
 
 // Queue the live query rather than resolving widgets on the console/game thread.
 // WidgetService calls may only run on the UI thread. A status command can be
 // used outside gameplay; report missing panels rather than fabricating zeros.
-void __cdecl ReadGridRectOnUiThread(
-    const D2RL::PluginContext* context, void*) noexcept {
-    if (context == nullptr || context != Context || Widgets == nullptr) return;
 
-    D2RL::Widgets::WidgetHandle panel{D2RL::Widgets::InvalidHandle};
-    const auto foundPanel = Widgets->findPanel(context, "buff-panel/BuffHud", &panel);
-    if (foundPanel != D2RL::Widgets::Result::Success) {
-        char line[200]{};
-        std::snprintf(line, sizeof(line),
-            "Buff Panel BuffGrid live (UI thread): unavailable; panel not found (result=%u). Enter a game to instantiate the panel.",
-            static_cast<unsigned>(foundPanel));
-        context->WriteConsoleWarning(line);
-        return;
-    }
 
-    D2RL::Widgets::WidgetHandle grid{D2RL::Widgets::InvalidHandle};
-    const auto foundGrid = Widgets->findWidget(context, panel, "BuffGrid", &grid);
-    if (foundGrid != D2RL::Widgets::Result::Success) {
-        char line[200]{};
-        std::snprintf(line, sizeof(line),
-            "Buff Panel BuffGrid live (UI thread): panel found, BuffGrid not found (result=%u).",
-            static_cast<unsigned>(foundGrid));
-        context->WriteConsoleWarning(line);
-        return;
-    }
 
-    D2RL::Widgets::Rect live{};
-    const auto rectResult = Widgets->getWidgetRect(context, grid, &live);
-    if (rectResult != D2RL::Widgets::Result::Success) {
-        char line[200]{};
-        std::snprintf(line, sizeof(line),
-            "Buff Panel BuffGrid live (UI thread): widget found, getWidgetRect failed (result=%u).",
-            static_cast<unsigned>(rectResult));
-        context->WriteConsoleWarning(line);
-        return;
-    }
 
-    const bool same = LoadedGridRectKnown
-        && live.x == LoadedGridRect.x && live.y == LoadedGridRect.y
-        && live.width == LoadedGridRect.width && live.height == LoadedGridRect.height;
-    char line[300]{};
-    std::snprintf(line, sizeof(line),
-        "Buff Panel BuffGrid LIVE (UI thread, parent-local): x=%d y=%d width=%d height=%d vs startup JSON=%s.",
-        live.x, live.y, live.width, live.height,
-        LoadedGridRectKnown ? (same ? "MATCH" : "DIFFERENT") : "UNKNOWN");
-    context->WriteConsoleMessage(line);
-    if (LoadedGridRectKnown && !same) {
-        context->WriteConsoleWarning(
-            "Buff Panel: registered JSON and live BuffGrid rect differ. Check whether D2RLoader applied the registered resource and whether another runtime layout changed the widget.");
-    }
-}
 
-void QueueGridRectReadback(const D2RL::PluginContext* context) noexcept {
-    if (context == nullptr || Threads == nullptr || Context != context) return;
-    const auto result = Threads->runOnUiThread(context, &ReadGridRectOnUiThread, nullptr);
-    if (result != D2RL::Threads::Result::Success) {
-        char line[180]{};
-        std::snprintf(line, sizeof(line),
-            "Buff Panel BuffGrid live: UI-thread readback unavailable (queue result=%u).",
-            static_cast<unsigned>(result));
-        context->WriteConsoleWarning(line);
-    } else {
-        context->WriteConsoleMessage(
-            "Buff Panel BuffGrid live: UI-thread coordinate readback queued.");
-    }
-}
 
 void PrintStatus(const D2RL::PluginContext* context) noexcept {
     if (context == nullptr) return;
     const auto snapshot = Core::BuffDisplays().Snapshot();
     const auto icons = Internal::SkillIconStatus();
-    char line[1536]{};
+    char line[512]{};
     std::snprintf(
-        line,
-        sizeof(line),
-        "Buff Panel 1.0.10 BuffHud: layout=3x7-lower-left-fill active=%zu/%zu session=%llu clock=%s frame=%u revision=%llu panel=%s frameBackend=%s skillIcons=%s skillNames=%s bank=%u tableRevision=%llu offsets(link=0x%X class=0x%X icon=0x%X nameId=0x%X) candidates=%u/%u/%u polls=%llu layoutRefresh=%llu timerWrites=%llu timerFailures=%llu tooltipWrites=%llu tooltipWriteFailures=%llu tooltipQualFailures=%llu tooltipNameFailures=%llu tooltipStorage=%s iconResolveFailures=%llu frameFallbacks=%llu expired=%llu widgetFailures=%llu widgetEnableFailures=%llu panelOpenFailures=%llu.",
+        line, sizeof(line),
+        "Buff Panel 1.0.11: displayed=%zu/%zu session=%llu frame=%u panel=%s layout=%s skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
         snapshot.count,
         SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
-        snapshot.hasGameFrame ? "game" : (DebugClockActive.load(std::memory_order_relaxed) ? "debug" : "none"),
         snapshot.currentGameFrame,
-        static_cast<unsigned long long>(snapshot.revision),
         RegisteredPanel != D2RL::Panels::InvalidHandle ? "registered" : "missing",
-        Internal::IconFrameBackendStatus() == IconFrameBackendState::Ready ? "ready" : "unavailable",
+        LayoutSource == LooseLayout::Source::ActiveMod ? "active-mod" : "embedded",
         icons.ready ? "ready" : "not-qualified",
         icons.namesReady ? "ready" : "not-qualified",
-        icons.bank,
-        static_cast<unsigned long long>(icons.tableRevision),
-        icons.skillDescLinkOffset,
-        icons.skillClassOffset,
-        icons.iconCelOffset,
-        icons.skillNameStringIdOffset,
-        icons.linkCandidateCount,
-        icons.classCandidateCount,
-        icons.nameCandidateCount,
-        static_cast<unsigned long long>(Polls.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(LayoutRefreshes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerWrites.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerWriteFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TooltipWrites.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TooltipWriteFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TooltipQualificationFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TooltipNameResolveFailures.load(std::memory_order_relaxed)),
-        TooltipEncodingName(RenderStates[0].qualifiedTooltipEncoding),
-        static_cast<unsigned long long>(IconResolveFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(IconFrameFallbacks.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(ExpiredEntriesRemoved.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(WidgetResolveFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(WidgetEnableFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(PanelOpenFailures.load(std::memory_order_relaxed)));
-    context->WriteConsoleMessage(line);
-    char layoutLine[160]{};
-    std::snprintf(layoutLine, sizeof(layoutLine),
-        "Buff Panel: BuffHudhd.json source=%s bytes=%zu (restart D2R to reload).",
-        LayoutSource == LooseLayout::Source::ActiveMod ? "active-mod" : "embedded",
-        LayoutBytes);
-    context->WriteConsoleMessage(layoutLine);
-    if (LoadedGridRectKnown) {
-        char jsonRectLine[225]{};
-        std::snprintf(jsonRectLine, sizeof(jsonRectLine),
-            "Buff Panel BuffGrid STARTUP JSON (parent-local): x=%d y=%d width=%d height=%d.",
-            LoadedGridRect.x, LoadedGridRect.y,
-            LoadedGridRect.width, LoadedGridRect.height);
-        context->WriteConsoleMessage(jsonRectLine);
-    } else {
-        context->WriteConsoleWarning(
-            "Buff Panel BuffGrid STARTUP JSON: integer rect unavailable; verify fields.rect on the BuffGrid widget.");
-    }
-    char inputStatus[256]{};
-    std::snprintf(inputStatus, sizeof(inputStatus),
-        "Buff Panel mouse policy=%s applied=%s applications=%llu failures=%llu (SDK enabled-state policy; test casting in game).",
-        MousePolicyName(CurrentMousePolicy.load(std::memory_order_acquire)),
-        MousePolicyLastApplied.load(std::memory_order_acquire) ? "yes" : "no",
-        static_cast<unsigned long long>(MousePolicyApplications.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(MousePolicyFailures.load(std::memory_order_relaxed)));
-    context->WriteConsoleMessage(inputStatus);
-    QueueGridRectReadback(context);
-
-    const auto visible = std::min<std::size_t>(snapshot.count, SlotCount);
-    for (std::size_t i = 0; i < visible; ++i) {
-        const auto& entry = snapshot.entries[i];
-        SkillIconDescriptor icon{};
-        const bool resolved = ResolveEntryIcon(entry, icon);
-        char localizedName[TooltipReserveBytes]{};
-        const bool nameResolved = Internal::TryResolveSkillName(
-            entry.sourceSkillId,
-            localizedName,
-            sizeof(localizedName));
-        char item[448]{};
-        std::snprintf(
-            item,
-            sizeof(item),
-            "  key=0x%llX skill=%d name=%s icon=%s/%u%s mode=%s expireFrame=%u value=%d/%d stats=%d/%d stacks=%u priority=%d seq=%llu",
-            static_cast<unsigned long long>(entry.key),
-            entry.sourceSkillId,
-            nameResolved ? localizedName : "<unresolved>",
-            AtlasName(icon.atlas),
-            static_cast<unsigned>(icon.frame),
-            resolved ? "" : "(fallback)",
-            entry.displayMode == Core::BuffDisplayMode::Resource ? "resource" : "timer",
-            entry.expireGameFrame,
-            entry.currentValue,
-            entry.maximumValue,
-            entry.valueStatId,
-            entry.maxStatId,
-            static_cast<unsigned>(entry.stacks),
-            static_cast<int>(entry.priority),
-            static_cast<unsigned long long>(entry.sequence));
-        context->WriteConsoleMessage(item);
-    }
-}
-
-void StartDebugTest(std::uint32_t seconds, std::uint32_t count) noexcept {
-    if (seconds == 0 || count == 0) return;
-    count = std::min<std::uint32_t>(count, static_cast<std::uint32_t>(SlotCount));
-    const auto session = CurrentSessionGeneration.load(std::memory_order_acquire);
-    if (session == 0) return;
-
-    const auto snapshot = Core::BuffDisplays().Snapshot();
-    std::uint32_t baseFrame = snapshot.hasGameFrame ? snapshot.currentGameFrame : 1;
-    if (!snapshot.hasGameFrame) {
-        DebugClockSession.store(session, std::memory_order_release);
-        DebugClockStartFrame.store(baseFrame, std::memory_order_release);
-        DebugClockStartTick.store(GetTickCount64(), std::memory_order_release);
-        DebugClockActive.store(true, std::memory_order_release);
-    }
-
-    for (std::uint32_t i = 0; i < count; ++i) {
-        Core::BuffDisplayEntry entry{};
-        entry.key = DebugKeyBase + i + 1;
-        entry.sourceSkillId = static_cast<std::int32_t>(6 + i); // Amazon witness sequence
-        entry.expireGameFrame = baseFrame + seconds * FramesPerSecond;
-        entry.priority = static_cast<std::int16_t>(1000 - static_cast<std::int32_t>(i));
-        (void)Core::BuffDisplays().Upsert(entry);
-    }
-}
-
-void __cdecl ApplyMousePolicyOnUiThread(
-    const D2RL::PluginContext* context, void*) noexcept {
-    if (context == nullptr || context != Context) return;
-    if (!ResolveWidgetHandles()) {
-        context->WriteConsoleWarning(
-            "Buff Panel mouse policy: widget handles unavailable; enter a game, then retry.");
-        return;
-    }
-    const bool applied = ApplyMousePolicy();
-    char line[240]{};
-    std::snprintf(line, sizeof(line),
-        "Buff Panel mouse policy=%s: enabled-state changes %s. Verify skills over empty and occupied HUD slots; hover tooltips may be unavailable.",
-        MousePolicyName(CurrentMousePolicy.load(std::memory_order_acquire)),
-        applied ? "applied" : "FAILED");
+        static_cast<unsigned long long>(icons.tableRevision));
     context->WriteConsoleMessage(line);
 }
 
@@ -5745,91 +5332,23 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
     D2R::Game::Client*,
     const D2RL::ConsoleCommandContext* command,
     void*) noexcept {
-    if (command == nullptr || command->plugin == nullptr) return D2RL::ConsoleCommandResult::Failed;
-
-    std::string_view args = command->args != nullptr
+    if (command == nullptr || command->plugin == nullptr) {
+        return D2RL::ConsoleCommandResult::Failed;
+    }
+    const std::string_view args = command->args != nullptr
         ? std::string_view(command->args, command->argsLength)
         : std::string_view{};
-    std::string_view action{};
-    if (!NextToken(args, action) || action == "status") {
+    const auto first = args.find_first_not_of(" \t\r\n");
+    if (first == std::string_view::npos) {
         PrintStatus(command->plugin);
         return D2RL::ConsoleCommandResult::Handled;
     }
-
-    if (action == "mouse") {
-        std::string_view mode{};
-        if (!NextToken(args, mode) || mode == "status") {
-            char line[180]{};
-            std::snprintf(line, sizeof(line),
-                "Buff Panel mouse policy=%s (gameplay | no-tooltips | original).",
-                MousePolicyName(CurrentMousePolicy.load(std::memory_order_acquire)));
-            command->plugin->WriteConsoleMessage(line);
-            return D2RL::ConsoleCommandResult::Handled;
-        }
-        MousePolicy selected{};
-        if (mode == "gameplay") selected = MousePolicy::Gameplay;
-        else if (mode == "no-tooltips") selected = MousePolicy::NoTooltips;
-        else if (mode == "original") selected = MousePolicy::Original;
-        else return D2RL::ConsoleCommandResult::InvalidArguments;
-        if (Threads == nullptr || Context == nullptr) return D2RL::ConsoleCommandResult::Failed;
-        const auto previous = CurrentMousePolicy.exchange(selected, std::memory_order_acq_rel);
-        MousePolicyLastApplied.store(false, std::memory_order_release);
-        if (Threads->runOnUiThread(Context, &ApplyMousePolicyOnUiThread, nullptr)
-            != D2RL::Threads::Result::Success) {
-            CurrentMousePolicy.store(previous, std::memory_order_release);
-            command->plugin->WriteConsoleError("Buff Panel mouse policy: UI callback could not be queued.");
-            return D2RL::ConsoleCommandResult::Failed;
-        }
-        command->plugin->WriteConsoleMessage(
-            "Buff Panel mouse policy change queued for the UI thread.");
+    const auto last = args.find_last_not_of(" \t\r\n");
+    if (args.substr(first, last - first + 1) == "status") {
+        PrintStatus(command->plugin);
         return D2RL::ConsoleCommandResult::Handled;
     }
-
-    if (action == "clear") {
-        Core::BuffDisplays().Clear();
-        DebugClockActive.store(false, std::memory_order_release);
-        command->plugin->WriteConsoleMessage("BuffPanel BuffHud: display registry cleared.");
-        return D2RL::ConsoleCommandResult::Handled;
-    }
-
-    if (action == "test") {
-        std::string_view secondsToken{};
-        std::string_view countToken{};
-        std::uint32_t seconds{60};
-        std::uint32_t count{21};
-        if (NextToken(args, secondsToken) && !ParseU32(secondsToken, seconds)) {
-            return D2RL::ConsoleCommandResult::InvalidArguments;
-        }
-        if (NextToken(args, countToken) && !ParseU32(countToken, count)) {
-            return D2RL::ConsoleCommandResult::InvalidArguments;
-        }
-        if (seconds == 0 || seconds > 86400 || count == 0 || count > SlotCount) {
-            return D2RL::ConsoleCommandResult::InvalidArguments;
-        }
-        if (CurrentSessionGeneration.load(std::memory_order_acquire) == 0) {
-            command->plugin->WriteConsoleWarning("BuffPanel BuffHud: enter a game before starting the display-only test.");
-            return D2RL::ConsoleCommandResult::Failed;
-        }
-        StartDebugTest(seconds, count);
-        char message[192]{};
-        std::snprintf(message, sizeof(message), "BuffPanel BuffHud: published %u display-only test buffs for %u seconds.", count, seconds);
-        command->plugin->WriteConsoleMessage(message);
-        return D2RL::ConsoleCommandResult::Handled;
-    }
-
-    if (action == "rebuild-icons") {
-        if (Threads == nullptr
-            || Threads->runOnGameThread(Context, &RebuildIconsOnGameThread, nullptr)
-                != D2RL::Threads::Result::Success) {
-            command->plugin->WriteConsoleWarning("BuffPanel BuffHud: could not queue skill-icon cache rebuild on the game thread.");
-            return D2RL::ConsoleCommandResult::Failed;
-        }
-        command->plugin->WriteConsoleMessage("BuffPanel BuffHud: skill-icon cache rebuild queued.");
-        return D2RL::ConsoleCommandResult::Handled;
-    }
-
-    command->plugin->WriteConsoleMessage(
-        "Usage: buff-panel [status | mouse [status|gameplay|no-tooltips|original] | test [seconds] [count] | clear | rebuild-icons]");
+    command->plugin->WriteConsoleMessage("Usage: buff-panel [status]");
     return D2RL::ConsoleCommandResult::InvalidArguments;
 }
 
@@ -5859,15 +5378,6 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
     // ResourceService copies selected.bytes before returning. Never keep a
     // pointer to temporary JSON memory after this registration.
     LayoutSource = selected.source;
-    LayoutBytes = selected.bytes.size();
-    // Capture selected bytes NOW: do not reopen the file when status is run,
-    // as a disk edit after load has not yet been registered with D2RLoader.
-    LoadedGridRectKnown = LooseLayout::ReadBuffGridRect(
-        selected.bytes, LoadedGridRect);
-    if (!LoadedGridRectKnown) {
-        Context->LogWarn(
-            "Buff Panel: could not read an integer BuffGrid fields.rect from the selected JSON; coordinate comparison will be unavailable.");
-    }
     if (selected.source == LooseLayout::Source::ActiveMod) {
         Context->LogInfo("Buff Panel: BuffHudhd.json source=active-mod (unpacked layout override).");
     } else {
@@ -5942,26 +5452,6 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
     return true;
 }
 
-void ResetDiagnostics() noexcept {
-    Polls.store(0, std::memory_order_relaxed);
-    PollQueueFailures.store(0, std::memory_order_relaxed);
-    LayoutRefreshes.store(0, std::memory_order_relaxed);
-    TimerWrites.store(0, std::memory_order_relaxed);
-    TimerWriteFailures.store(0, std::memory_order_relaxed);
-    IconResolveFailures.store(0, std::memory_order_relaxed);
-    IconFrameFallbacks.store(0, std::memory_order_relaxed);
-    ExpiredEntriesRemoved.store(0, std::memory_order_relaxed);
-    PanelOpenFailures.store(0, std::memory_order_relaxed);
-    WidgetResolveFailures.store(0, std::memory_order_relaxed);
-    WidgetEnableFailures.store(0, std::memory_order_relaxed);
-    MousePolicyApplications.store(0, std::memory_order_relaxed);
-    MousePolicyFailures.store(0, std::memory_order_relaxed);
-    MousePolicyLastApplied.store(false, std::memory_order_relaxed);
-    TooltipNameResolveFailures.store(0, std::memory_order_relaxed);
-    TooltipQualificationFailures.store(0, std::memory_order_relaxed);
-    TooltipWrites.store(0, std::memory_order_relaxed);
-    TooltipWriteFailures.store(0, std::memory_order_relaxed);
-}
 
 } // namespace
 
@@ -5969,7 +5459,6 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     Shutdown();
     if (context == nullptr) return false;
     Context = context;
-    CurrentMousePolicy.store(MousePolicy::Gameplay, std::memory_order_release);
 
     const auto& services = Core::Services();
     Resources = services.resources;
@@ -6027,13 +5516,12 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     if (!Context->RegisterConsoleCommand(
             "buff-panel",
             &BuffCommand,
-            "Show/test Buff Panel temporary-buff HUD state.")) {
+            "Show Buff Panel status.")) {
         Context->LogWarn("BuffPanel BuffHud: console command 'buff-panel' could not be registered.");
     }
 
-    ResetDiagnostics();
     Context->LogInfo(
-        "Buff Panel 1.0.10 BuffHud initialized: production 3x7 lower-left-fill panel, 21 reusable slots, display-only buff icons with reversible UI input-isolation modes; gameplay mode disables HUD focus surfaces (hover tooltips require original mode), timer/resource presentation with single-value resource counters, runtime Skills->SkillDesc icon + localized str-name cache resolver using the first WORD-aligned post-icon name field with Missing-string rejection, nine native skill atlases (including Warlock), stable priority ordering, session reset, and live ButtonWidget frame application through the build-93847 path visually qualified by Skill Icon HUD Probe 0.7.0.");
+        "Buff Panel 1.0.11 BuffHud initialized: 21 display-only slots, fixed gameplay input isolation, timer/resource rendering, and runtime skill icon/name resolution.");
     return true;
 }
 
@@ -6043,10 +5531,6 @@ void Shutdown() noexcept {
     Internal::ShutdownIconFrameBackend();
     CurrentSessionGeneration.store(0, std::memory_order_release);
     PollScheduled.store(false, std::memory_order_release);
-    DebugClockActive.store(false, std::memory_order_release);
-    DebugClockStartTick.store(0, std::memory_order_release);
-    DebugClockStartFrame.store(1, std::memory_order_release);
-    DebugClockSession.store(0, std::memory_order_release);
     // Restore any native countdown backing buffers we qualified before dropping
     // their pointers. This is bounded/readability-checked and does not call UI
     // services from the loader shutdown thread.
@@ -6056,9 +5540,6 @@ void Shutdown() noexcept {
 
     LayoutResource = D2RL::Resources::InvalidHandle;
     LayoutSource = LooseLayout::Source::Embedded;
-    LayoutBytes = 0;
-    LoadedGridRect = {};
-    LoadedGridRectKnown = false;
     RegisteredPanel = D2RL::Panels::InvalidHandle;
     DataTablesListener = D2RL::Lifecycle::InvalidHandle;
     GameplayListeners = {};

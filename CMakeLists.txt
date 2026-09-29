@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.29)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     if(WIN32)
-        project(BuffPanel VERSION 1.0.0 LANGUAGES CXX RC)
+        project(BuffPanel VERSION 1.0.11 LANGUAGES CXX RC)
     else()
-        project(BuffPanel VERSION 1.0.0 LANGUAGES CXX)
+        project(BuffPanel VERSION 1.0.11 LANGUAGES CXX)
     endif()
 elseif(WIN32)
     enable_language(RC)
@@ -37,35 +37,9 @@ else()
     message(FATAL_ERROR "Buff Panel requires official D2RLoader PluginSDK 0.2.x (plugin ABI 4). Update Suite third_party/PluginSDK.")
 endif()
 
-file(READ
-    "${CMAKE_CURRENT_SOURCE_DIR}/runtime-data/data/global/excel/d2rloader/buff-panel/buff-hud.txt"
-    BUFF_PANEL_DEFAULT_BUFF_HUD)
-configure_file(src/systems/buff_tracker/default_buff_hud_table.hpp.in
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/default_buff_hud_table.hpp" @ONLY)
-
-file(READ
-    "${CMAKE_CURRENT_SOURCE_DIR}/runtime-data/data/global/ui/layouts/buff-panel/BuffHudhd.json"
-    BUFF_PANEL_LAYOUT)
-set(BUFF_PANEL_CHUNK 4096)
-string(LENGTH "${BUFF_PANEL_LAYOUT}" BUFF_PANEL_LAYOUT_LENGTH)
-set(BUFF_PANEL_LAYOUT_LITERALS "")
-set(BUFF_PANEL_OFFSET 0)
-while(BUFF_PANEL_OFFSET LESS BUFF_PANEL_LAYOUT_LENGTH)
-    math(EXPR BUFF_PANEL_REMAINING "${BUFF_PANEL_LAYOUT_LENGTH} - ${BUFF_PANEL_OFFSET}")
-    if(BUFF_PANEL_REMAINING GREATER BUFF_PANEL_CHUNK)
-        set(BUFF_PANEL_THIS_CHUNK ${BUFF_PANEL_CHUNK})
-    else()
-        set(BUFF_PANEL_THIS_CHUNK ${BUFF_PANEL_REMAINING})
-    endif()
-    string(SUBSTRING "${BUFF_PANEL_LAYOUT}" ${BUFF_PANEL_OFFSET}
-        ${BUFF_PANEL_THIS_CHUNK} BUFF_PANEL_LAYOUT_PART)
-    string(APPEND BUFF_PANEL_LAYOUT_LITERALS
-        "R\"buffpaneljson(${BUFF_PANEL_LAYOUT_PART})buffpaneljson\"\n")
-    math(EXPR BUFF_PANEL_OFFSET "${BUFF_PANEL_OFFSET} + ${BUFF_PANEL_THIS_CHUNK}")
-endwhile()
-configure_file(src/systems/buff_hud/buff_hud_layout.hpp.in
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/buff_hud_layout.hpp" @ONLY)
-
+# 1.0.6+ keeps the complete defaults embedded in the compiled C++ sources.
+# There are intentionally no configure-time TXT/JSON/template dependencies so
+# source-mirroring installers cannot lose assets required to build the DLL.
 add_library(buff_panel SHARED
     src/plugin.cpp
     src/core/services.cpp
@@ -74,26 +48,66 @@ add_library(buff_panel SHARED
     src/core/stat_read_bus.cpp
     src/core/buff_display_bus.cpp
     src/systems/buff_tracker/buff_tracker.cpp
+    src/systems/buff_tracker/loose_buff_hud.cpp
     src/systems/buff_hud/buff_hud.cpp
+    src/systems/buff_hud/loose_layout.cpp
     src/systems/buff_hud/icon_frame_backend.cpp
     src/systems/buff_hud/skill_icon_resolver.cpp
 )
 if(WIN32)
     target_sources(buff_panel PRIVATE src/plugin.rc)
 endif()
-target_include_directories(buff_panel PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated")
+target_include_directories(buff_panel PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(buff_panel PRIVATE ${BUFF_PANEL_SDK_TARGET})
 target_compile_features(buff_panel PRIVATE cxx_std_20)
-# Windows.h defines min/max as function-like macros unless NOMINMAX is set.
-# Without this, PluginSDK item.h and our numeric_limits<>::min/max calls
-# are mangled by the preprocessor (MSVC C4003/C2589/C2059).
-# Apply to *every* Buff Panel translation unit before it includes Windows.h.
 if(WIN32)
     target_compile_definitions(buff_panel PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
 endif()
 set_target_properties(buff_panel PROPERTIES OUTPUT_NAME "d2rl-buff-panel")
 if(MSVC)
     target_compile_options(buff_panel PRIVATE /W4 /permissive- /utf-8)
+endif()
+
+
+option(BUFF_PANEL_BUILD_TESTS "Build Buff Panel regression tests" OFF)
+if(BUFF_PANEL_BUILD_TESTS)
+    enable_testing()
+
+    add_executable(buff_panel_timer_metadata_test tests/timer_metadata_test.cpp)
+    target_include_directories(buff_panel_timer_metadata_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_compile_features(buff_panel_timer_metadata_test PRIVATE cxx_std_20)
+    add_test(NAME buff_panel_timer_metadata COMMAND buff_panel_timer_metadata_test)
+
+    add_executable(buff_panel_tooltip_text_test tests/tooltip_text_test.cpp)
+    target_include_directories(buff_panel_tooltip_text_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_compile_features(buff_panel_tooltip_text_test PRIVATE cxx_std_20)
+    add_test(NAME buff_panel_tooltip_text COMMAND buff_panel_tooltip_text_test)
+
+    add_executable(buff_panel_skill_icon_resolver_test
+        tests/skill_icon_resolver_test.cpp
+        src/systems/buff_hud/skill_icon_resolver.cpp)
+    target_include_directories(buff_panel_skill_icon_resolver_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    target_link_libraries(buff_panel_skill_icon_resolver_test PRIVATE ${BUFF_PANEL_SDK_TARGET})
+    target_compile_features(buff_panel_skill_icon_resolver_test PRIVATE cxx_std_20)
+    if(WIN32)
+        target_compile_definitions(buff_panel_skill_icon_resolver_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    endif()
+    add_test(NAME buff_panel_skill_icon_resolver COMMAND buff_panel_skill_icon_resolver_test)
+
+    # This test includes production buff_hud.cpp directly so it is deliberately
+    # Windows-only and built only when the explicit test option is enabled.
+    if(WIN32)
+        add_executable(buff_panel_tooltip_binding_test
+            tests/tooltip_binding_test.cpp
+            src/core/services.cpp
+            src/core/buff_display_bus.cpp
+            src/systems/buff_hud/loose_layout.cpp
+            src/systems/buff_hud/skill_icon_resolver.cpp
+            src/systems/buff_hud/icon_frame_backend.cpp)
+        target_include_directories(buff_panel_tooltip_binding_test PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+        target_link_libraries(buff_panel_tooltip_binding_test PRIVATE ${BUFF_PANEL_SDK_TARGET})
+        target_compile_definitions(buff_panel_tooltip_binding_test PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+        target_compile_features(buff_panel_tooltip_binding_test PRIVATE cxx_std_20)
+        add_test(NAME buff_panel_tooltip_binding COMMAND buff_panel_tooltip_binding_test)
+    endif()
 endif()

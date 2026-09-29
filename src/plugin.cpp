@@ -9,44 +9,24 @@
 #include "systems/buff_hud/buff_hud.hpp"
 #include "systems/buff_tracker/buff_tracker.hpp"
 
-#include <cstdio>
-
 namespace BuffPanel {
 namespace {
 
 static_assert(D2RL_PLUGIN_ABI_VERSION == 4,
-    "Buff Panel 1.0.10 requires D2RLoader PluginSDK 0.2.x / plugin ABI 4.");
+    "Buff Panel 1.0.11 requires D2RLoader PluginSDK 0.2.x / plugin ABI 4.");
 
 constexpr D2RL::PluginInfo Info{
     .infoSize = D2RL::PluginInfoSize,
     .abiVersion = D2RL_PLUGIN_ABI_VERSION,
     .id = "buff-panel",
     .name = "Buff Panel",
-    .version = "1.0.10",
+    .version = "1.0.11",
     .author = "MindH1ve",
     .description = "Standalone configurable D2RLoader buff panel and countdown timers.",
     .flags = D2RL::PluginFlags::Shared | D2RL::PluginFlags::NativeHooks,
 };
 
-bool Active{};
-
-D2RL::ConsoleCommandResult __cdecl StatusCommand(
-    D2R::Game::Client*, const D2RL::ConsoleCommandContext* command,
-    void*) noexcept {
-    if (!command || !command->plugin) return D2RL::ConsoleCommandResult::Failed;
-    char message[192]{};
-    std::snprintf(message, sizeof(message),
-        "Buff Panel 1.0.10 active=%d displayed=%zu postObservers=%zu nativeHooks=%zu",
-        Active ? 1 : 0, Core::BuffDisplays().Count(),
-        Core::StatListPosts().ObserverCount(), Core::Hooks().Snapshot().count);
-    command->plugin->WriteConsoleMessage(message);
-    command->plugin->WriteConsoleMessage(
-        "Commands: buff-panel, buff-panel-tracker, buff-panel-status. Avoid loading two buff panels simultaneously.");
-    return D2RL::ConsoleCommandResult::Handled;
-}
-
 void ShutdownRuntime() noexcept {
-    Active = false;
     Systems::BuffTracker::Shutdown();
     Systems::BuffHud::Shutdown();
     Core::StatListPosts().Reset();
@@ -71,7 +51,8 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
         ShutdownRuntime();
         return false;
     }
-    // The display needs stat values but need not install a global stat-read hook.
+    // Buff Panel only needs to read live stat values. Resolve the loader-owned,
+    // already-qualified bridge without installing a global stat-read hook.
     if (!Core::StatReads().ResolveRawGetter(
             Native::Contract::GetUnitStatRva,
             Native::Contract::GetUnitStatExpected,
@@ -84,11 +65,7 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
         ShutdownRuntime();
         return false;
     }
-    (void)context->RegisterConsoleCommand(
-        "buff-panel-status", &StatusCommand,
-        "Show standalone Buff Panel status.");
-    Active = true;
-    context->LogInfo("Buff Panel 1.0.10 loaded (D2R build 93847; PluginSDK 0.2.x/ABI 4).");
+    context->LogInfo("Buff Panel 1.0.11 loaded (D2R build 93847; PluginSDK 0.2.x/ABI 4).");
     return true;
 }
 

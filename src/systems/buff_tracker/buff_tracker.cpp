@@ -155,8 +155,7 @@ namespace {
 using GetGameFromUnitFn = void*(__fastcall*)(void* unit) noexcept;
 using GetStatListFromUnitAndStateFn = void*(__fastcall*)(void* unit, std::int32_t state) noexcept;
 
-// StatList semantic field layout is qualified from Player Buff StatList Probe
-// 1.0.2 on D2R build 93847. buff-hud.txt is the authoritative whitelist and
+// StatList semantic fields are runtime-qualified for D2R build 93847. buff-hud.txt is the authoritative whitelist and
 // also declares how each state is presented: finite timer or resource pool.
 // Native CURSE lists remain excluded as a safety boundary. Timer rows require
 // finite future expiry metadata. Native skill ID is preferred; timer skill_id
@@ -225,59 +224,9 @@ std::atomic<void*> AuthoritativeGame{};
 std::atomic<void*> AuthoritativePlayer{};
 std::atomic<bool> FramePumpScheduled{};
 
-std::atomic<std::uint64_t> PlayerPosts{};
-std::atomic<std::uint64_t> AuthoritativePosts{};
-std::atomic<std::uint64_t> BuffPostsAccepted{};
-std::atomic<std::uint64_t> RejectedNotWhitelisted{};
-std::atomic<std::uint64_t> RejectedCurse{};
-std::atomic<std::uint64_t> RejectedSharedStashProxy{};
-std::atomic<std::uint64_t> RejectedNoExpiry{};
-std::atomic<std::uint64_t> RejectedResourceUnavailable{};
-std::atomic<std::uint64_t> RejectedInvalidMetadata{};
-std::atomic<std::uint64_t> PublishFailures{};
-std::atomic<std::uint64_t> ResourcePublishes{};
-std::atomic<std::uint64_t> ResourceRefreshes{};
-std::atomic<std::uint64_t> ResourceRemovals{};
-std::atomic<std::uint64_t> TimerPresenceChecks{};
-std::atomic<std::uint64_t> TimerPresenceHits{};
-std::atomic<std::uint64_t> TimerPresenceMisses{};
-std::atomic<std::uint64_t> TimerExpiryRefreshes{};
-std::atomic<std::uint64_t> TimerExpiryReadRejects{};
-std::atomic<std::uint64_t> TimerDiscoveryFrames{};
-std::atomic<std::uint64_t> TimerDiscoveryStateHits{};
-std::atomic<std::uint64_t> TimerDiscoveryInvalid{};
-std::atomic<std::uint64_t> TimerDiscoveryPublishes{};
-std::atomic<std::uint64_t> TimerDiscoveryPublishFailures{};
-std::atomic<std::uint32_t> LastDiscoveryState{};
-std::atomic<std::uint32_t> LastDiscoveryResult{}; // 0=none 1=absent 2=invalid 3=alreadyPublished 4=published 5=full
-std::atomic<std::uint32_t> LastDiscoverySkill{};
-std::atomic<std::uint32_t> LastDiscoveryExpiry{};
 std::atomic<std::uint32_t> LastTimerDiscoveryFrame{}; // once per game frame
 
-std::atomic<std::uint64_t> PrematureTimerRemovals{};
-std::atomic<std::uint64_t> PrematureTimerRemoveMisses{};
-std::atomic<std::uint64_t> FramePublishes{};
-std::atomic<std::uint64_t> FramePumpRuns{};
-std::atomic<std::uint64_t> FramePumpQueueFailures{};
-std::atomic<std::uint64_t> TableLoads{};
-std::atomic<std::uint64_t> TableLoadFailures{};
 
-std::atomic<std::uint32_t> LastFlags{};
-std::atomic<std::uint32_t> LastState{};
-std::atomic<std::uint32_t> LastSkill{};
-std::atomic<std::uint32_t> LastExpireFrame{};
-std::atomic<std::uint32_t> LastCurrentFrame{};
-std::atomic<std::int32_t> LastResourceCurrent{};
-std::atomic<std::int32_t> LastResourceMaximum{};
-std::atomic<std::uint32_t> LastTimerRefreshState{};
-std::atomic<std::uint32_t> LastTimerRefreshSkill{};
-std::atomic<std::uint32_t> LastTimerRefreshOldExpire{};
-std::atomic<std::uint32_t> LastTimerRefreshNewExpire{};
-std::atomic<std::uint32_t> LastTimerRefreshFrame{};
-std::atomic<std::uint32_t> LastPrematureRemovedState{};
-std::atomic<std::uint32_t> LastPrematureRemovedSkill{};
-std::atomic<std::uint32_t> LastPrematureRemovedExpire{};
-std::atomic<std::uint32_t> LastPrematureRemovedFrame{};
 
 constexpr std::array<D2RL::CustomTables::ColumnDefinition, 8> BuffHudColumns{{
     {
@@ -496,14 +445,12 @@ void __cdecl OnTablesLoaded(
     const auto cache = BuildWhitelist();
     if (!cache) {
         Whitelist.store({}, std::memory_order_release);
-        TableLoadFailures.fetch_add(1, std::memory_order_relaxed);
         context->LogError("BuffPanel BuffTracker: buff-hud.txt rejected; whitelist-driven BuffHud publishing is disabled.");
         return;
     }
     const auto count = cache->definitions.size();
     const auto revision = cache->revision;
     Whitelist.store(cache, std::memory_order_release);
-    TableLoads.fetch_add(1, std::memory_order_relaxed);
     char line[256]{};
     std::snprintf(line, sizeof(line),
         "BuffPanel BuffTracker: buff-hud.txt ready; enabledDefinitions=%zu revision=%llu.",
@@ -602,14 +549,9 @@ void RefreshTimerPresence(std::uint32_t currentFrame) noexcept {
 
     struct Removal final {
         std::uint64_t key{};
-        std::uint32_t stateId{};
-        std::uint32_t skillId{};
-        std::uint32_t expireFrame{};
     };
     struct Refresh final {
         std::uint64_t key{};
-        std::uint32_t stateId{};
-        std::uint32_t skillId{};
         std::uint32_t oldExpireFrame{};
         std::uint32_t newExpireFrame{};
     };
@@ -630,12 +572,9 @@ void RefreshTimerPresence(std::uint32_t currentFrame) noexcept {
                 continue;
             }
             if (record.lastPostFrame == currentFrame) continue;
-
-            TimerPresenceChecks.fetch_add(1, std::memory_order_relaxed);
             void* nativeState = GetStatListFromUnitAndState(
                 player, static_cast<std::int32_t>(record.stateId));
             if (nativeState != nullptr) {
-                TimerPresenceHits.fetch_add(1, std::memory_order_relaxed);
                 std::uint32_t liveExpire{};
                 if (ReadLiveTimerExpiry(nativeState, record, currentFrame, liveExpire)) {
                     // Only a strictly later expiry is evidence of a renewal.
@@ -646,29 +585,19 @@ void RefreshTimerPresence(std::uint32_t currentFrame) noexcept {
                         && refreshCount < refreshes.size()) {
                         refreshes[refreshCount++] = Refresh{
                             .key = record.key,
-                            .stateId = record.stateId,
-                            .skillId = record.skillId,
                             .oldExpireFrame = record.expireFrame,
                             .newExpireFrame = liveExpire,
                         };
                         record.expireFrame = liveExpire;
                         record.lastPostFrame = currentFrame;
                     }
-                } else {
-                    TimerExpiryReadRejects.fetch_add(1, std::memory_order_relaxed);
                 }
                 continue;
             }
 
             // Preserve the existing state-removal policy.
-            TimerPresenceMisses.fetch_add(1, std::memory_order_relaxed);
             if (removalCount < removals.size()) {
-                removals[removalCount++] = Removal{
-                    .key = record.key,
-                    .stateId = record.stateId,
-                    .skillId = record.skillId,
-                    .expireFrame = record.expireFrame,
-                };
+                removals[removalCount++] = Removal{.key = record.key};
             }
             record = {};
         }
@@ -684,30 +613,15 @@ void RefreshTimerPresence(std::uint32_t currentFrame) noexcept {
             auto updated = entry;
             updated.expireGameFrame = refresh.newExpireFrame;
             if (!Core::BuffDisplays().Upsert(updated)) {
-                PublishFailures.fetch_add(1, std::memory_order_relaxed);
                 break;
             }
-            TimerExpiryRefreshes.fetch_add(1, std::memory_order_relaxed);
-            LastTimerRefreshState.store(refresh.stateId, std::memory_order_relaxed);
-            LastTimerRefreshSkill.store(refresh.skillId, std::memory_order_relaxed);
-            LastTimerRefreshOldExpire.store(refresh.oldExpireFrame, std::memory_order_relaxed);
-            LastTimerRefreshNewExpire.store(refresh.newExpireFrame, std::memory_order_relaxed);
-            LastTimerRefreshFrame.store(currentFrame, std::memory_order_relaxed);
             break;
         }
     }
 
     for (std::size_t i = 0; i < removalCount; ++i) {
         const auto& removal = removals[i];
-        LastPrematureRemovedState.store(removal.stateId, std::memory_order_relaxed);
-        LastPrematureRemovedSkill.store(removal.skillId, std::memory_order_relaxed);
-        LastPrematureRemovedExpire.store(removal.expireFrame, std::memory_order_relaxed);
-        LastPrematureRemovedFrame.store(currentFrame, std::memory_order_relaxed);
-        if (Core::BuffDisplays().Remove(removal.key)) {
-            PrematureTimerRemovals.fetch_add(1, std::memory_order_relaxed);
-        } else {
-            PrematureTimerRemoveMisses.fetch_add(1, std::memory_order_relaxed);
-        }
+        (void)Core::BuffDisplays().Remove(removal.key);
     }
 }
 
@@ -730,7 +644,6 @@ void RefreshResourceBuffs() noexcept {
     if (GetStatListFromUnitAndState != nullptr
         && GetStatListFromUnitAndState(player, SharedStashProxyState) != nullptr) {
         AuthoritativePlayer.store(nullptr, std::memory_order_release);
-        RejectedSharedStashProxy.fetch_add(1, std::memory_order_relaxed);
         return;
     }
 
@@ -774,9 +687,7 @@ void RefreshResourceBuffs() noexcept {
                 && GetStatListFromUnitAndState(
                     player, static_cast<std::int32_t>(definition.stateId)) != nullptr;
             if (!isAttached) {
-                if (existing != nullptr && Core::BuffDisplays().Remove(key)) {
-                    ResourceRemovals.fetch_add(1, std::memory_order_relaxed);
-                }
+                if (existing != nullptr) (void)Core::BuffDisplays().Remove(key);
                 continue;
             }
         }
@@ -785,16 +696,9 @@ void RefreshResourceBuffs() noexcept {
         const auto rawMaximum = getter(player, definition.maxStatId, 0);
         const auto current = NormalizeResourceValue(rawCurrent, definition.valueShift);
         const auto maximum = NormalizeResourceValue(rawMaximum, definition.valueShift);
-        LastResourceCurrent.store(current, std::memory_order_relaxed);
-        LastResourceMaximum.store(maximum, std::memory_order_relaxed);
 
         if (rawCurrent <= 0 || rawMaximum <= 0) {
-            if (existing != nullptr && Core::BuffDisplays().Remove(key)) {
-                ResourceRemovals.fetch_add(1, std::memory_order_relaxed);
-            }
-            if (rawCurrent > 0 && rawMaximum <= 0) {
-                RejectedResourceUnavailable.fetch_add(1, std::memory_order_relaxed);
-            }
+            if (existing != nullptr) (void)Core::BuffDisplays().Remove(key);
             continue;
         }
 
@@ -819,15 +723,11 @@ void RefreshResourceBuffs() noexcept {
         entry.stacks = 1;
         entry.priority = 100;
         if (!Core::BuffDisplays().Upsert(entry)) {
-            PublishFailures.fetch_add(1, std::memory_order_relaxed);
             continue;
         }
 
         if (existing == nullptr) {
-            ResourcePublishes.fetch_add(1, std::memory_order_relaxed);
-            BuffPostsAccepted.fetch_add(1, std::memory_order_relaxed);
         } else {
-            ResourceRefreshes.fetch_add(1, std::memory_order_relaxed);
         }
     }
 }
@@ -845,19 +745,12 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
     // The loader's UNIT_PLAYER-shaped shared stash proxy must never be treated
     // as a gameplay player. This matches RefreshResourceBuffs' safety guard.
     if (GetStatListFromUnitAndState(player, SharedStashProxyState) != nullptr) return;
-
-    TimerDiscoveryFrames.fetch_add(1, std::memory_order_relaxed);
     auto snapshot = Core::BuffDisplays().Snapshot();
     for (const auto& definition : cache->definitions) {
         if (definition.displayMode != Core::BuffDisplayMode::Timer) continue;
         const auto state = definition.stateId;
-        LastDiscoveryState.store(state, std::memory_order_relaxed);
-        LastDiscoveryResult.store(1, std::memory_order_relaxed);
-        LastDiscoverySkill.store(0, std::memory_order_relaxed);
-        LastDiscoveryExpiry.store(0, std::memory_order_relaxed);
         auto* nativeState = GetStatListFromUnitAndState(player, static_cast<std::int32_t>(state));
         if (nativeState == nullptr) continue;
-        TimerDiscoveryStateHits.fetch_add(1, std::memory_order_relaxed);
 
         NativeTimerMetadata metadata{};
         std::uint32_t skill{}, expiry{};
@@ -871,9 +764,6 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
                 currentFrame,
                 skill,
                 expiry)) {
-            TimerDiscoveryInvalid.fetch_add(1, std::memory_order_relaxed);
-            LastDiscoveryResult.store(2, std::memory_order_relaxed);
-            LastDiscoverySkill.store(skill, std::memory_order_relaxed);
             continue;
         }
         const TimerPresenceRecord witness{
@@ -881,8 +771,6 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
             .stateId = state,
             .skillId = skill,
         };
-        LastDiscoverySkill.store(skill, std::memory_order_relaxed);
-        LastDiscoveryExpiry.store(expiry, std::memory_order_relaxed);
         bool alreadyPublished = false;
         for (std::size_t i = 0; i < snapshot.count; ++i) {
             if (snapshot.entries[i].key == witness.key
@@ -892,7 +780,6 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
             }
         }
         if (alreadyPublished) {
-            LastDiscoveryResult.store(3, std::memory_order_relaxed);
             continue;
         }
         Core::BuffDisplayEntry entry{};
@@ -903,14 +790,9 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
         entry.stacks = 1;
         entry.priority = 100;
         if (!Core::BuffDisplays().Upsert(entry)) {
-            TimerDiscoveryPublishFailures.fetch_add(1, std::memory_order_relaxed);
-            LastDiscoveryResult.store(5, std::memory_order_relaxed);
             continue;
         }
         RecordTimerPresence(witness.key, state, skill, expiry, currentFrame);
-        TimerDiscoveryPublishes.fetch_add(1, std::memory_order_relaxed);
-        BuffPostsAccepted.fetch_add(1, std::memory_order_relaxed);
-        LastDiscoveryResult.store(4, std::memory_order_relaxed);
         // Keep the per-frame snapshot in step so a duplicate table row or key
         // cannot consume two HUD positions during this scan.
         snapshot = Core::BuffDisplays().Snapshot();
@@ -924,14 +806,10 @@ void __cdecl FramePumpOnGameThread(const D2RL::PluginContext* context, void*) no
     if (context == nullptr || context != Context) return;
     const auto session = CurrentSessionGeneration.load(std::memory_order_acquire);
     if (session == 0) return;
-
-    FramePumpRuns.fetch_add(1, std::memory_order_relaxed);
     auto* game = AuthoritativeGame.load(std::memory_order_acquire);
     std::uint32_t frame{};
     if (ReadGameFrame(game, frame)) {
         Core::BuffDisplays().PublishGameFrame(session, frame);
-        LastCurrentFrame.store(frame, std::memory_order_relaxed);
-        FramePublishes.fetch_add(1, std::memory_order_relaxed);
         RefreshResourceBuffs();
         RefreshTimerPresence(frame);
         DiscoverAttachedTimers(frame);
@@ -956,7 +834,6 @@ void QueueFramePump() noexcept {
     if (Threads->runOnGameThread(Context, &FramePumpOnGameThread, nullptr)
         != D2RL::Threads::Result::Success) {
         FramePumpScheduled.store(false, std::memory_order_release);
-        FramePumpQueueFailures.fetch_add(1, std::memory_order_relaxed);
     }
 }
 
@@ -973,9 +850,6 @@ void OnStatListPost(
     // creates its shared-stash proxy by posting state 186 to a UNIT_PLAYER-
     // shaped proxy. During BeforeNative that marker is not attached yet.
     if (!IsReadableRange(event.statList, Native::Contract::StatListBuffMetadataBytes)) {
-        if (phase == Core::StatListPostPhase::BeforeNative) {
-            RejectedInvalidMetadata.fetch_add(1, std::memory_order_relaxed);
-        }
         return;
     }
 
@@ -987,9 +861,6 @@ void OnStatListPost(
         || !ReadField(event.statList, Native::Contract::StatListBuffStateOffset, state)
         || !ReadField(event.statList, Native::Contract::StatListBuffExpireFrameFloatOffset, expireFrameFloat)
         || !ReadField(event.statList, Native::Contract::StatListBuffSkillIdOffset, skill)) {
-        if (phase == Core::StatListPostPhase::BeforeNative) {
-            RejectedInvalidMetadata.fetch_add(1, std::memory_order_relaxed);
-        }
         return;
     }
 
@@ -997,7 +868,6 @@ void OnStatListPost(
         || (GetStatListFromUnitAndState != nullptr
             && GetStatListFromUnitAndState(event.unit, SharedStashProxyState) != nullptr);
     if (sharedStashProxy) {
-        RejectedSharedStashProxy.fetch_add(1, std::memory_order_relaxed);
         return;
     }
 
@@ -1006,37 +876,21 @@ void OnStatListPost(
     if (!ReadGameFrame(game, currentFrame)) return;
 
     if (phase == Core::StatListPostPhase::BeforeNative) {
-        PlayerPosts.fetch_add(1, std::memory_order_relaxed);
-        AuthoritativePosts.fetch_add(1, std::memory_order_relaxed);
         AuthoritativeGame.store(game, std::memory_order_release);
         AuthoritativePlayer.store(event.unit, std::memory_order_release);
         const auto session = CurrentSessionGeneration.load(std::memory_order_acquire);
         if (session != 0) {
             Core::BuffDisplays().PublishGameFrame(session, currentFrame);
-            FramePublishes.fetch_add(1, std::memory_order_relaxed);
-            LastCurrentFrame.store(currentFrame, std::memory_order_relaxed);
             QueueFramePump();
         }
-    }
-
-    if (phase == Core::StatListPostPhase::BeforeNative) {
-        LastFlags.store(flags, std::memory_order_relaxed);
-        LastState.store(state, std::memory_order_relaxed);
-        LastSkill.store(skill, std::memory_order_relaxed);
     }
 
     const auto cache = Whitelist.load(std::memory_order_acquire);
     const auto* definition = FindBuffDefinition(cache, state);
     if (definition == nullptr) {
-        if (phase == Core::StatListPostPhase::BeforeNative) {
-            RejectedNotWhitelisted.fetch_add(1, std::memory_order_relaxed);
-        }
         return;
     }
     if ((flags & StatListCurseFlag) != 0) {
-        if (phase == Core::StatListPostPhase::BeforeNative) {
-            RejectedCurse.fetch_add(1, std::memory_order_relaxed);
-        }
         return;
     }
     const auto session = CurrentSessionGeneration.load(std::memory_order_acquire);
@@ -1055,10 +909,8 @@ void OnStatListPost(
                 currentFrame,
                 resolvedSkill,
                 expireFrame)) {
-            RejectedInvalidMetadata.fetch_add(1, std::memory_order_relaxed);
             return;
         }
-        LastExpireFrame.store(expireFrame, std::memory_order_relaxed);
 
         Core::BuffDisplayEntry entry{};
         entry.key = AutomaticBuffKey(state, resolvedSkill);
@@ -1068,21 +920,18 @@ void OnStatListPost(
         entry.stacks = 1;
         entry.priority = 100;
         if (!Core::BuffDisplays().Upsert(entry)) {
-            PublishFailures.fetch_add(1, std::memory_order_relaxed);
             return;
         }
         RecordTimerPresence(entry.key, state, resolvedSkill, expireFrame, currentFrame);
-        BuffPostsAccepted.fetch_add(1, std::memory_order_relaxed);
         return;
     }
 
     // Resource-mode rows are not classified from StatList metadata. Some
-    // absorb-pool skills (notably Bone Armor) do not expose a reliable
-    // state/skill/level tuple on the posted list. The frame pump therefore
+    // absorb-pool skills (notably Bone Armor) do not expose reliable source
+    // skill metadata on the posted list. The frame pump therefore
     // discovers resource buffs directly from their configured current/max unit
     // stats and uses buff-hud.txt skill_id only to resolve the icon/name.
     return;
-
 }
 
 void __cdecl OnGameplayEvent(
@@ -1113,110 +962,6 @@ void __cdecl OnGameplayEvent(
     }
 }
 
-D2RL::ConsoleCommandResult __cdecl TrackerCommand(
-    D2R::Game::Client*,
-    const D2RL::ConsoleCommandContext* command,
-    void*) noexcept {
-    if (command == nullptr || command->plugin == nullptr) return D2RL::ConsoleCommandResult::Failed;
-    char line[768]{};
-    std::snprintf(
-        line,
-        sizeof(line),
-        "BuffPanel BuffTracker: session=%llu playerPosts=%llu authoritative=%llu accepted=%llu reject(notWhitelisted=%llu curse=%llu noExpiry=%llu resourceUnavailable=%llu invalid=%llu) resource(publish=%llu refresh=%llu remove=%llu) timerPresence(check=%llu hit=%llu miss=%llu removed=%llu removeMiss=%llu) publishFail=%llu framePublishes=%llu pumpRuns=%llu pumpQueueFail=%llu tableLoads=%llu tableFail=%llu definitions=%zu.",
-        static_cast<unsigned long long>(CurrentSessionGeneration.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(PlayerPosts.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(AuthoritativePosts.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(BuffPostsAccepted.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(RejectedNotWhitelisted.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(RejectedCurse.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(RejectedNoExpiry.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(RejectedResourceUnavailable.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(RejectedInvalidMetadata.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(ResourcePublishes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(ResourceRefreshes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(ResourceRemovals.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerPresenceChecks.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerPresenceHits.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerPresenceMisses.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(PrematureTimerRemovals.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(PrematureTimerRemoveMisses.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(PublishFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(FramePublishes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(FramePumpRuns.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(FramePumpQueueFailures.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TableLoads.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TableLoadFailures.load(std::memory_order_relaxed)),
-        Whitelist.load(std::memory_order_acquire) != nullptr
-            ? Whitelist.load(std::memory_order_acquire)->definitions.size() : 0u);
-    command->plugin->WriteConsoleMessage(line);
-    std::snprintf(line, sizeof(line),
-        "BuffPanel BuffTracker timer expiry polling: refresh=%llu rejectedLiveExpiry=%llu lastRefresh(state=%u skill=%u oldExpire=%u newExpire=%u frame=%u).",
-        static_cast<unsigned long long>(TimerExpiryRefreshes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerExpiryReadRejects.load(std::memory_order_relaxed)),
-        LastTimerRefreshState.load(std::memory_order_relaxed),
-        LastTimerRefreshSkill.load(std::memory_order_relaxed),
-        LastTimerRefreshOldExpire.load(std::memory_order_relaxed),
-        LastTimerRefreshNewExpire.load(std::memory_order_relaxed),
-        LastTimerRefreshFrame.load(std::memory_order_relaxed));
-    command->plugin->WriteConsoleMessage(line);
-    std::snprintf(line, sizeof(line),
-        "BuffPanel BuffTracker attached timer discovery: frames=%llu nativeHits=%llu invalid=%llu published=%llu publishFail=%llu last(state=%u result=%u skill=%u expiry=%u; result:1=absent 2=invalid 3=alreadyPublished 4=published 5=full).",
-        static_cast<unsigned long long>(TimerDiscoveryFrames.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerDiscoveryStateHits.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerDiscoveryInvalid.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerDiscoveryPublishes.load(std::memory_order_relaxed)),
-        static_cast<unsigned long long>(TimerDiscoveryPublishFailures.load(std::memory_order_relaxed)),
-        LastDiscoveryState.load(std::memory_order_relaxed),
-        LastDiscoveryResult.load(std::memory_order_relaxed),
-        LastDiscoverySkill.load(std::memory_order_relaxed),
-        LastDiscoveryExpiry.load(std::memory_order_relaxed));
-    command->plugin->WriteConsoleMessage(line);
-    const auto lastExpire = LastExpireFrame.load(std::memory_order_relaxed);
-    const auto lastCurrent = LastCurrentFrame.load(std::memory_order_relaxed);
-    const auto remaining = static_cast<std::int64_t>(lastExpire) - static_cast<std::int64_t>(lastCurrent);
-    std::snprintf(
-        line,
-        sizeof(line),
-        "BuffPanel BuffTracker last semantic witness: flags=0x%08X state=%u nativeSkill=%u expire=%u current=%u remaining=%lld frames (%.2fs).",
-        LastFlags.load(std::memory_order_relaxed),
-        LastState.load(std::memory_order_relaxed),
-        LastSkill.load(std::memory_order_relaxed),
-        lastExpire,
-        lastCurrent,
-        static_cast<long long>(remaining),
-        static_cast<double>(remaining) / FramesPerSecond);
-    command->plugin->WriteConsoleMessage(line);
-    std::snprintf(
-        line,
-        sizeof(line),
-        "BuffPanel BuffTracker last resource witness: current=%d maximum=%d.",
-        LastResourceCurrent.load(std::memory_order_relaxed),
-        LastResourceMaximum.load(std::memory_order_relaxed));
-    command->plugin->WriteConsoleMessage(line);
-    std::snprintf(
-        line,
-        sizeof(line),
-        "BuffPanel BuffTracker last premature timer removal: state=%u skill=%u expectedExpire=%u removedAt=%u remaining=%lld frames (%.2fs).",
-        LastPrematureRemovedState.load(std::memory_order_relaxed),
-        LastPrematureRemovedSkill.load(std::memory_order_relaxed),
-        LastPrematureRemovedExpire.load(std::memory_order_relaxed),
-        LastPrematureRemovedFrame.load(std::memory_order_relaxed),
-        static_cast<long long>(static_cast<std::int64_t>(LastPrematureRemovedExpire.load(std::memory_order_relaxed))
-            - static_cast<std::int64_t>(LastPrematureRemovedFrame.load(std::memory_order_relaxed))),
-        static_cast<double>(static_cast<std::int64_t>(LastPrematureRemovedExpire.load(std::memory_order_relaxed))
-            - static_cast<std::int64_t>(LastPrematureRemovedFrame.load(std::memory_order_relaxed))) / FramesPerSecond);
-    command->plugin->WriteConsoleMessage(line);
-    std::snprintf(line, sizeof(line),
-        "BuffPanel buff-hud.txt source=%s (restart D2R after editing the loose TXT).",
-        TableSource == LooseBuffHud::Source::ActiveMod ? "active-mod" : "embedded");
-    command->plugin->WriteConsoleMessage(line);
-    if (TableSource == LooseBuffHud::Source::ActiveMod) {
-        command->plugin->WriteConsoleMessage(TableSourcePath.c_str());
-    }
-    command->plugin->WriteConsoleMessage(
-        "Detection policy: timer rows are matched by whitelisted state on authoritative UNIT_PLAYER StatLists and require native skill/level plus finite future expiry. Subsequent game-thread polling extends an existing HUD timer only for a validated later attached-state expiry; failed metadata reads have no effect on the countdown. Early native state removal retires it. Resource rows poll configured current/max stats. STATLIST_BUFF is ignored; STATLIST_CURSE remains excluded.");
-    return D2RL::ConsoleCommandResult::Handled;
-}
 
 [[nodiscard]] bool RegisterTable() noexcept {
     if (Context == nullptr || Resources == nullptr || CustomTables == nullptr) return false;
@@ -1322,60 +1067,6 @@ D2RL::ConsoleCommandResult __cdecl TrackerCommand(
     return true;
 }
 
-void ResetDiagnostics() noexcept {
-    PlayerPosts.store(0, std::memory_order_relaxed);
-    AuthoritativePosts.store(0, std::memory_order_relaxed);
-    BuffPostsAccepted.store(0, std::memory_order_relaxed);
-    RejectedNotWhitelisted.store(0, std::memory_order_relaxed);
-    RejectedCurse.store(0, std::memory_order_relaxed);
-    RejectedSharedStashProxy.store(0, std::memory_order_relaxed);
-    RejectedNoExpiry.store(0, std::memory_order_relaxed);
-    RejectedResourceUnavailable.store(0, std::memory_order_relaxed);
-    RejectedInvalidMetadata.store(0, std::memory_order_relaxed);
-    PublishFailures.store(0, std::memory_order_relaxed);
-    ResourcePublishes.store(0, std::memory_order_relaxed);
-    ResourceRefreshes.store(0, std::memory_order_relaxed);
-    ResourceRemovals.store(0, std::memory_order_relaxed);
-    TimerPresenceChecks.store(0, std::memory_order_relaxed);
-    TimerPresenceHits.store(0, std::memory_order_relaxed);
-    TimerPresenceMisses.store(0, std::memory_order_relaxed);
-    TimerExpiryRefreshes.store(0, std::memory_order_relaxed);
-    TimerExpiryReadRejects.store(0, std::memory_order_relaxed);
-    TimerDiscoveryFrames.store(0, std::memory_order_relaxed);
-    TimerDiscoveryStateHits.store(0, std::memory_order_relaxed);
-    TimerDiscoveryInvalid.store(0, std::memory_order_relaxed);
-    TimerDiscoveryPublishes.store(0, std::memory_order_relaxed);
-    TimerDiscoveryPublishFailures.store(0, std::memory_order_relaxed);
-    LastDiscoveryState.store(0, std::memory_order_relaxed);
-    LastDiscoveryResult.store(0, std::memory_order_relaxed);
-    LastDiscoverySkill.store(0, std::memory_order_relaxed);
-    LastDiscoveryExpiry.store(0, std::memory_order_relaxed);
-    LastTimerDiscoveryFrame.store(0, std::memory_order_relaxed);
-    PrematureTimerRemovals.store(0, std::memory_order_relaxed);
-    PrematureTimerRemoveMisses.store(0, std::memory_order_relaxed);
-    FramePublishes.store(0, std::memory_order_relaxed);
-    FramePumpRuns.store(0, std::memory_order_relaxed);
-    FramePumpQueueFailures.store(0, std::memory_order_relaxed);
-    TableLoads.store(0, std::memory_order_relaxed);
-    TableLoadFailures.store(0, std::memory_order_relaxed);
-    LastFlags.store(0, std::memory_order_relaxed);
-    LastState.store(0, std::memory_order_relaxed);
-    LastSkill.store(0, std::memory_order_relaxed);
-    LastExpireFrame.store(0, std::memory_order_relaxed);
-    LastCurrentFrame.store(0, std::memory_order_relaxed);
-    LastResourceCurrent.store(0, std::memory_order_relaxed);
-    LastResourceMaximum.store(0, std::memory_order_relaxed);
-    LastTimerRefreshState.store(0, std::memory_order_relaxed);
-    LastTimerRefreshSkill.store(0, std::memory_order_relaxed);
-    LastTimerRefreshOldExpire.store(0, std::memory_order_relaxed);
-    LastTimerRefreshNewExpire.store(0, std::memory_order_relaxed);
-    LastTimerRefreshFrame.store(0, std::memory_order_relaxed);
-    LastPrematureRemovedState.store(0, std::memory_order_relaxed);
-    LastPrematureRemovedSkill.store(0, std::memory_order_relaxed);
-    LastPrematureRemovedExpire.store(0, std::memory_order_relaxed);
-    LastPrematureRemovedFrame.store(0, std::memory_order_relaxed);
-    ClearTimerPresenceRecords();
-}
 
 } // namespace
 
@@ -1445,16 +1136,8 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
         return false;
     }
 
-    if (!Context->RegisterConsoleCommand(
-            "buff-panel-tracker",
-            &TrackerCommand,
-            "Show whitelist-driven player BuffHud tracking diagnostics.")) {
-        Context->LogWarn("BuffPanel BuffTracker: console command 'buff-panel-tracker' could not be registered.");
-    }
-
-    ResetDiagnostics();
     Context->LogInfo(
-        "Buff Panel 1.0.10 BuffTracker initialized: 1.0.7 timer lifecycle preserved; skillLevel is not a qualification field; native skill ID is preferred with optional buff-hud.txt skill_id fallback; finite future native expiry remains required; timer resolution is centralized and tested.");
+        "Buff Panel 1.0.11 BuffTracker initialized: whitelist-driven timer/resource tracking with native skill attribution, configured skill fallback, and finite native expiry validation.");
     return true;
 }
 

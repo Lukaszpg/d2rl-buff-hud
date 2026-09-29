@@ -65,8 +65,6 @@ public:
     }
 
     [[nodiscard]] bool Register(const StatListPostObserver& observer) noexcept;
-    [[nodiscard]] RawPostStatListFn RawPoster() const noexcept { return original_; }
-    [[nodiscard]] std::size_t ObserverCount() const noexcept { return count_; }
     void Reset() noexcept;
 
 private:

@@ -45,12 +45,6 @@ bool BuffDisplayBus::Remove(std::uint64_t key) noexcept {
     return false;
 }
 
-void BuffDisplayBus::Clear() noexcept {
-    std::lock_guard lock(mutex_);
-    entries_ = {};
-    count_ = 0;
-    ++revision_;
-}
 
 void BuffDisplayBus::PublishGameFrame(
     std::uint64_t sessionGeneration,
@@ -100,10 +94,6 @@ BuffDisplaySnapshot BuffDisplayBus::Snapshot() const noexcept {
     return snapshot;
 }
 
-std::size_t BuffDisplayBus::Count() const noexcept {
-    std::lock_guard lock(mutex_);
-    return count_;
-}
 
 BuffDisplayBus& BuffDisplays() noexcept {
     return Bus;
