@@ -135,11 +135,10 @@ Distribute the matching DLL and MPQ together with the supported-game-build infor
 
 ## GitHub Actions
 
-`CI` runs on pushes to `main`, pull requests, and manual dispatch. It initializes the PluginSDK submodule, runs the Python source checks, builds the Release DLL and regression tests, runs CTest, verifies `d2rl-buff-panel.dll`, and uploads the DLL as a CI artifact.
+`CI` runs on pushes to `main`, pull requests, and manual dispatch. It initializes the PluginSDK submodule, verifies the pinned D2RLCompiler, runs the Python source checks, packs and verifies the companion MPQ, builds the Release DLL and regression tests, runs CTest, and uploads the DLL/MPQ pair as the CI artifact.
 
 `Release` is a manual workflow on `main`, following the same bump/tag pattern as UnHoarder. Configure these repository secrets before running it:
 
-- `D2RL_COMPILER_URL` — direct HTTPS URL to the approved `D2RLCompiler.exe`.
-- `D2RL_COMPILER_SHA256` — SHA-256 of that exact executable.
+The approved compiler is pinned in the repository at `external/D2RLCompiler/D2RLCompiler.exe`; no Actions secret or network download is required. CI and Release verify its SHA-256 before using it.
 
 Release increments `VERSION`, synchronizes all compiled version metadata, packs and verifies the companion MPQ first, builds/tests the DLL second, commits and tags the successful version, and publishes `d2rl-buff-panel.dll`, `d2rl-buff-panel.mpq`, a source ZIP, and `SHA256SUMS.txt`.
