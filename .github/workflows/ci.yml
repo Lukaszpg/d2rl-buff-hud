@@ -40,47 +40,7 @@ jobs:
             throw "Repository-pinned D2RLCompiler.exe is missing at $compiler"
           }
           $sumLine = (Get-Content "external\D2RLCompiler\SHA256SUMS.txt" | Select-Object -First 1).Trim()
-          if ($sumLine -notmatch '^([0-9A-Fa-f]{64})\s+D2RLCompiler\.exe
-      - name: Pack companion MPQ
-        shell: pwsh
-        run: |
-          cmake --build build --config Release --target buff_panel_companion
-          $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
-
-      - name: Verify companion MPQ
-        shell: pwsh
-        run: |
-          python -m pip install --disable-pip-version-check mpyq==0.2.5
-          python tests/verify_package.py "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-
-      - name: Build DLL and regression tests
-        shell: pwsh
-        run: |
-          cmake --build build --config Release --parallel
-
-      - name: Run C++ tests
-        shell: pwsh
-        run: |
-          ctest --test-dir build -C Release --output-on-failure
-
-      - name: Verify shipping pair
-        shell: pwsh
-        run: |
-          $dll = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.dll"
-          $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $dll)) { throw "d2rl-buff-panel.dll was not produced at $dll" }
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
-
-      - name: Upload CI artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: buff-hud-ci-${{ github.sha }}
-          path: |
-            build/stage/Release/d2rloader/plugins/d2rl-buff-panel.dll
-            build/stage/Release/d2rloader/plugins/d2rl-buff-panel.mpq
-          if-no-files-found: error
-) {
+          if ($sumLine -notmatch '^([0-9A-Fa-f]{64})\s+D2RLCompiler\.exe$') {
             throw "Invalid external/D2RLCompiler/SHA256SUMS.txt"
           }
           $expected = $Matches[1].ToLowerInvariant()
@@ -99,7 +59,9 @@ jobs:
         run: |
           cmake --build build --config Release --target buff_panel_companion
           $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
+          if (-not (Test-Path $mpq)) {
+            throw "d2rl-buff-panel.mpq was not produced at $mpq"
+          }
 
       - name: Verify companion MPQ
         shell: pwsh
@@ -122,8 +84,12 @@ jobs:
         run: |
           $dll = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.dll"
           $mpq = "build\stage\Release\d2rloader\plugins\d2rl-buff-panel.mpq"
-          if (-not (Test-Path $dll)) { throw "d2rl-buff-panel.dll was not produced at $dll" }
-          if (-not (Test-Path $mpq)) { throw "d2rl-buff-panel.mpq was not produced at $mpq" }
+          if (-not (Test-Path $dll)) {
+            throw "d2rl-buff-panel.dll was not produced at $dll"
+          }
+          if (-not (Test-Path $mpq)) {
+            throw "d2rl-buff-panel.mpq was not produced at $mpq"
+          }
 
       - name: Upload CI artifact
         uses: actions/upload-artifact@v4
