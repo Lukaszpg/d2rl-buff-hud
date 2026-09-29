@@ -1,4 +1,4 @@
-# Buff Panel changelog
+# Buff HUD changelog
 
 ## 1.0.11 — companion-MPQ reconciliation and production cleanup (2026-09-29)
 - Reconcile PR #1's companion MPQ/build/distribution architecture with the production runtime from main.

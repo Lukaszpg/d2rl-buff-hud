@@ -14,16 +14,16 @@ namespace BuffPanel {
 namespace {
 
 static_assert(D2RL_PLUGIN_ABI_VERSION == 4,
-    "Buff Panel 1.0.11 requires D2RLoader PluginSDK 0.3.0 / plugin ABI 4.");
+    "Buff HUD 1.0.11 requires D2RLoader PluginSDK 0.3.0 / plugin ABI 4.");
 
 constexpr D2RL::PluginInfo Info{
     .infoSize = D2RL::PluginInfoSize,
     .abiVersion = D2RL_PLUGIN_ABI_VERSION,
     .id = "buff-panel",
-    .name = "Buff Panel",
+    .name = "Buff HUD",
     .version = "1.0.11",
     .author = "MindH1ve",
-    .description = "Standalone configurable D2RLoader buff panel and countdown timers.",
+    .description = "Standalone configurable D2RLoader buff HUD and countdown timers.",
     .flags = D2RL::PluginFlags::Shared | D2RL::PluginFlags::NativeHooks,
 };
 
@@ -52,13 +52,13 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
         ShutdownRuntime();
         return false;
     }
-    // Buff Panel only needs to read live stat values. Resolve the loader-owned,
+    // Buff HUD only needs to read live stat values. Resolve the loader-owned,
     // already-qualified bridge without installing a global stat-read hook.
     if (!Core::StatReads().ResolveRawGetter(
             Native::Contract::GetUnitStatRva,
             Native::Contract::GetUnitStatExpected,
             Native::Contract::GetUnitStatBridgeSlotRva)) {
-        context->LogError("Buff Panel: cannot resolve D2RLoader's qualified GetUnitStat bridge; refusing to load.");
+        context->LogError("Buff HUD: cannot resolve D2RLoader's qualified GetUnitStat bridge; refusing to load.");
         ShutdownRuntime();
         return false;
     }
@@ -66,7 +66,7 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
         ShutdownRuntime();
         return false;
     }
-    context->LogInfo("Buff Panel 1.0.11 loaded (D2R build 93847; PluginSDK 0.3.0/ABI 4).");
+    context->LogInfo("Buff HUD 1.0.11 loaded (D2R build 93847; PluginSDK 0.3.0/ABI 4).");
     return true;
 }
 

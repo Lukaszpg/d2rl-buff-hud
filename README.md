@@ -1,6 +1,6 @@
-# Buff Panel — D2RLoader plugin
+# Buff HUD — D2RLoader plugin
 
-A standalone 3×7 temporary-buff panel and countdown tracker.
+A standalone 3×7 temporary-buff HUD and countdown tracker.
 
 ## Acknowledgements
 

@@ -1,4 +1,4 @@
-# Buff Panel 1.0.11 validation
+# Buff HUD 1.0.11 validation
 
 Production-cleanup validation performed on the packaged source tree:
 

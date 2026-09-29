@@ -13,7 +13,7 @@ bool StatListPostBus::Register(const StatListPostObserver& observer) noexcept {
         return false;
     }
     if (count_ >= observers_.size()) {
-        if (context != nullptr) context->LogError("BuffPanel Core: StatList-post observer registry capacity exhausted.");
+        if (context != nullptr) context->LogError("Buff HUD: StatList-post observer registry capacity exhausted.");
         return false;
     }
     for (std::size_t i = 0; i < count_; ++i) {
@@ -23,7 +23,7 @@ bool StatListPostBus::Register(const StatListPostObserver& observer) noexcept {
                 std::snprintf(
                     message,
                     sizeof(message),
-                    "BuffPanel Core: StatList-post observer owner '%.*s' registered twice.",
+                    "Buff HUD: StatList-post observer owner '%.*s' registered twice.",
                     static_cast<int>(observer.owner.size()), observer.owner.data());
                 context->LogError(message);
             }

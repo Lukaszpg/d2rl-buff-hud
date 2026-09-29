@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Configure, build and test Buff Panel; optionally publish its DLL/MPQ pair.
+    Configure, build and test Buff HUD; optionally publish its DLL/MPQ pair.
 
 .DESCRIPTION
     Locates the Visual Studio x64 build environment (cl.exe, rc.exe) via
@@ -58,7 +58,7 @@ try {
     cmake --build --preset $Preset
     if ($LASTEXITCODE -ne 0) { throw "Building tests failed." }
     ctest --preset $Preset
-    if ($LASTEXITCODE -ne 0) { throw "Buff Panel tests failed." }
+    if ($LASTEXITCODE -ne 0) { throw "Buff HUD tests failed." }
 
     Write-Host "Built plugin pair is in build\$Preset\stage\." -ForegroundColor Green
     if ($Dist) {

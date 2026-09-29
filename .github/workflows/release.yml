@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: buff-panel-release
+  group: buff-hud-release
   cancel-in-progress: false
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add VERSION CMakeLists.txt src/plugin.cpp src/plugin.rc src/systems/buff_hud/buff_hud.cpp src/systems/buff_tracker/buff_tracker.cpp
           git commit -m "chore(release): $tag"
-          git tag -a $tag -m "Buff Panel $tag"
+          git tag -a $tag -m "Buff HUD $tag"
           git push --atomic origin HEAD:main "refs/tags/$tag"
 
       - name: Prepare release assets
@@ -153,13 +153,13 @@ jobs:
             "dist\d2rl-buff-hud-$version-source.zip" `
             "dist\SHA256SUMS.txt" `
             --verify-tag `
-            --title "Buff Panel $tag" `
+            --title "Buff HUD $tag" `
             --generate-notes
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buff-panel-release-${{ steps.version.outputs.version }}
+          name: buff-hud-release-${{ steps.version.outputs.version }}
           path: dist/
           if-no-files-found: error
 ) {
@@ -215,7 +215,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add VERSION CMakeLists.txt src/plugin.cpp src/plugin.rc src/systems/buff_hud/buff_hud.cpp src/systems/buff_tracker/buff_tracker.cpp
           git commit -m "chore(release): $tag"
-          git tag -a $tag -m "Buff Panel $tag"
+          git tag -a $tag -m "Buff HUD $tag"
           git push --atomic origin HEAD:main "refs/tags/$tag"
 
       - name: Prepare release assets
@@ -251,12 +251,12 @@ jobs:
             "dist\d2rl-buff-hud-$version-source.zip" `
             "dist\SHA256SUMS.txt" `
             --verify-tag `
-            --title "Buff Panel $tag" `
+            --title "Buff HUD $tag" `
             --generate-notes
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buff-panel-release-${{ steps.version.outputs.version }}
+          name: buff-hud-release-${{ steps.version.outputs.version }}
           path: dist/
           if-no-files-found: error

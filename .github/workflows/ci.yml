@@ -75,7 +75,7 @@ jobs:
       - name: Upload CI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buff-panel-ci-${{ github.sha }}
+          name: buff-hud-ci-${{ github.sha }}
           path: |
             build/stage/Release/d2rloader/plugins/d2rl-buff-panel.dll
             build/stage/Release/d2rloader/plugins/d2rl-buff-panel.mpq
@@ -128,7 +128,7 @@ jobs:
       - name: Upload CI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: buff-panel-ci-${{ github.sha }}
+          name: buff-hud-ci-${{ github.sha }}
           path: |
             build/stage/Release/d2rloader/plugins/d2rl-buff-panel.dll
             build/stage/Release/d2rloader/plugins/d2rl-buff-panel.mpq

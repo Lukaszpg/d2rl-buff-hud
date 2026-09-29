@@ -6,7 +6,7 @@ elseif(WIN32)
 endif()
 
 if(NOT WIN32 OR NOT MSVC OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-    message(FATAL_ERROR "Buff Panel requires Windows x64 and an MSVC-compatible toolchain.")
+    message(FATAL_ERROR "Buff HUD requires Windows x64 and an MSVC-compatible toolchain.")
 endif()
 
 set(BUFF_PANEL_SDK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/PluginSDK" CACHE PATH "PluginSDK source directory (0.3.0 or newer, ABI 4)")
@@ -14,7 +14,7 @@ if(NOT TARGET D2RLPlugin::D2RLPlugin AND NOT TARGET D2RLPluginV4::D2RLPluginV4)
     if(EXISTS "${BUFF_PANEL_SDK_DIR}/CMakeLists.txt")
         file(STRINGS "${BUFF_PANEL_SDK_DIR}/include/D2RLPlugin/version.h" sdk_version REGEX "^#define[ \t]+D2RL_SDK_VERSION")
         if(NOT sdk_version MATCHES "\"([0-9]+\\.[0-9]+\\.[0-9]+)\"" OR CMAKE_MATCH_1 VERSION_LESS 0.3.0)
-            message(FATAL_ERROR "Buff Panel requires PluginSDK 0.3.0 or newer.")
+            message(FATAL_ERROR "Buff HUD requires PluginSDK 0.3.0 or newer.")
         endif()
         set(D2RLPLUGIN_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
         set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
@@ -29,7 +29,7 @@ if(TARGET D2RLPlugin::D2RLPlugin)
 elseif(TARGET D2RLPluginV4::D2RLPluginV4)
     set(BUFF_PANEL_SDK_TARGET D2RLPluginV4::D2RLPluginV4)
 else()
-    message(FATAL_ERROR "Buff Panel requires PluginSDK 0.3.0 or a Suite-provided ABI-4 PluginSDK target.")
+    message(FATAL_ERROR "Buff HUD requires PluginSDK 0.3.0 or a Suite-provided ABI-4 PluginSDK target.")
 endif()
 
 add_library(buff_panel SHARED
@@ -82,7 +82,7 @@ add_custom_target(buff_panel_companion
         "-DBUFF_PANEL_COMPANION_OUTPUT=$<TARGET_FILE_DIR:buff_panel>/d2rl-buff-panel.mpq"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PackCompanion.cmake"
     DEPENDS buff_panel_validate
-    COMMENT "Validating and packing Buff Panel companion resources"
+    COMMENT "Validating and packing Buff HUD companion resources"
     VERBATIM)
 add_custom_target(dist
     COMMAND "${CMAKE_COMMAND}"
@@ -93,13 +93,13 @@ add_custom_target(dist
         "-DBUFF_PANEL_DIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}/dist"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PublishDist.cmake"
     DEPENDS buff_panel_companion buff_panel
-    COMMENT "Publishing the Buff Panel DLL and MPQ pair"
+    COMMENT "Publishing the Buff HUD DLL and MPQ pair"
     VERBATIM)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-    option(BUFF_PANEL_BUILD_TESTS "Build Buff Panel regression tests" ON)
+    option(BUFF_PANEL_BUILD_TESTS "Build Buff HUD regression tests" ON)
 else()
-    option(BUFF_PANEL_BUILD_TESTS "Build Buff Panel regression tests" OFF)
+    option(BUFF_PANEL_BUILD_TESTS "Build Buff HUD regression tests" OFF)
 endif()
 if(BUFF_PANEL_BUILD_TESTS)
     enable_testing()

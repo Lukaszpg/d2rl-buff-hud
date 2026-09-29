@@ -11,8 +11,9 @@ assert f"project(BuffPanel VERSION {version} LANGUAGES CXX RC)" in cmake
 
 plugin = (ROOT / "src/plugin.cpp").read_text(encoding="utf-8")
 assert f'.version = "{version}"' in plugin
-assert f"Buff Panel {version} requires" in plugin
-assert f"Buff Panel {version} loaded" in plugin
+assert '.name = "Buff HUD"' in plugin
+assert f"Buff HUD {version} requires" in plugin
+assert f"Buff HUD {version} loaded" in plugin
 
 rc = (ROOT / "src/plugin.rc").read_text(encoding="utf-8")
 numeric = f"{major},{minor},{patch},0"
@@ -26,7 +27,7 @@ for relative in (
     "src/systems/buff_tracker/buff_tracker.cpp",
 ):
     text = (ROOT / relative).read_text(encoding="utf-8")
-    versions = set(re.findall(r"Buff Panel (\d+\.\d+\.\d+)", text))
+    versions = set(re.findall(r"Buff HUD (\d+\.\d+\.\d+)", text))
     assert versions == {version}, f"{relative}: runtime versions {sorted(versions)} != {version}"
 
 print(f"PASS: VERSION {version} matches CMake, DLL metadata, resources and runtime logs")

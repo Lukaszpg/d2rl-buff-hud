@@ -1,6 +1,6 @@
 # D2RLCompiler
 
-This directory pins the compiler used to build Buff Panel's companion MPQ in CI and Release.
+This directory pins the compiler used to build Buff HUD's companion MPQ in CI and Release.
 
 Expected binary:
 

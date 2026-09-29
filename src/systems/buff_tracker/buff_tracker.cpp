@@ -314,7 +314,7 @@ void __cdecl OnTablesLoaded(
     const auto cache = BuildWhitelist();
     if (!cache) {
         Whitelist.store({}, std::memory_order_release);
-        context->LogError("BuffPanel BuffTracker: buff-hud.txt rejected; whitelist-driven BuffHud publishing is disabled.");
+        context->LogError("Buff HUD: buff-hud.txt rejected; whitelist-driven BuffHud publishing is disabled.");
         return;
     }
     const auto count = cache->definitions.size();
@@ -322,7 +322,7 @@ void __cdecl OnTablesLoaded(
     Whitelist.store(cache, std::memory_order_release);
     char line[256]{};
     std::snprintf(line, sizeof(line),
-        "BuffPanel BuffTracker: buff-hud.txt ready; enabledDefinitions=%zu revision=%llu.",
+        "Buff HUD: buff-hud.txt ready; enabledDefinitions=%zu revision=%llu.",
         count, static_cast<unsigned long long>(revision));
     context->LogInfo(line);
 }
@@ -868,11 +868,11 @@ void __cdecl OnGameplayEvent(
     if (CustomTables->registerTable(Context, &registration, &BuffHudTable)
             != D2RL::CustomTables::Result::Success
         || BuffHudTable == D2RL::CustomTables::InvalidHandle) {
-        Context->LogError("Buff Panel: unable to register selected buff-hud.txt custom table.");
+        Context->LogError("Buff HUD: unable to register selected buff-hud.txt custom table.");
         return false;
     }
     Context->LogInfo(
-        "Buff Panel: registered buff-hud custom table from companion resources; active-mod overrides take priority.");
+        "Buff HUD: registered buff-hud custom table from companion resources; active-mod overrides take priority.");
     return true;
 }
 
@@ -924,7 +924,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     if (CustomTables == nullptr || Threads == nullptr || Lifecycle == nullptr
         || !D2RL::HasThreadServiceField(Threads, D2RL::ThreadServiceRequiredSize)
         || !D2RL::HasLifecycleServiceField(Lifecycle, D2RL::LifecycleServiceRequiredSize)) {
-        Context->LogError("BuffPanel BuffTracker: required CustomTable/Thread/Lifecycle service unavailable.");
+        Context->LogError("Buff HUD: required CustomTable/Thread/Lifecycle service unavailable.");
         Shutdown();
         return false;
     }
@@ -933,7 +933,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
             Native::Contract::GetGameFromUnitRva,
             Native::Contract::GetGameFromUnitExpected.data(),
             static_cast<std::uint32_t>(Native::Contract::GetGameFromUnitExpected.size()))) {
-        Context->LogError("BuffPanel BuffTracker: UNITS_GetGame native fingerprint mismatch; refusing whitelist-driven buff tracking.");
+        Context->LogError("Buff HUD: UNITS_GetGame native fingerprint mismatch; refusing whitelist-driven buff tracking.");
         Shutdown();
         return false;
     }
@@ -944,7 +944,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
             Native::Contract::GenericCurseStateLookupCallRva,
             Native::Contract::GenericCurseStateLookupCallExpected.data(),
             static_cast<std::uint32_t>(Native::Contract::GenericCurseStateLookupCallExpected.size()))) {
-        Context->LogError("BuffPanel BuffTracker: exact-state StatList lookup native fingerprint mismatch; refusing premature timer-removal tracking.");
+        Context->LogError("Buff HUD: exact-state StatList lookup native fingerprint mismatch; refusing premature timer-removal tracking.");
         Shutdown();
         return false;
     }
@@ -952,7 +952,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
         context->exeBase + Native::Contract::GetStatListFromUnitAndStateRva);
 
     if (Core::StatReads().RawGetter() == nullptr) {
-        Context->LogError("BuffPanel BuffTracker: shared Core unit-stat reader is unavailable; resource-mode BuffHud entries cannot be supported.");
+        Context->LogError("Buff HUD: shared Core unit-stat reader is unavailable; resource-mode BuffHud entries cannot be supported.");
         Shutdown();
         return false;
     }
@@ -967,18 +967,18 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
             .callback = &OnStatListPost,
             .userData = nullptr,
         })) {
-        Context->LogError("BuffPanel BuffTracker: failed to register with the shared Core STATLIST_PostStatList bus.");
+        Context->LogError("Buff HUD: failed to register with the shared Core STATLIST_PostStatList bus.");
         Shutdown();
         return false;
     }
 
     if (!RegisterTable() || !RegisterLifecycle()) {
-        Context->LogError("BuffPanel BuffTracker: failed to register buff-hud table/lifecycle listeners.");
+        Context->LogError("Buff HUD: failed to register buff-hud table/lifecycle listeners.");
         Shutdown();
         return false;
     }
     Context->LogInfo(
-        "Buff Panel 1.0.11 BuffTracker initialized: companion whitelist tracking with native skill attribution, configured skill fallback, exact-state lifetime checks, and finite native expiry validation.");
+        "Buff HUD 1.0.11 BuffTracker initialized: companion whitelist tracking with native skill attribution, configured skill fallback, exact-state lifetime checks, and finite native expiry validation.");
     return true;
 }
 

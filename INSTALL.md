@@ -1,4 +1,4 @@
-# Buff Panel 1.0.11
+# Buff HUD 1.0.11
 
 Requires D2RLoader with PluginSDK 0.3.0 services / plugin ABI 4. Native hooks remain qualified only for D2R build 93847.
 
