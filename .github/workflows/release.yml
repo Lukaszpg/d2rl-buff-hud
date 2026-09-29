@@ -64,31 +64,23 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Python test failed: $($test.Name)" }
           }
 
-      - name: Download verified D2RLCompiler
+      - name: Verify repository D2RLCompiler
         shell: pwsh
-        env:
-          D2RL_COMPILER_URL: ${{ secrets.D2RL_COMPILER_URL }}
-          D2RL_COMPILER_SHA256: ${{ secrets.D2RL_COMPILER_SHA256 }}
         run: |
-          if ([string]::IsNullOrWhiteSpace($env:D2RL_COMPILER_URL)) {
-            throw "Repository secret D2RL_COMPILER_URL is not configured"
+          $compiler = Join-Path $PWD "external\D2RLCompiler\D2RLCompiler.exe"
+          if (-not (Test-Path $compiler)) {
+            throw "Repository-pinned D2RLCompiler.exe is missing at $compiler"
           }
-          if ($env:D2RL_COMPILER_SHA256 -notmatch '^[0-9A-Fa-f]{64}$') {
-            throw "Repository secret D2RL_COMPILER_SHA256 must contain a SHA-256 hash"
-          }
-          New-Item -ItemType Directory -Force ".tools" | Out-Null
-          $compiler = Join-Path $PWD ".tools\D2RLCompiler.exe"
-          Invoke-WebRequest -Uri $env:D2RL_COMPILER_URL -OutFile $compiler
+          $expected = "8a2bfde3859a71927a7a58a84cca2a098f6c6ba760198a66177ee5d15f04709f"
           $actual = (Get-FileHash $compiler -Algorithm SHA256).Hash.ToLowerInvariant()
-          $expected = $env:D2RL_COMPILER_SHA256.ToLowerInvariant()
           if ($actual -ne $expected) {
-            throw "D2RLCompiler SHA-256 mismatch: expected $expected, got $actual"
+            throw "Repository D2RLCompiler SHA-256 mismatch: expected $expected, got $actual"
           }
 
       - name: Configure
         shell: pwsh
         run: |
-          $compiler = Join-Path $PWD ".tools\D2RLCompiler.exe"
+          $compiler = Join-Path $PWD "external\D2RLCompiler\D2RLCompiler.exe"
           cmake -S . -B build -DBUFF_PANEL_BUILD_TESTS=ON "-DD2RL_COMPILER=$compiler"
 
       - name: Pack companion MPQ
