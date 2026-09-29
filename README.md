@@ -7,6 +7,8 @@ A standalone 3×7 temporary-buff HUD and countdown tracker.
 Many thanks to [RuffnecKk](https://github.com/RuffDood) for being a great teacher and awesome dude.
 Make sure to check out his amazing plugin [suite](https://github.com/RuffDood/RuffnecKk-D2RLoader-Suite)!
 
+Huge thank you also goes to [Collin](https://github.com/CollinHerber) for contributing to the codebase. Make sure to check his mod [D2R:Reimagined](https://www.d2r-reimagined.com/)!
+
 ## What it provides
 
 - 21 reusable display-only buff slots in a 3×7, lower-left-fill panel.
