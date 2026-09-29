@@ -81,7 +81,7 @@ ctest --test-dir build/vs -C Release --output-on-failure
 cmake --build build/vs --config Release --target dist
 ```
 
-The `buff_panel` target builds the DLL and packs the MPQ beside it under `build/<preset>/stage/Release/d2rloader/plugins/`. The companion is validated and repacked even for asset-only builds. A missing compiler or invalid resource fails the build; a shipping build never silently substitutes an unpacked folder. Like MoveOnly's resource packaging, this uses `D2RLCompiler pack`, which requires no per-user linked game installation. Debug builds cannot publish `dist`.
+The `buff_panel` target builds the DLL. The explicit `buff_panel_companion` target validates and packs the MPQ beside it under `build/<preset>/stage/Release/d2rloader/plugins/`; `dist` depends on both. This separation lets ordinary CI compile/test the DLL without requiring the private packer, while release builds still fail closed if `D2RLCompiler.exe` is unavailable or companion resources are invalid. Like MoveOnly's resource packaging, the companion target uses `D2RLCompiler pack`, which requires no per-user linked game installation. Debug builds cannot publish `dist`.
 
 `dist/` includes the DLL/MPQ pair, SHA-256 checksums, installation instructions, and both license notices. It is a relative install overlay: copy its `d2rloader` folder beneath the chosen game/mod root. The build does not install into the game or publish a ladder bundle.
 
@@ -131,3 +131,15 @@ Version 1.0.11 reconciles the companion-MPQ packaging work with the production-c
 ## Distributing
 
 Distribute the matching DLL and MPQ together with the supported-game-build information, installation instructions, and included license notices. Preserve upstream attribution. The PluginSDK submodule has its own license.
+
+
+## GitHub Actions
+
+`CI` runs on pushes to `main`, pull requests, and manual dispatch. It initializes the PluginSDK submodule, runs the Python source checks, builds the Release DLL and regression tests, runs CTest, verifies `d2rl-buff-panel.dll`, and uploads the DLL as a CI artifact.
+
+`Release` is a manual workflow on `main`, following the same bump/tag pattern as UnHoarder. Configure these repository secrets before running it:
+
+- `D2RL_COMPILER_URL` — direct HTTPS URL to the approved `D2RLCompiler.exe`.
+- `D2RL_COMPILER_SHA256` — SHA-256 of that exact executable.
+
+Release increments `VERSION`, synchronizes all compiled version metadata, packs and verifies the companion MPQ first, builds/tests the DLL second, commits and tags the successful version, and publishes `d2rl-buff-panel.dll`, `d2rl-buff-panel.mpq`, a source ZIP, and `SHA256SUMS.txt`.
