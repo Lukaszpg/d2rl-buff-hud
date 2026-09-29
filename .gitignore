@@ -41,3 +41,8 @@ cmake-build-*/
 build/
 dist/
 __pycache__/
+
+
+# Repository-pinned D2RL compiler used by Buff Panel CI/release.
+!external/D2RLCompiler/
+!external/D2RLCompiler/D2RLCompiler.exe
