@@ -26,6 +26,13 @@ for token, description in banned.items():
 assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
 assert "UpdateHoverNamePresentation" in sources
+assert "disable(slot.hoverName)" in sources
+assert "disable(slot.countdown)" in sources
+assert "disable(slot.slot)" in sources
+assert "disable(GridWidget)" in sources
+assert "disable(HudPanel)" in sources
+assert "const double gridLeft = static_cast<double>(panelRect.width) * 0.5" in sources
+assert "const double gridTop = static_cast<double>(panelRect.height)" in sources
 assert 'ResolveNativeSlotChild(slotIndex, "HoverName")' in sources
 assert "set(slot.tooltip, occupied && state.tooltipVisible)" not in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
