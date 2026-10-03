@@ -37,9 +37,7 @@ constexpr char TimerReserve[] = "__BUFF_PANEL_TIMER_RESERVE_00__";
 constexpr std::size_t TimerReserveBytes = sizeof(TimerReserve);
 using Internal::TooltipReserveBytes;
 using Internal::TooltipReserveLength;
-constexpr char HoverNameReserve[] = "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________";
-constexpr std::size_t HoverNameReserveBytes = sizeof(HoverNameReserve);
-static_assert(HoverNameReserveBytes == 127);
+constexpr std::size_t HoverTextBytes = 127;
 constexpr std::size_t TooltipReserveCodepoints = TooltipReserveLength / 3;
 static_assert(TooltipReserveCodepoints * 3 == TooltipReserveLength);
 constexpr std::size_t TooltipNativeScanBytes = 0x1000;
@@ -95,7 +93,7 @@ struct HoverOverlayState final {
     bool visible{};
     float normalizedX{};
     float normalizedY{};
-    std::array<char, HoverNameReserveBytes> text{};
+    std::array<char, HoverTextBytes> text{};
 };
 
 std::mutex HoverOverlayMutex{};
@@ -111,7 +109,6 @@ struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
     D2RL::Widgets::WidgetHandle countdown{D2RL::Widgets::InvalidHandle};
-    D2RL::Widgets::WidgetHandle hoverName{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle tooltip{D2RL::Widgets::InvalidHandle};
 };
 
@@ -128,9 +125,8 @@ struct SlotRenderState final {
     std::int32_t sourceSkillId{Core::NoSourceSkillId};
     bool timerVisible{};
     bool tooltipVisible{};
-    std::array<char, HoverNameReserveBytes> hoverText{};
+    std::array<char, HoverTextBytes> hoverText{};
     std::uintptr_t qualifiedTimerBuffer{};
-    std::uintptr_t qualifiedHoverNameBuffer{};
     std::uintptr_t qualifiedTooltipWidget{};
     std::uintptr_t qualifiedTooltipBuffer{};
     std::size_t qualifiedTooltipFieldOffset{std::numeric_limits<std::size_t>::max()};
@@ -336,16 +332,6 @@ void RestoreQualifiedCountdownBuffers() noexcept {
     }
 }
 
-void RestoreQualifiedHoverNameBuffers() noexcept {
-    for (auto& state : RenderStates) {
-        if (state.qualifiedHoverNameBuffer == 0) continue;
-        auto* buffer = reinterpret_cast<char*>(state.qualifiedHoverNameBuffer);
-        if (IsWritableRange(buffer, HoverNameReserveBytes)) {
-            std::memcpy(buffer, HoverNameReserve, HoverNameReserveBytes);
-        }
-    }
-}
-
 void RestoreQualifiedTooltipBuffer(std::size_t slotIndex, SlotRenderState& state) noexcept {
     if (slotIndex >= SlotCount
         || state.qualifiedTooltipWidget == 0
@@ -483,33 +469,6 @@ void InvalidateWidgetHandles() noexcept {
         return false;
     }
     return true;
-}
-
-[[nodiscard]] bool WriteHoverNameText(std::size_t slotIndex, const char* text) noexcept {
-    if (slotIndex >= SlotCount || text == nullptr) return false;
-    const auto length = std::strlen(text);
-    if (length + 1 > HoverNameReserveBytes) return false;
-
-    void* widget = ResolveNativeSlotChild(slotIndex, "HoverName");
-    std::uintptr_t pointer{};
-    if (widget == nullptr
-        || !ReadNativeField(widget, Native::Contract::HudTextPointerOffset, pointer)
-        || pointer == 0) {
-        return false;
-    }
-
-    auto* buffer = reinterpret_cast<char*>(pointer);
-    if (!IsWritableRange(buffer, HoverNameReserveBytes)) return false;
-
-    auto& state = RenderStates[slotIndex];
-    if (state.qualifiedHoverNameBuffer != pointer) {
-        if (std::memcmp(buffer, HoverNameReserve, HoverNameReserveBytes) != 0) return false;
-        state.qualifiedHoverNameBuffer = pointer;
-    }
-
-    std::memcpy(buffer, HoverNameReserve, HoverNameReserveBytes);
-    std::memcpy(buffer, text, length + 1);
-    return std::memcmp(buffer, text, length + 1) == 0;
 }
 
 [[nodiscard]] bool QualifyTooltipString(
@@ -986,14 +945,12 @@ void HideSlot(std::size_t slotIndex) noexcept {
 
     (void)SetVisible(Handles[slotIndex].slot, false);
     const auto qualifiedTimerBuffer = state.qualifiedTimerBuffer;
-    const auto qualifiedHoverNameBuffer = state.qualifiedHoverNameBuffer;
     const auto qualifiedTooltipWidget = state.qualifiedTooltipWidget;
     const auto qualifiedTooltipBuffer = state.qualifiedTooltipBuffer;
     const auto qualifiedTooltipFieldOffset = state.qualifiedTooltipFieldOffset;
     const auto qualifiedTooltipEncoding = state.qualifiedTooltipEncoding;
     state = {};
     state.qualifiedTimerBuffer = qualifiedTimerBuffer;
-    state.qualifiedHoverNameBuffer = qualifiedHoverNameBuffer;
     state.qualifiedTooltipWidget = qualifiedTooltipWidget;
     state.qualifiedTooltipBuffer = qualifiedTooltipBuffer;
     state.qualifiedTooltipFieldOffset = qualifiedTooltipFieldOffset;
@@ -1201,7 +1158,6 @@ void OpenPanel() noexcept {
 void ClosePanel() noexcept {
     ClearHoverOverlay();
     RestoreQualifiedCountdownBuffers();
-    RestoreQualifiedHoverNameBuffers();
     RestoreQualifiedTooltipBuffers();
     if (Context != nullptr && Panels != nullptr
         && RegisteredPanel != D2RL::Panels::InvalidHandle) {
