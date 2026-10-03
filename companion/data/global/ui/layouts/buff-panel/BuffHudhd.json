@@ -2,10 +2,7 @@
   "type": "Panel",
   "name": "buff-panel/BuffHud",
   "fields": {
-    "anchor": {
-      "x": 0.5,
-      "y": 1.0
-    },
+    "fitToParent": true,
     "priority": 101
   },
   "children": [
@@ -18,6 +15,10 @@
           "y": -515,
           "width": 780,
           "height": 300
+        },
+        "anchor": {
+          "x": 0.5,
+          "y": 1
         }
       },
       "children": [
@@ -206,17 +207,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -406,17 +420,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -606,17 +633,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -806,17 +846,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -1006,17 +1059,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -1206,17 +1272,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -1406,17 +1485,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -1606,17 +1698,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -1806,17 +1911,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -2006,17 +2124,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -2206,17 +2337,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -2406,17 +2550,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -2606,17 +2763,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -2806,17 +2976,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -3006,17 +3189,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -3206,17 +3402,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -3406,17 +3615,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -3606,17 +3828,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -3806,17 +4041,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -4006,17 +4254,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "‌‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
@@ -4206,17 +4467,30 @@
               }
             },
             {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
+              "type": "TextBoxWidget",
+              "name": "HoverName",
               "fields": {
+                "visible": false,
+                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
+                "fontType": "16pt",
                 "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
+                  "x": -64,
+                  "y": -48,
+                  "width": 224,
+                  "height": 40
                 },
-                "tooltipString": "​​‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
+                "style": {
+                  "pointSize": "$MediumFontSize",
+                  "fontColor": "$FontColorWhite",
+                  "alignment": {
+                    "h": "center",
+                    "v": "center"
+                  },
+                  "dropShadow": "$DefaultDropShadow",
+                  "options": {
+                    "hideOverflow": true
+                  }
+                }
               }
             }
           ]
