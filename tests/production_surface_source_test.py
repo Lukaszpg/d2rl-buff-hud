@@ -1,6 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+LAYOUT = (ROOT / "companion/data/global/ui/layouts/buff-panel/BuffHudhd.json").read_text(encoding="utf-8")
 sources = "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "src").rglob("*.cpp")))
 sources += "\n" + "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "src").rglob("*.hpp")))
 
@@ -24,10 +25,12 @@ for token, description in banned.items():
 
 assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
-assert "set(HudPanel, true)" in sources
-assert "set(GridWidget, true)" in sources
-assert "set(slot.tooltip, occupied && state.tooltipVisible)" in sources
-assert "disable(slot.tooltip)" not in sources
+assert "UpdateHoverNamePresentation" in sources
+assert 'ResolveNativeSlotChild(slotIndex, "HoverName")' in sources
+assert "set(slot.tooltip, occupied && state.tooltipVisible)" not in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
+assert '"type": "FocusableWidget"' not in LAYOUT
+assert LAYOUT.count('"name": "HoverName"') == 21
+assert '"fitToParent": true' in LAYOUT
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")
