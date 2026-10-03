@@ -1285,7 +1285,6 @@ void __cdecl OnGameplayEvent(
         Core::BuffDisplays().EndSession(event->sessionGeneration);
         CurrentSessionGeneration.store(0, std::memory_order_release);
         PollScheduled.store(false, std::memory_order_release);
-        PanelReadyLogged = false;
         HoverGeometryLogged = false;
         ClosePanel();
         break;
