@@ -29,20 +29,33 @@ void TestHoverInteractionState() {
     H::Context = &context;
     H::Widgets = &widgets;
     H::HandlesResolved = true;
+    H::HudPanel = 1;
+    H::GridWidget = 2;
 
-    std::uint64_t next = 1;
+    std::uint64_t next = 3;
     for (auto& slot : H::Handles) {
+        slot.slot = next++;
+        slot.countdown = next++;
+        slot.hoverName = next++;
         for (auto& icon : slot.icons) icon = next++;
     }
 
+    Enabled.fill(true);
     assert(H::ApplyInputIsolation());
+    assert(!Enabled[H::HudPanel]);
+    assert(!Enabled[H::GridWidget]);
     for (const auto& slot : H::Handles) {
+        assert(!Enabled[slot.slot]);
+        assert(!Enabled[slot.countdown]);
+        assert(!Enabled[slot.hoverName]);
         for (const auto icon : slot.icons) assert(!Enabled[icon]);
     }
 
     H::Context = nullptr;
     H::Widgets = nullptr;
     H::HandlesResolved = false;
+    H::HudPanel = D2RL::Widgets::InvalidHandle;
+    H::GridWidget = D2RL::Widgets::InvalidHandle;
     H::Handles = {};
     Enabled.fill(false);
 }
