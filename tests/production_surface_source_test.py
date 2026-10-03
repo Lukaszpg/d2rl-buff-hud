@@ -27,6 +27,7 @@ assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
 assert "UpdateHoverNamePresentation" in sources
 assert "EnsurePanelOpen" not in sources
+assert "PanelReadyLogged" not in sources
 assert "Panels->getPanelInfo" not in sources
 assert "RenderSnapshot();\n    QueuePoll();" in sources
 assert "RegisterHoverOverlay" in sources
