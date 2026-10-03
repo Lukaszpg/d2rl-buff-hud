@@ -37,9 +37,11 @@ assert "disable(slot.countdown)" in sources
 assert "disable(slot.slot)" in sources
 assert "disable(GridWidget)" in sources
 assert "disable(HudPanel)" in sources
-assert "const double gridLeft = static_cast<double>(gridRect.x)" in sources
-assert "const double gridTop = static_cast<double>(gridRect.y)" in sources
+assert "gridRectAlreadyResolved" in sources
+assert "static_cast<double>(panelRect.width) * 0.5" in sources
+assert "static_cast<double>(panelRect.height) + static_cast<double>(gridRect.y)" in sources
 assert "EnsurePanelOpen" in sources
+assert "QueuePoll();" in sources
 assert "Panels->getPanelInfo" in sources
 assert "PresentationState::Open" in sources
 assert "set(slot.tooltip, occupied && state.tooltipVisible)" not in sources
