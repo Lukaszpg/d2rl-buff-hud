@@ -297,9 +297,8 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         // hit target. Empty BuffHud slots are display placeholders, so disable
         // every atlas button as soon as handles are resolved. Occupied slots
         // keep the selected atlas visible but disabled. A separate slot-local
-        // FocusableWidget owns optional hover-only tooltip presentation.
-        // In optional gameplay mode ApplyInputIsolation also disables the tooltip,
-        // all slots, the grid and the panel to prioritize world input.
+        // FocusableWidget owns hover-only tooltip presentation; the final
+        // interaction pass enables it only for occupied slots with valid text.
         for (const auto icon : slot.icons) {
             if (!SetEnabled(icon, false)) {
             }
@@ -386,26 +385,35 @@ void InvalidateWidgetHandles() noexcept {
     return Widgets->setWidgetEnabled(Context, handle, enabled) == D2RL::Widgets::Result::Success;
 }
 
-// Call only on the UI thread, after ResolveWidgetHandles. A disabled widget
-// can still be drawn in D2R (this is already how the atlas ButtonWidgets are
-// rendered), but it cannot be relied on for native hover. Do not pretend that
-// this proves end-to-end click-through: the test must also cover Panel hit-test
-// behavior in the running game.
+// Call only on the UI thread, after ResolveWidgetHandles. Atlas buttons stay
+// disabled permanently. The native FocusableWidget is the only surface that can
+// produce the buff-name hover tooltip, so occupied slots with valid tooltip text
+// must remain enabled. Empty slots remain disabled and cannot create dead mouse
+// zones.
 [[nodiscard]] bool ApplyInputIsolation() noexcept {
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return false;
     bool allSucceeded = true;
-    auto disable = [&](D2RL::Widgets::WidgetHandle handle) noexcept {
-        if (!SetEnabled(handle, false)) allSucceeded = false;
+    auto set = [&](D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept {
+        if (handle == D2RL::Widgets::InvalidHandle) return;
+        if (!SetEnabled(handle, enabled)) allSucceeded = false;
     };
-    for (auto& slot : Handles) {
-        disable(slot.slot);
-        disable(slot.tooltip);
-        for (const auto icon : slot.icons) disable(icon);
+
+    // Panel and grid are non-focusable containers, but their enabled state gates
+    // descendant hit testing. Keep them enabled so the per-slot FocusableWidget
+    // can receive mouse-over. Only occupied slots get an enabled hit surface.
+    set(HudPanel, true);
+    set(GridWidget, true);
+    for (std::size_t i = 0; i < Handles.size(); ++i) {
+        auto& slot = Handles[i];
+        const auto& state = RenderStates[i];
+        const bool occupied = state.visible;
+        set(slot.slot, occupied);
+        set(slot.tooltip, occupied && state.tooltipVisible);
+        for (const auto icon : slot.icons) set(icon, false);
     }
-    disable(GridWidget);
-    disable(HudPanel);
+
     if (!allSucceeded) Context->LogWarn(
-        "Buff HUD: one or more widget enabled-state updates failed; gameplay input isolation may be incomplete.");
+        "Buff HUD: one or more widget enabled-state updates failed; buff-name hover may be incomplete.");
     return allSucceeded;
 }
 
@@ -1076,7 +1084,7 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     const auto icons = Internal::SkillIconStatus();
     char line[512]{};
     std::snprintf(line, sizeof(line),
-        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
+        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu hoverTooltips=enabled.",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
