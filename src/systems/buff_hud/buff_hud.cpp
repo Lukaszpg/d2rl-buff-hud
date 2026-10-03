@@ -36,6 +36,9 @@ constexpr char TimerReserve[] = "__BUFF_PANEL_TIMER_RESERVE_00__";
 constexpr std::size_t TimerReserveBytes = sizeof(TimerReserve);
 using Internal::TooltipReserveBytes;
 using Internal::TooltipReserveLength;
+constexpr char HoverNameReserve[] = "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________";
+constexpr std::size_t HoverNameReserveBytes = sizeof(HoverNameReserve);
+static_assert(HoverNameReserveBytes == 127);
 constexpr std::size_t TooltipReserveCodepoints = TooltipReserveLength / 3;
 static_assert(TooltipReserveCodepoints * 3 == TooltipReserveLength);
 constexpr std::size_t TooltipNativeScanBytes = 0x1000;
@@ -94,6 +97,7 @@ struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
     D2RL::Widgets::WidgetHandle countdown{D2RL::Widgets::InvalidHandle};
+    D2RL::Widgets::WidgetHandle hoverName{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle tooltip{D2RL::Widgets::InvalidHandle};
 };
 
@@ -111,6 +115,7 @@ struct SlotRenderState final {
     bool timerVisible{};
     bool tooltipVisible{};
     std::uintptr_t qualifiedTimerBuffer{};
+    std::uintptr_t qualifiedHoverNameBuffer{};
     std::uintptr_t qualifiedTooltipWidget{};
     std::uintptr_t qualifiedTooltipBuffer{};
     std::size_t qualifiedTooltipFieldOffset{std::numeric_limits<std::size_t>::max()};
@@ -287,18 +292,16 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         }
         if (Widgets->findWidget(Context, slot.slot, "Countdown", &slot.countdown)
             != D2RL::Widgets::Result::Success
-            || Widgets->findWidget(Context, slot.slot, "Tooltip", &slot.tooltip)
+            || Widgets->findWidget(Context, slot.slot, "HoverName", &slot.hoverName)
                 != D2RL::Widgets::Result::Success) {
             Handles = {};
             return false;
         }
+        slot.tooltip = D2RL::Widgets::InvalidHandle;
 
-        // ButtonWidget visibility alone does not guarantee that D2R removes its
-        // hit target. Empty BuffHud slots are display placeholders, so disable
-        // every atlas button as soon as handles are resolved. Occupied slots
-        // keep the selected atlas visible but disabled. A separate slot-local
-        // FocusableWidget owns hover-only tooltip presentation; the final
-        // interaction pass enables it only for occupied slots with valid text.
+        // Atlas buttons remain disabled permanently. Hover presentation is a
+        // plain TextBoxWidget driven by pointer observation, so no focusable or
+        // clickable surface sits over the buff icon.
         for (const auto icon : slot.icons) {
             if (!SetEnabled(icon, false)) {
             }
@@ -316,6 +319,16 @@ void RestoreQualifiedCountdownBuffers() noexcept {
         auto* buffer = reinterpret_cast<char*>(state.qualifiedTimerBuffer);
         if (IsWritableRange(buffer, TimerReserveBytes)) {
             std::memcpy(buffer, TimerReserve, TimerReserveBytes);
+        }
+    }
+}
+
+void RestoreQualifiedHoverNameBuffers() noexcept {
+    for (auto& state : RenderStates) {
+        if (state.qualifiedHoverNameBuffer == 0) continue;
+        auto* buffer = reinterpret_cast<char*>(state.qualifiedHoverNameBuffer);
+        if (IsWritableRange(buffer, HoverNameReserveBytes)) {
+            std::memcpy(buffer, HoverNameReserve, HoverNameReserveBytes);
         }
     }
 }
@@ -385,35 +398,19 @@ void InvalidateWidgetHandles() noexcept {
     return Widgets->setWidgetEnabled(Context, handle, enabled) == D2RL::Widgets::Result::Success;
 }
 
-// Call only on the UI thread, after ResolveWidgetHandles. Atlas buttons stay
-// disabled permanently. The native FocusableWidget is the only surface that can
-// produce the buff-name hover tooltip, so occupied slots with valid tooltip text
-// must remain enabled. Empty slots remain disabled and cannot create dead mouse
-// zones.
+// Call only on the UI thread, after ResolveWidgetHandles. Only atlas
+// ButtonWidgets need interaction isolation. Hover-name TextBoxWidgets and the
+// plain Widget hierarchy are presentation-only and never own mouse clicks.
 [[nodiscard]] bool ApplyInputIsolation() noexcept {
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return false;
     bool allSucceeded = true;
-    auto set = [&](D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept {
-        if (handle == D2RL::Widgets::InvalidHandle) return;
-        if (!SetEnabled(handle, enabled)) allSucceeded = false;
-    };
-
-    // Panel and grid are non-focusable containers, but their enabled state gates
-    // descendant hit testing. Keep them enabled so the per-slot FocusableWidget
-    // can receive mouse-over. Only occupied slots get an enabled hit surface.
-    set(HudPanel, true);
-    set(GridWidget, true);
-    for (std::size_t i = 0; i < Handles.size(); ++i) {
-        auto& slot = Handles[i];
-        const auto& state = RenderStates[i];
-        const bool occupied = state.visible;
-        set(slot.slot, occupied);
-        set(slot.tooltip, occupied && state.tooltipVisible);
-        for (const auto icon : slot.icons) set(icon, false);
+    for (auto& slot : Handles) {
+        for (const auto icon : slot.icons) {
+            if (!SetEnabled(icon, false)) allSucceeded = false;
+        }
     }
-
     if (!allSucceeded) Context->LogWarn(
-        "Buff HUD: one or more widget enabled-state updates failed; buff-name hover may be incomplete.");
+        "Buff HUD: one or more atlas buttons could not be disabled; input isolation may be incomplete.");
     return allSucceeded;
 }
 
@@ -462,6 +459,33 @@ void InvalidateWidgetHandles() noexcept {
         return false;
     }
     return true;
+}
+
+[[nodiscard]] bool WriteHoverNameText(std::size_t slotIndex, const char* text) noexcept {
+    if (slotIndex >= SlotCount || text == nullptr) return false;
+    const auto length = std::strlen(text);
+    if (length + 1 > HoverNameReserveBytes) return false;
+
+    void* widget = ResolveNativeSlotChild(slotIndex, "HoverName");
+    std::uintptr_t pointer{};
+    if (widget == nullptr
+        || !ReadNativeField(widget, Native::Contract::HudTextPointerOffset, pointer)
+        || pointer == 0) {
+        return false;
+    }
+
+    auto* buffer = reinterpret_cast<char*>(pointer);
+    if (!IsWritableRange(buffer, HoverNameReserveBytes)) return false;
+
+    auto& state = RenderStates[slotIndex];
+    if (state.qualifiedHoverNameBuffer != pointer) {
+        if (std::memcmp(buffer, HoverNameReserve, HoverNameReserveBytes) != 0) return false;
+        state.qualifiedHoverNameBuffer = pointer;
+    }
+
+    std::memcpy(buffer, HoverNameReserve, HoverNameReserveBytes);
+    std::memcpy(buffer, text, length + 1);
+    return std::memcmp(buffer, text, length + 1) == 0;
 }
 
 [[nodiscard]] bool QualifyTooltipString(
@@ -655,8 +679,10 @@ void InvalidateWidgetHandles() noexcept {
 
 void ClearTooltip(std::size_t slotIndex) noexcept {
     if (slotIndex >= SlotCount) return;
-    (void)SetVisible(Handles[slotIndex].tooltip, false);
-    if (WriteTooltipText(slotIndex, "")) {
+    (void)SetVisible(Handles[slotIndex].hoverName, false);
+    if (WriteHoverNameText(slotIndex, "")) {
+        RenderStates[slotIndex].tooltipVisible = false;
+    } else {
         RenderStates[slotIndex].tooltipVisible = false;
     }
 }
@@ -666,22 +692,63 @@ void ApplyTooltip(
     std::int32_t sourceSkillId) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
-    (void)SetVisible(Handles[slotIndex].tooltip, false);
-    char localizedName[TooltipReserveBytes]{};
+    (void)SetVisible(Handles[slotIndex].hoverName, false);
+    char localizedName[HoverNameReserveBytes]{};
     if (sourceSkillId == Core::NoSourceSkillId
-        || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))) {
-        ClearTooltip(slotIndex);
-        return;
-    }
-
-    if (!WriteTooltipText(slotIndex, localizedName)) {
+        || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))
+        || !WriteHoverNameText(slotIndex, localizedName)) {
         RenderStates[slotIndex].tooltipVisible = false;
         return;
     }
+    RenderStates[slotIndex].tooltipVisible = true;
+}
 
-    // Native hover is optional: a FocusableWidget may intercept world clicks.
-    // Preserve the valid-text visibility guard independently of the mouse mode.
-    RenderStates[slotIndex].tooltipVisible = SetVisible(Handles[slotIndex].tooltip, true);
+void UpdateHoverNamePresentation() noexcept {
+    if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return;
+    for (const auto& slot : Handles) (void)SetVisible(slot.hoverName, false);
+
+    HWND window = GetForegroundWindow();
+    DWORD processId{};
+    if (window == nullptr) return;
+    GetWindowThreadProcessId(window, &processId);
+    if (processId != GetCurrentProcessId()) return;
+
+    POINT point{};
+    RECT client{};
+    if (!GetCursorPos(&point) || !ScreenToClient(window, &point) || !GetClientRect(window, &client)) return;
+    const auto clientWidth = client.right - client.left;
+    const auto clientHeight = client.bottom - client.top;
+    if (clientWidth <= 0 || clientHeight <= 0) return;
+
+    D2RL::Widgets::Rect panelRect{};
+    D2RL::Widgets::Rect gridRect{};
+    if (Widgets->getWidgetRect(Context, HudPanel, &panelRect) != D2RL::Widgets::Result::Success
+        || Widgets->getWidgetRect(Context, GridWidget, &gridRect) != D2RL::Widgets::Result::Success
+        || panelRect.width <= 0 || panelRect.height <= 0) {
+        return;
+    }
+
+    const double uiX = static_cast<double>(point.x) * static_cast<double>(panelRect.width)
+        / static_cast<double>(clientWidth);
+    const double uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
+        / static_cast<double>(clientHeight);
+
+    for (std::size_t i = 0; i < Handles.size(); ++i) {
+        if (!RenderStates[i].visible || !RenderStates[i].tooltipVisible) continue;
+        D2RL::Widgets::Rect slotRect{};
+        if (Widgets->getWidgetRect(Context, Handles[i].slot, &slotRect)
+            != D2RL::Widgets::Result::Success) {
+            continue;
+        }
+        const double left = static_cast<double>(gridRect.x + slotRect.x);
+        const double top = static_cast<double>(gridRect.y + slotRect.y);
+        const double right = left + static_cast<double>(slotRect.width);
+        const double bottom = top + static_cast<double>(slotRect.height);
+        if (uiX >= left && uiX < right && uiY >= top && uiY < bottom) {
+            (void)SetVisible(Handles[i].hoverName, true);
+            break;
+        }
+    }
 }
 
 [[nodiscard]] bool ResolveEntryIcon(
@@ -766,12 +833,14 @@ void HideSlot(std::size_t slotIndex) noexcept {
 
     (void)SetVisible(Handles[slotIndex].slot, false);
     const auto qualifiedTimerBuffer = state.qualifiedTimerBuffer;
+    const auto qualifiedHoverNameBuffer = state.qualifiedHoverNameBuffer;
     const auto qualifiedTooltipWidget = state.qualifiedTooltipWidget;
     const auto qualifiedTooltipBuffer = state.qualifiedTooltipBuffer;
     const auto qualifiedTooltipFieldOffset = state.qualifiedTooltipFieldOffset;
     const auto qualifiedTooltipEncoding = state.qualifiedTooltipEncoding;
     state = {};
     state.qualifiedTimerBuffer = qualifiedTimerBuffer;
+    state.qualifiedHoverNameBuffer = qualifiedHoverNameBuffer;
     state.qualifiedTooltipWidget = qualifiedTooltipWidget;
     state.qualifiedTooltipBuffer = qualifiedTooltipBuffer;
     state.qualifiedTooltipFieldOffset = qualifiedTooltipFieldOffset;
@@ -924,6 +993,7 @@ void RenderSnapshot() noexcept {
     }
     for (std::size_t i = visibleCount; i < SlotCount; ++i) HideSlot(i);
 
+    UpdateHoverNamePresentation();
     LastRenderedRevision = snapshot.revision;
 }
 
@@ -977,6 +1047,7 @@ void OpenPanel() noexcept {
 
 void ClosePanel() noexcept {
     RestoreQualifiedCountdownBuffers();
+    RestoreQualifiedHoverNameBuffers();
     RestoreQualifiedTooltipBuffers();
     if (Context != nullptr && Panels != nullptr
         && RegisteredPanel != D2RL::Panels::InvalidHandle) {
@@ -1084,7 +1155,7 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     const auto icons = Internal::SkillIconStatus();
     char line[512]{};
     std::snprintf(line, sizeof(line),
-        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu hoverTooltips=enabled.",
+        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu hoverLabels=click-through.",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
