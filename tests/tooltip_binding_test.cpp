@@ -11,6 +11,60 @@ namespace H = BuffPanel::Systems::BuffHud;
 namespace {
 alignas(8) std::array<std::byte, 0x1000> Widget{};
 constexpr std::size_t TextField = 0x88; // Observed FocusableWidget field on 93847.
+std::array<bool, 256> Enabled{};
+
+D2RL::Widgets::Result __cdecl SetEnabled(
+    const D2RL::PluginContext*,
+    D2RL::Widgets::WidgetHandle handle,
+    bool enabled) noexcept {
+    assert(handle > 0 && handle < Enabled.size());
+    Enabled[handle] = enabled;
+    return D2RL::Widgets::Result::Success;
+}
+
+void TestHoverInteractionState() {
+    D2RL::PluginContext context{};
+    D2RL::WidgetService widgets{};
+    widgets.setWidgetEnabled = &SetEnabled;
+    H::Context = &context;
+    H::Widgets = &widgets;
+    H::HandlesResolved = true;
+    H::HudPanel = 1;
+    H::GridWidget = 2;
+
+    std::uint64_t next = 3;
+    for (auto& slot : H::Handles) {
+        slot.slot = next++;
+        slot.tooltip = next++;
+        for (auto& icon : slot.icons) icon = next++;
+    }
+
+    H::RenderStates = {};
+    H::RenderStates[0].visible = true;
+    H::RenderStates[0].tooltipVisible = true;
+    H::RenderStates[1].visible = true;
+    H::RenderStates[1].tooltipVisible = false;
+
+    assert(H::ApplyInputIsolation());
+    assert(Enabled[H::HudPanel]);
+    assert(Enabled[H::GridWidget]);
+    for (std::size_t i = 0; i < H::Handles.size(); ++i) {
+        const auto& slot = H::Handles[i];
+        const bool occupied = H::RenderStates[i].visible;
+        assert(Enabled[slot.slot] == occupied);
+        assert(Enabled[slot.tooltip] == (occupied && H::RenderStates[i].tooltipVisible));
+        for (const auto icon : slot.icons) assert(!Enabled[icon]);
+    }
+
+    H::Context = nullptr;
+    H::Widgets = nullptr;
+    H::HandlesResolved = false;
+    H::HudPanel = D2RL::Widgets::InvalidHandle;
+    H::GridWidget = D2RL::Widgets::InvalidHandle;
+    H::Handles = {};
+    H::RenderStates = {};
+    Enabled.fill(false);
+}
 void* __fastcall FindPanel(const char*) noexcept { return Widget.data(); }
 void* __fastcall FindChild(void*, const char*) noexcept { return Widget.data(); }
 
@@ -32,6 +86,7 @@ void Bind(void* buffer, std::uint64_t length) {
 }
 
 int main() {
+    TestHoverInteractionState();
     H::FindTopLevelPanel = &FindPanel;
     H::FindChildWidgetByName = &FindChild;
     SYSTEM_INFO info{};
