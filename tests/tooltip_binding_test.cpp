@@ -22,6 +22,43 @@ D2RL::Widgets::Result __cdecl SetEnabled(
     return D2RL::Widgets::Result::Success;
 }
 
+
+int OverlayTextCalls{};
+int OverlayFillCalls{};
+int OverlayBorderCalls{};
+std::string OverlayLastText{};
+
+D2RL::Overlay::Result __cdecl MeasureOverlayText(
+    const D2RL::PluginContext*,
+    const D2RL::Overlay::MeasureTextRequest*,
+    D2RL::Overlay::TextMetrics* metrics) noexcept {
+    metrics->width = 104.0F;
+    metrics->height = 18.0F;
+    return D2RL::Overlay::Result::Success;
+}
+
+D2RL::Overlay::Result __cdecl DrawOverlayFill(
+    const D2RL::PluginContext*,
+    const D2RL::Overlay::FilledRectangleRequest*) noexcept {
+    ++OverlayFillCalls;
+    return D2RL::Overlay::Result::Success;
+}
+
+D2RL::Overlay::Result __cdecl DrawOverlayBorder(
+    const D2RL::PluginContext*,
+    const D2RL::Overlay::RectangleRequest*) noexcept {
+    ++OverlayBorderCalls;
+    return D2RL::Overlay::Result::Success;
+}
+
+D2RL::Overlay::Result __cdecl DrawOverlayText(
+    const D2RL::PluginContext*,
+    const D2RL::Overlay::TextRequest* request) noexcept {
+    ++OverlayTextCalls;
+    OverlayLastText.assign(request->text, request->textLength);
+    return D2RL::Overlay::Result::Success;
+}
+
 void TestHoverInteractionState() {
     D2RL::PluginContext context{};
     D2RL::WidgetService widgets{};
@@ -36,7 +73,6 @@ void TestHoverInteractionState() {
     for (auto& slot : H::Handles) {
         slot.slot = next++;
         slot.countdown = next++;
-        slot.hoverName = next++;
         for (auto& icon : slot.icons) icon = next++;
     }
 
@@ -47,7 +83,6 @@ void TestHoverInteractionState() {
     for (const auto& slot : H::Handles) {
         assert(!Enabled[slot.slot]);
         assert(!Enabled[slot.countdown]);
-        assert(!Enabled[slot.hoverName]);
         for (const auto icon : slot.icons) assert(!Enabled[icon]);
     }
 
@@ -59,6 +94,47 @@ void TestHoverInteractionState() {
     H::Handles = {};
     Enabled.fill(false);
 }
+void TestDisplayOnlyHoverOverlay() {
+    D2RL::PluginContext context{};
+    D2RL::OverlayService overlay{};
+    overlay.measureText = &MeasureOverlayText;
+    overlay.drawFilledRectangle = &DrawOverlayFill;
+    overlay.drawRectangle = &DrawOverlayBorder;
+    overlay.drawText = &DrawOverlayText;
+
+    H::Context = &context;
+    H::Overlay = &overlay;
+    OverlayTextCalls = 0;
+    OverlayFillCalls = 0;
+    OverlayBorderCalls = 0;
+    OverlayLastText.clear();
+
+    const POINT cursor{320, 180};
+    H::PublishHoverOverlay("Battle Orders", cursor, 1280, 720);
+    const D2RL::Overlay::Frame frame{
+        .structSize = D2RL::Overlay::FrameSize,
+        .flags = 0,
+        .canvas = 1,
+        .frameNumber = 1,
+        .screenWidth = 1920.0F,
+        .screenHeight = 1080.0F,
+        .deltaTimeSeconds = 1.0F / 60.0F,
+        .defaultTextSize = 16.0F,
+    };
+    H::DrawHoverOverlay(&context, &frame, nullptr);
+    assert(OverlayTextCalls == 1);
+    assert(OverlayFillCalls == 1);
+    assert(OverlayBorderCalls == 1);
+    assert(OverlayLastText == "Battle Orders");
+
+    H::ClearHoverOverlay();
+    H::DrawHoverOverlay(&context, &frame, nullptr);
+    assert(OverlayTextCalls == 1);
+
+    H::Overlay = nullptr;
+    H::Context = nullptr;
+}
+
 void* __fastcall FindPanel(const char*) noexcept { return Widget.data(); }
 void* __fastcall FindChild(void*, const char*) noexcept { return Widget.data(); }
 
@@ -81,6 +157,7 @@ void Bind(void* buffer, std::uint64_t length) {
 
 int main() {
     TestHoverInteractionState();
+    TestDisplayOnlyHoverOverlay();
     H::FindTopLevelPanel = &FindPanel;
     H::FindChildWidgetByName = &FindChild;
     SYSTEM_INFO info{};
