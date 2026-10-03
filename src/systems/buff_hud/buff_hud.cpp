@@ -838,11 +838,21 @@ void UpdateHoverNamePresentation() noexcept {
     const double uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
         / static_cast<double>(clientHeight);
 
-    // WidgetService returns the resolved rectangle local to the widget's
-    // parent. BuffGrid's JSON anchor has already been applied by D2R; adding
-    // the anchor again would displace the synthetic hover hitbox.
-    const double gridLeft = static_cast<double>(gridRect.x);
-    const double gridTop = static_cast<double>(gridRect.y);
+    // WidgetService guarantees parent-local coordinates but does not specify
+    // whether a JSON anchor is already baked into x/y. Accept either form:
+    // an in-parent rectangle is already resolved; an authored rectangle that
+    // sits outside the fit-to-parent root receives BuffGrid's (0.5, 1.0)
+    // anchor exactly once.
+    const bool gridRectAlreadyResolved =
+        gridRect.x >= 0 && gridRect.y >= 0
+        && gridRect.x + gridRect.width <= panelRect.width
+        && gridRect.y + gridRect.height <= panelRect.height;
+    const double gridLeft = gridRectAlreadyResolved
+        ? static_cast<double>(gridRect.x)
+        : static_cast<double>(panelRect.width) * 0.5 + static_cast<double>(gridRect.x);
+    const double gridTop = gridRectAlreadyResolved
+        ? static_cast<double>(gridRect.y)
+        : static_cast<double>(panelRect.height) + static_cast<double>(gridRect.y);
 
     if (!HoverGeometryLogged) {
         for (std::size_t i = 0; i < Handles.size(); ++i) {
@@ -853,9 +863,11 @@ void UpdateHoverNamePresentation() noexcept {
                 char line[384]{};
                 std::snprintf(
                     line, sizeof(line),
-                    "BUFF_HOVER_GEOMETRY panel=(%d,%d %dx%d) grid=(%d,%d %dx%d) slot=%zu:(%d,%d %dx%d) client=%ldx%ld",
+                    "BUFF_HOVER_GEOMETRY rectMode=%s panel=(%d,%d %dx%d) grid=(%d,%d %dx%d) origin=(%.1f,%.1f) slot=%zu:(%d,%d %dx%d) client=%ldx%ld",
+                    gridRectAlreadyResolved ? "resolved" : "anchored",
                     panelRect.x, panelRect.y, panelRect.width, panelRect.height,
                     gridRect.x, gridRect.y, gridRect.width, gridRect.height,
+                    gridLeft, gridTop,
                     i, firstSlot.x, firstSlot.y, firstSlot.width, firstSlot.height,
                     static_cast<long>(clientWidth), static_cast<long>(clientHeight));
                 Context->LogInfo(line);
@@ -1302,6 +1314,7 @@ void __cdecl OnGameplayEvent(
         Core::BuffDisplays().BeginSession(event->sessionGeneration);
         PanelReadyLogged = false;
         HoverGeometryLogged = false;
+        QueuePoll();
         break;
     case D2RL::Lifecycle::GameplayEventKind::LocalPlayerReady:
         if (CurrentSessionGeneration.load(std::memory_order_acquire) != event->sessionGeneration) {
