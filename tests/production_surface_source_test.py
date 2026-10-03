@@ -24,6 +24,10 @@ for token, description in banned.items():
 
 assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
+assert "set(HudPanel, true)" in sources
+assert "set(GridWidget, true)" in sources
+assert "set(slot.tooltip, occupied && state.tooltipVisible)" in sources
+assert "disable(slot.tooltip)" not in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")
