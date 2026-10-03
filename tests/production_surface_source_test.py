@@ -26,6 +26,9 @@ for token, description in banned.items():
 assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
 assert "UpdateHoverNamePresentation" in sources
+assert "EnsurePanelOpen" not in sources
+assert "Panels->getPanelInfo" not in sources
+assert "RenderSnapshot();\n    QueuePoll();" in sources
 assert "RegisterHoverOverlay" in sources
 assert "DrawHoverOverlay" in sources
 assert "PublishHoverOverlay" in sources
@@ -40,10 +43,7 @@ assert "disable(HudPanel)" in sources
 assert "gridRectAlreadyResolved" in sources
 assert "static_cast<double>(panelRect.width) * 0.5" in sources
 assert "static_cast<double>(panelRect.height) + static_cast<double>(gridRect.y)" in sources
-assert "EnsurePanelOpen" in sources
 assert "QueuePoll();" in sources
-assert "Panels->getPanelInfo" in sources
-assert "PresentationState::Open" in sources
 assert "set(slot.tooltip, occupied && state.tooltipVisible)" not in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
