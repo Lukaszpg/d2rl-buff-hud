@@ -404,13 +404,25 @@ void InvalidateWidgetHandles() noexcept {
 [[nodiscard]] bool ApplyInputIsolation() noexcept {
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return false;
     bool allSucceeded = true;
+    auto disable = [&](D2RL::Widgets::WidgetHandle handle) noexcept {
+        if (handle == D2RL::Widgets::InvalidHandle) return;
+        if (!SetEnabled(handle, false)) allSucceeded = false;
+    };
+
+    // D2R treats enabled generic HUD widgets as UI mouse targets even when
+    // their visible state is false. Keep the complete BuffHud hierarchy
+    // disabled; rendering/visibility updates still work through this state.
     for (auto& slot : Handles) {
-        for (const auto icon : slot.icons) {
-            if (!SetEnabled(icon, false)) allSucceeded = false;
-        }
+        for (const auto icon : slot.icons) disable(icon);
+        disable(slot.hoverName);
+        disable(slot.countdown);
+        disable(slot.slot);
     }
+    disable(GridWidget);
+    disable(HudPanel);
+
     if (!allSucceeded) Context->LogWarn(
-        "Buff HUD: one or more atlas buttons could not be disabled; input isolation may be incomplete.");
+        "Buff HUD: one or more presentation widgets could not be disabled; gameplay click-through may be incomplete.");
     return allSucceeded;
 }
 
@@ -733,6 +745,14 @@ void UpdateHoverNamePresentation() noexcept {
     const double uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
         / static_cast<double>(clientHeight);
 
+    // BuffGrid is authored at anchor=(0.5, 1.0). WidgetService rectangles are
+    // parent-local and do not bake the anchor into x/y, so apply the resolved
+    // fit-to-parent panel dimensions before testing slot-local rectangles.
+    const double gridLeft = static_cast<double>(panelRect.width) * 0.5
+        + static_cast<double>(gridRect.x);
+    const double gridTop = static_cast<double>(panelRect.height)
+        + static_cast<double>(gridRect.y);
+
     for (std::size_t i = 0; i < Handles.size(); ++i) {
         if (!RenderStates[i].visible || !RenderStates[i].tooltipVisible) continue;
         D2RL::Widgets::Rect slotRect{};
@@ -740,8 +760,8 @@ void UpdateHoverNamePresentation() noexcept {
             != D2RL::Widgets::Result::Success) {
             continue;
         }
-        const double left = static_cast<double>(gridRect.x + slotRect.x);
-        const double top = static_cast<double>(gridRect.y + slotRect.y);
+        const double left = gridLeft + static_cast<double>(slotRect.x);
+        const double top = gridTop + static_cast<double>(slotRect.y);
         const double right = left + static_cast<double>(slotRect.width);
         const double bottom = top + static_cast<double>(slotRect.height);
         if (uiX >= left && uiX < right && uiY >= top && uiY < bottom) {
