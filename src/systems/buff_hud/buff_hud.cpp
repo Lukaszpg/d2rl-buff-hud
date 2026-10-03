@@ -139,7 +139,6 @@ std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
-bool PanelReadyLogged{};
 bool HoverGeometryLogged{};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -1142,47 +1141,6 @@ void RenderSnapshot() noexcept {
 
 void QueuePoll() noexcept;
 
-[[nodiscard]] bool EnsurePanelOpen() noexcept {
-    if (Context == nullptr || Panels == nullptr
-        || RegisteredPanel == D2RL::Panels::InvalidHandle) {
-        return false;
-    }
-
-    D2RL::Panels::PanelInfo info{
-        .structSize = D2RL::Panels::PanelInfoSize,
-    };
-    const auto infoResult = Panels->getPanelInfo(Context, RegisteredPanel, &info);
-    if (infoResult == D2RL::Panels::Result::Success
-        && info.presentationState == D2RL::Panels::PresentationState::Open) {
-        if (!PanelReadyLogged) {
-            char line[192]{};
-            std::snprintf(
-                line, sizeof(line),
-                "BUFF_PANEL_READY session=%llu state=open handlesResolved=%u",
-                static_cast<unsigned long long>(
-                    CurrentSessionGeneration.load(std::memory_order_acquire)),
-                HandlesResolved ? 1u : 0u);
-            Context->LogInfo(line);
-            PanelReadyLogged = true;
-        }
-        return true;
-    }
-
-    // LocalPlayerReady can arrive while D2R's root UI/panel composition is
-    // still settling. Retry only a genuinely closed panel; Unknown/Busy is a
-    // transition and will be observed again on the next UI poll.
-    if (infoResult == D2RL::Panels::Result::Success
-        && info.presentationState != D2RL::Panels::PresentationState::Closed) {
-        return false;
-    }
-
-    const auto openResult = Panels->openPanel(Context, RegisteredPanel);
-    if (openResult == D2RL::Panels::Result::Success) {
-        InvalidateWidgetHandles();
-    }
-    return false;
-}
-
 void __cdecl PollOnUiThread(const D2RL::PluginContext* context, void*) noexcept {
     PollScheduled.store(false, std::memory_order_release);
     if (context == nullptr || context != Context
@@ -1190,9 +1148,7 @@ void __cdecl PollOnUiThread(const D2RL::PluginContext* context, void*) noexcept 
         return;
     }
 
-    if (EnsurePanelOpen()) {
-        RenderSnapshot();
-    }
+    RenderSnapshot();
     QueuePoll();
 }
 
@@ -1312,9 +1268,7 @@ void __cdecl OnGameplayEvent(
     case D2RL::Lifecycle::GameplayEventKind::GameJoined:
         CurrentSessionGeneration.store(event->sessionGeneration, std::memory_order_release);
         Core::BuffDisplays().BeginSession(event->sessionGeneration);
-        PanelReadyLogged = false;
         HoverGeometryLogged = false;
-        QueuePoll();
         break;
     case D2RL::Lifecycle::GameplayEventKind::LocalPlayerReady:
         if (CurrentSessionGeneration.load(std::memory_order_acquire) != event->sessionGeneration) {
