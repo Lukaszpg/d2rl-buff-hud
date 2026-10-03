@@ -2,10 +2,7 @@
   "type": "Panel",
   "name": "buff-panel/BuffHud",
   "fields": {
-    "anchor": {
-      "x": 0.5,
-      "y": 1.0
-    },
+    "fitToParent": true,
     "priority": 101
   },
   "children": [
@@ -18,6 +15,10 @@
           "y": -515,
           "width": 780,
           "height": 300
+        },
+        "anchor": {
+          "x": 0.5,
+          "y": 1
         }
       },
       "children": [
@@ -203,20 +204,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -404,20 +391,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -603,20 +576,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -804,20 +763,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -1003,20 +948,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -1204,20 +1135,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -1403,20 +1320,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -1604,20 +1507,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -1803,20 +1692,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -2004,20 +1879,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -2203,20 +2064,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -2404,20 +2251,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -2603,20 +2436,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -2804,20 +2623,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌​‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -3003,20 +2808,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -3204,20 +2995,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌‌‌‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -3403,20 +3180,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -3604,20 +3367,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌​​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -3803,20 +3552,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]
@@ -4004,20 +3739,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "‌‌​​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
-              }
             }
           ]
         },
@@ -4203,20 +3924,6 @@
                     "hideOverflow": true
                   }
                 }
-              }
-            },
-            {
-              "type": "FocusableWidget",
-              "name": "Tooltip",
-              "fields": {
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 96,
-                  "height": 96
-                },
-                "tooltipString": "​​‌​‌​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​",
-                "tooltipStyle": "$TooltipStyle"
               }
             }
           ]

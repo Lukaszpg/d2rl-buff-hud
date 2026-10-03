@@ -34,6 +34,7 @@ bool InitializeServices(const D2RL::PluginContext* context) noexcept {
     Registry.lifecycle = Query<D2RL::LifecycleService>(context);
     Registry.threads = Query<D2RL::ThreadService>(context);
     Registry.widgets = Query<D2RL::WidgetService>(context);
+    Registry.overlay = Query<D2RL::OverlayService>(context);
     Registry.dataTables = Query<D2RL::DataTableService>(context);
     Registry.localization = Query<D2RL::LocalizationService>(context);
 

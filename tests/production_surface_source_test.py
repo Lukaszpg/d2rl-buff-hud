@@ -1,6 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+LAYOUT = (ROOT / "companion/data/global/ui/layouts/buff-panel/BuffHudhd.json").read_text(encoding="utf-8")
 sources = "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "src").rglob("*.cpp")))
 sources += "\n" + "\n".join(p.read_text(encoding="utf-8") for p in sorted((ROOT / "src").rglob("*.hpp")))
 
@@ -24,6 +25,34 @@ for token, description in banned.items():
 
 assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
+assert "UpdateHoverNamePresentation" in sources
+assert "EnsurePanelOpen" not in sources
+assert "PanelReadyLogged" not in sources
+assert "Panels->getPanelInfo" not in sources
+assert "RenderSnapshot();\n    QueuePoll();" in sources
+assert "RegisterHoverOverlay" in sources
+assert "DrawHoverOverlay" in sources
+assert "PublishHoverOverlay" in sources
+assert "D2RL::OverlayService" in sources
+assert "Overlay->drawText" in sources
+assert "Overlay->measureText" in sources
+assert "std::array<char, HoverTextBytes> hoverText" in sources
+assert "disable(slot.countdown)" in sources
+assert "disable(slot.slot)" in sources
+assert "disable(GridWidget)" in sources
+assert "disable(HudPanel)" in sources
+assert "gridRectAlreadyResolved" in sources
+assert "static_cast<double>(panelRect.width) * 0.5" in sources
+assert "static_cast<double>(panelRect.height) + static_cast<double>(gridRect.y)" in sources
+assert "QueuePoll();" in sources
+assert "set(slot.tooltip, occupied && state.tooltipVisible)" not in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
+assert '"type": "FocusableWidget"' not in LAYOUT
+assert '"name": "HoverName"' not in LAYOUT
+assert "__BUFF_HUD_HOVER_NAME_RESERVE" not in LAYOUT
+assert "__BUFF_HUD_HOVER_NAME_RESERVE" not in sources
+assert "WriteHoverNameText" not in sources
+assert "qualifiedHoverNameBuffer" not in sources
+assert '"fitToParent": true' in LAYOUT
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")
