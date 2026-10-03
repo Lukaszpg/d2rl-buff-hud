@@ -205,33 +205,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -404,33 +377,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -631,33 +577,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -830,33 +749,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -1057,33 +949,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -1256,33 +1121,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -1483,33 +1321,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -1682,33 +1493,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -1909,33 +1693,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -2108,33 +1865,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -2335,33 +2065,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -2534,33 +2237,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -2761,33 +2437,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -2960,33 +2609,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -3187,33 +2809,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -3386,33 +2981,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -3613,33 +3181,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -3812,33 +3353,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
@@ -4039,33 +3553,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -4252,33 +3739,6 @@
                   }
                 }
               }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
             }
           ]
         },
@@ -4451,33 +3911,6 @@
                   "y": 52,
                   "width": 112,
                   "height": 42
-                },
-                "style": {
-                  "pointSize": "$MediumFontSize",
-                  "fontColor": "$FontColorWhite",
-                  "alignment": {
-                    "h": "center",
-                    "v": "center"
-                  },
-                  "dropShadow": "$DefaultDropShadow",
-                  "options": {
-                    "hideOverflow": true
-                  }
-                }
-              }
-            },
-            {
-              "type": "TextBoxWidget",
-              "name": "HoverName",
-              "fields": {
-                "visible": false,
-                "text": "__BUFF_HUD_HOVER_NAME_RESERVE_________________________________________________________________________________________________",
-                "fontType": "16pt",
-                "rect": {
-                  "x": -64,
-                  "y": -48,
-                  "width": 224,
-                  "height": 40
                 },
                 "style": {
                   "pointSize": "$MediumFontSize",
