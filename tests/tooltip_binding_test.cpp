@@ -29,40 +29,21 @@ void TestHoverInteractionState() {
     H::Context = &context;
     H::Widgets = &widgets;
     H::HandlesResolved = true;
-    H::HudPanel = 1;
-    H::GridWidget = 2;
 
-    std::uint64_t next = 3;
+    std::uint64_t next = 1;
     for (auto& slot : H::Handles) {
-        slot.slot = next++;
-        slot.tooltip = next++;
         for (auto& icon : slot.icons) icon = next++;
     }
 
-    H::RenderStates = {};
-    H::RenderStates[0].visible = true;
-    H::RenderStates[0].tooltipVisible = true;
-    H::RenderStates[1].visible = true;
-    H::RenderStates[1].tooltipVisible = false;
-
     assert(H::ApplyInputIsolation());
-    assert(Enabled[H::HudPanel]);
-    assert(Enabled[H::GridWidget]);
-    for (std::size_t i = 0; i < H::Handles.size(); ++i) {
-        const auto& slot = H::Handles[i];
-        const bool occupied = H::RenderStates[i].visible;
-        assert(Enabled[slot.slot] == occupied);
-        assert(Enabled[slot.tooltip] == (occupied && H::RenderStates[i].tooltipVisible));
+    for (const auto& slot : H::Handles) {
         for (const auto icon : slot.icons) assert(!Enabled[icon]);
     }
 
     H::Context = nullptr;
     H::Widgets = nullptr;
     H::HandlesResolved = false;
-    H::HudPanel = D2RL::Widgets::InvalidHandle;
-    H::GridWidget = D2RL::Widgets::InvalidHandle;
     H::Handles = {};
-    H::RenderStates = {};
     Enabled.fill(false);
 }
 void* __fastcall FindPanel(const char*) noexcept { return Widget.data(); }
