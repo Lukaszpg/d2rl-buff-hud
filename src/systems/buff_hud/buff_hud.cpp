@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstring>
 #include <limits>
+#include <mutex>
 #include <string>
 #include <string_view>
 
@@ -82,11 +83,24 @@ using FindChildWidgetByNameFn = void*(__fastcall*)(void* parent, const char* nam
 const D2RL::PluginContext* Context{};
 const D2RL::PanelService* Panels{};
 const D2RL::WidgetService* Widgets{};
+const D2RL::OverlayService* Overlay{};
 const D2RL::ThreadService* Threads{};
 const D2RL::LifecycleService* Lifecycle{};
 D2RL::Panels::RegistrationHandle RegisteredPanel{D2RL::Panels::InvalidHandle};
 D2RL::Lifecycle::ListenerHandle DataTablesListener{D2RL::Lifecycle::InvalidHandle};
 std::array<D2RL::Lifecycle::ListenerHandle, 3> GameplayListeners{};
+D2RL::Overlay::CallbackHandle HoverOverlayCallback{D2RL::Overlay::InvalidCallbackHandle};
+
+struct HoverOverlayState final {
+    bool visible{};
+    float normalizedX{};
+    float normalizedY{};
+    std::array<char, HoverNameReserveBytes> text{};
+};
+
+std::mutex HoverOverlayMutex{};
+HoverOverlayState HoverOverlay{};
+
 
 FindTopLevelPanelFn FindTopLevelPanel{};
 FindChildWidgetByNameFn FindChildWidgetByName{};
@@ -114,6 +128,7 @@ struct SlotRenderState final {
     std::int32_t sourceSkillId{Core::NoSourceSkillId};
     bool timerVisible{};
     bool tooltipVisible{};
+    std::array<char, HoverNameReserveBytes> hoverText{};
     std::uintptr_t qualifiedTimerBuffer{};
     std::uintptr_t qualifiedHoverNameBuffer{};
     std::uintptr_t qualifiedTooltipWidget{};
@@ -291,9 +306,7 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
             }
         }
         if (Widgets->findWidget(Context, slot.slot, "Countdown", &slot.countdown)
-            != D2RL::Widgets::Result::Success
-            || Widgets->findWidget(Context, slot.slot, "HoverName", &slot.hoverName)
-                != D2RL::Widgets::Result::Success) {
+            != D2RL::Widgets::Result::Success) {
             Handles = {};
             return false;
         }
@@ -414,7 +427,6 @@ void InvalidateWidgetHandles() noexcept {
     // disabled; rendering/visibility updates still work through this state.
     for (auto& slot : Handles) {
         for (const auto icon : slot.icons) disable(icon);
-        disable(slot.hoverName);
         disable(slot.countdown);
         disable(slot.slot);
     }
@@ -689,14 +701,132 @@ void InvalidateWidgetHandles() noexcept {
     return true;
 }
 
+void ClearHoverOverlay() noexcept {
+    std::lock_guard lock(HoverOverlayMutex);
+    HoverOverlay = {};
+}
+
+void PublishHoverOverlay(
+    const char* text,
+    const POINT& point,
+    LONG clientWidth,
+    LONG clientHeight) noexcept {
+    if (text == nullptr || text[0] == '\0' || clientWidth <= 0 || clientHeight <= 0) {
+        ClearHoverOverlay();
+        return;
+    }
+
+    HoverOverlayState next{};
+    next.visible = true;
+    next.normalizedX = static_cast<float>(point.x) / static_cast<float>(clientWidth);
+    next.normalizedY = static_cast<float>(point.y) / static_cast<float>(clientHeight);
+    std::snprintf(next.text.data(), next.text.size(), "%s", text);
+
+    std::lock_guard lock(HoverOverlayMutex);
+    HoverOverlay = next;
+}
+
+void __cdecl DrawHoverOverlay(
+    const D2RL::PluginContext* context,
+    const D2RL::Overlay::Frame* frame,
+    void*) noexcept {
+    if (context == nullptr || context != Context || frame == nullptr
+        || Overlay == nullptr || frame->canvas == D2RL::Overlay::InvalidCanvasHandle) {
+        return;
+    }
+
+    HoverOverlayState state{};
+    {
+        std::lock_guard lock(HoverOverlayMutex);
+        state = HoverOverlay;
+    }
+    if (!state.visible || state.text[0] == '\0') return;
+
+    const auto textLength = static_cast<std::uint32_t>(std::strlen(state.text.data()));
+    if (textLength == 0) return;
+
+    const D2RL::Overlay::MeasureTextRequest measureRequest{
+        .structSize = D2RL::Overlay::MeasureTextRequestSize,
+        .flags = 0,
+        .canvas = frame->canvas,
+        .textSize = 0.0F,
+        .reserved = 0,
+        .text = state.text.data(),
+        .textLength = textLength,
+        .reserved2 = 0,
+    };
+    D2RL::Overlay::TextMetrics metrics{
+        .structSize = D2RL::Overlay::TextMetricsSize,
+        .flags = 0,
+    };
+    if (Overlay->measureText(context, &measureRequest, &metrics)
+        != D2RL::Overlay::Result::Success) {
+        return;
+    }
+
+    constexpr float HorizontalPadding = 7.0F;
+    constexpr float VerticalPadding = 5.0F;
+    constexpr float CursorGap = 14.0F;
+    const float cursorX = state.normalizedX * frame->screenWidth;
+    const float cursorY = state.normalizedY * frame->screenHeight;
+    const float boxWidth = metrics.width + HorizontalPadding * 2.0F;
+    const float boxHeight = metrics.height + VerticalPadding * 2.0F;
+
+    float left = cursorX + CursorGap;
+    float top = cursorY - boxHeight - CursorGap;
+    if (left + boxWidth > frame->screenWidth) {
+        left = cursorX - boxWidth - CursorGap;
+    }
+    if (top < 0.0F) {
+        top = cursorY + CursorGap;
+    }
+    if (left < 0.0F) left = 0.0F;
+    if (top + boxHeight > frame->screenHeight) {
+        top = std::max(0.0F, frame->screenHeight - boxHeight);
+    }
+
+    const D2RL::Overlay::FilledRectangleRequest background{
+        .structSize = D2RL::Overlay::FilledRectangleRequestSize,
+        .flags = 0,
+        .canvas = frame->canvas,
+        .rect = {left, top, left + boxWidth, top + boxHeight},
+        .color = {0.0F, 0.0F, 0.0F, 0.82F},
+        .rounding = 2.0F,
+        .reserved = 0,
+    };
+    (void)Overlay->drawFilledRectangle(context, &background);
+
+    const D2RL::Overlay::RectangleRequest border{
+        .structSize = D2RL::Overlay::RectangleRequestSize,
+        .flags = 0,
+        .canvas = frame->canvas,
+        .rect = {left, top, left + boxWidth, top + boxHeight},
+        .color = {0.55F, 0.55F, 0.55F, 0.95F},
+        .rounding = 2.0F,
+        .thickness = 1.0F,
+    };
+    (void)Overlay->drawRectangle(context, &border);
+
+    const D2RL::Overlay::TextRequest textRequest{
+        .structSize = D2RL::Overlay::TextRequestSize,
+        .flags = 0,
+        .canvas = frame->canvas,
+        .position = {left + HorizontalPadding, top + VerticalPadding},
+        .color = {1.0F, 1.0F, 1.0F, 1.0F},
+        .textSize = 0.0F,
+        .reserved = 0,
+        .text = state.text.data(),
+        .textLength = textLength,
+        .reserved2 = 0,
+    };
+    (void)Overlay->drawText(context, &textRequest);
+}
+
 void ClearTooltip(std::size_t slotIndex) noexcept {
     if (slotIndex >= SlotCount) return;
-    (void)SetVisible(Handles[slotIndex].hoverName, false);
-    if (WriteHoverNameText(slotIndex, "")) {
-        RenderStates[slotIndex].tooltipVisible = false;
-    } else {
-        RenderStates[slotIndex].tooltipVisible = false;
-    }
+    auto& state = RenderStates[slotIndex];
+    state.tooltipVisible = false;
+    state.hoverText.fill('\0');
 }
 
 void ApplyTooltip(
@@ -704,20 +834,22 @@ void ApplyTooltip(
     std::int32_t sourceSkillId) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
-    (void)SetVisible(Handles[slotIndex].hoverName, false);
-    char localizedName[HoverNameReserveBytes]{};
+    auto& state = RenderStates[slotIndex];
+    state.tooltipVisible = false;
+    state.hoverText.fill('\0');
     if (sourceSkillId == Core::NoSourceSkillId
-        || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))
-        || !WriteHoverNameText(slotIndex, localizedName)) {
-        RenderStates[slotIndex].tooltipVisible = false;
+        || !Internal::TryResolveSkillName(
+            sourceSkillId,
+            state.hoverText.data(),
+            state.hoverText.size())) {
         return;
     }
-    RenderStates[slotIndex].tooltipVisible = true;
+    state.tooltipVisible = state.hoverText[0] != '\0';
 }
 
 void UpdateHoverNamePresentation() noexcept {
+    ClearHoverOverlay();
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return;
-    for (const auto& slot : Handles) (void)SetVisible(slot.hoverName, false);
 
     HWND window = GetForegroundWindow();
     DWORD processId{};
@@ -745,16 +877,17 @@ void UpdateHoverNamePresentation() noexcept {
     const double uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
         / static_cast<double>(clientHeight);
 
-    // BuffGrid is authored at anchor=(0.5, 1.0). WidgetService rectangles are
-    // parent-local and do not bake the anchor into x/y, so apply the resolved
-    // fit-to-parent panel dimensions before testing slot-local rectangles.
+    // The original panel placed its local origin at anchor=(0.5, 1.0).
+    // The fit-to-parent root keeps that coordinate system by applying the same
+    // anchor to BuffGrid.
     const double gridLeft = static_cast<double>(panelRect.width) * 0.5
         + static_cast<double>(gridRect.x);
     const double gridTop = static_cast<double>(panelRect.height)
         + static_cast<double>(gridRect.y);
 
     for (std::size_t i = 0; i < Handles.size(); ++i) {
-        if (!RenderStates[i].visible || !RenderStates[i].tooltipVisible) continue;
+        const auto& state = RenderStates[i];
+        if (!state.visible || !state.tooltipVisible || state.hoverText[0] == '\0') continue;
         D2RL::Widgets::Rect slotRect{};
         if (Widgets->getWidgetRect(Context, Handles[i].slot, &slotRect)
             != D2RL::Widgets::Result::Success) {
@@ -765,7 +898,7 @@ void UpdateHoverNamePresentation() noexcept {
         const double right = left + static_cast<double>(slotRect.width);
         const double bottom = top + static_cast<double>(slotRect.height);
         if (uiX >= left && uiX < right && uiY >= top && uiY < bottom) {
-            (void)SetVisible(Handles[i].hoverName, true);
+            PublishHoverOverlay(state.hoverText.data(), point, clientWidth, clientHeight);
             break;
         }
     }
@@ -1066,6 +1199,7 @@ void OpenPanel() noexcept {
 }
 
 void ClosePanel() noexcept {
+    ClearHoverOverlay();
     RestoreQualifiedCountdownBuffers();
     RestoreQualifiedHoverNameBuffers();
     RestoreQualifiedTooltipBuffers();
@@ -1203,6 +1337,31 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
     return D2RL::ConsoleCommandResult::InvalidArguments;
 }
 
+[[nodiscard]] bool RegisterHoverOverlay() noexcept {
+    Overlay = Core::Services().overlay;
+    if (Overlay == nullptr
+        || !D2RL::HasOverlayServiceField(Overlay, D2RL::OverlayServiceRequiredSize)) {
+        Context->LogError("Buff HUD: OverlayService unavailable/undersized; click-through hover labels require OverlayService V1.");
+        return false;
+    }
+
+    const D2RL::Overlay::CallbackRegistration registration{
+        .structSize = D2RL::Overlay::CallbackRegistrationSize,
+        .flags = 0,
+        .phase = D2RL::Overlay::Phase::AfterGameUi,
+        .priority = 0,
+        .callback = &DrawHoverOverlay,
+        .userData = nullptr,
+    };
+    if (Overlay->registerFrameCallback(Context, &registration, &HoverOverlayCallback)
+        != D2RL::Overlay::Result::Success) {
+        Context->LogError("Buff HUD: failed to register display-only hover overlay.");
+        HoverOverlayCallback = D2RL::Overlay::InvalidCallbackHandle;
+        return false;
+    }
+    return true;
+}
+
 [[nodiscard]] bool RegisterLayoutAndPanel() noexcept {
     if (Context == nullptr || Panels == nullptr) return false;
     // D2RLoader resolves the layout from our companion MPQ, including packed
@@ -1326,6 +1485,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
     if (!ValidateNativeUiContract()
         || !Internal::InitializeIconFrameBackend(Context)
         || !RegisterLayoutAndPanel()
+        || !RegisterHoverOverlay()
         || !RegisterLifecycle()) {
         Shutdown();
         return false;
@@ -1343,6 +1503,14 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
 }
 
 void Shutdown() noexcept {
+    if (Context != nullptr && Overlay != nullptr
+        && HoverOverlayCallback != D2RL::Overlay::InvalidCallbackHandle
+        && Overlay->unregisterFrameCallback != nullptr) {
+        (void)Overlay->unregisterFrameCallback(Context, HoverOverlayCallback);
+    }
+    HoverOverlayCallback = D2RL::Overlay::InvalidCallbackHandle;
+    ClearHoverOverlay();
+
     Core::BuffDisplays().EndSession();
     Internal::ResetSkillIconCache();
     Internal::ShutdownIconFrameBackend();
@@ -1364,6 +1532,7 @@ void Shutdown() noexcept {
     Widgets = nullptr;
     Threads = nullptr;
     Lifecycle = nullptr;
+    Overlay = nullptr;
     Context = nullptr;
 }
 
