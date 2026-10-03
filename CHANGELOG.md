@@ -1,5 +1,11 @@
 # Buff HUD changelog
 
+## Unreleased — restore native buff-name hover
+- Re-enable the slot-local `FocusableWidget` for occupied buffs with resolved tooltip text so hovering an icon displays the localized buff name again.
+- Keep atlas buttons and inactive slots disabled; panel/grid containers remain enabled only to permit descendant hover hit-testing.
+- Add regression coverage for the enabled-state policy that was lost during the 1.0.11 production cleanup.
+
+
 ## 1.0.11 — companion-MPQ reconciliation and production cleanup (2026-09-29)
 - Reconcile PR #1's companion MPQ/build/distribution architecture with the production runtime from main.
 - Keep native-skill-first timer resolution with configured Shout/Battle Orders/Battle Command fallbacks and finite native expiry.
