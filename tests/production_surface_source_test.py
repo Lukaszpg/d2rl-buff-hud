@@ -32,7 +32,7 @@ assert "PublishHoverOverlay" in sources
 assert "D2RL::OverlayService" in sources
 assert "Overlay->drawText" in sources
 assert "Overlay->measureText" in sources
-assert "std::array<char, HoverNameReserveBytes> hoverText" in sources
+assert "std::array<char, HoverTextBytes> hoverText" in sources
 assert "disable(slot.countdown)" in sources
 assert "disable(slot.slot)" in sources
 assert "disable(GridWidget)" in sources
@@ -44,5 +44,9 @@ assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
 assert '"type": "FocusableWidget"' not in LAYOUT
 assert '"name": "HoverName"' not in LAYOUT
+assert "__BUFF_HUD_HOVER_NAME_RESERVE" not in LAYOUT
+assert "__BUFF_HUD_HOVER_NAME_RESERVE" not in sources
+assert "WriteHoverNameText" not in sources
+assert "qualifiedHoverNameBuffer" not in sources
 assert '"fitToParent": true' in LAYOUT
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")
