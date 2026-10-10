@@ -1,5 +1,10 @@
 # Buff HUD changelog
 
+## Unreleased
+- Hide the Buff HUD while the verified expansion stash panel is visible, then restore it when the stash closes.
+- Reuse the existing build-93847 UI lookup and UI-thread polling, with readable-range and visibility-value checks before reading the stock panel.
+- Set the loader-facing plugin author to MadMike while retaining upstream license and attribution notices.
+
 ## 1.0.11 — companion-MPQ reconciliation and production cleanup (2026-09-29)
 - Reconcile PR #1's companion MPQ/build/distribution architecture with the production runtime from main.
 - Keep native-skill-first timer resolution with configured Shout/Battle Orders/Battle Command fallbacks and finite native expiry.

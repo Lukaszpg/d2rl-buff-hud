@@ -32,6 +32,7 @@ using Internal::SkillIconDescriptor;
 constexpr std::size_t SlotCount = Core::MaximumDisplayedBuffs;
 constexpr std::size_t AtlasCount = 9;
 constexpr std::uint32_t FramesPerSecond = 25;
+constexpr char StashPanelName[] = "BankExpansionLayout";
 constexpr char TimerReserve[] = "__BUFF_PANEL_TIMER_RESERVE_00__";
 constexpr std::size_t TimerReserveBytes = sizeof(TimerReserve);
 using Internal::TooltipReserveBytes;
@@ -122,6 +123,8 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
+bool HudVisibilityKnown{};
+bool HudHiddenForStash{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -921,6 +924,42 @@ void RenderSnapshot() noexcept {
 
 void QueuePoll() noexcept;
 
+enum class StashPanelVisibility : std::uint8_t {
+    Unknown,
+    Closed,
+    Open,
+};
+
+[[nodiscard]] StashPanelVisibility ReadStashPanelVisibility() noexcept {
+    if (FindTopLevelPanel == nullptr) return StashPanelVisibility::Unknown;
+    void* const panel = FindTopLevelPanel(StashPanelName);
+    if (panel == nullptr) return StashPanelVisibility::Closed;
+
+    const auto* const visible = static_cast<const std::uint8_t*>(panel)
+        + Native::Contract::WidgetVisibleOffset;
+    if (!IsReadableRange(visible, sizeof(*visible))) return StashPanelVisibility::Unknown;
+    if (*visible > 1U) return StashPanelVisibility::Unknown;
+    return *visible != 0U ? StashPanelVisibility::Open : StashPanelVisibility::Closed;
+}
+
+void SyncHudVisibilityWithStash() noexcept {
+    if (!HandlesResolved && !ResolveWidgetHandles()) return;
+    const auto stash = ReadStashPanelVisibility();
+    if (stash == StashPanelVisibility::Unknown) return;
+
+    const bool hideHud = stash == StashPanelVisibility::Open;
+    if (HudVisibilityKnown && HudHiddenForStash == hideHud) return;
+    if (!SetVisible(HudPanel, !hideHud)) return;
+
+    HudVisibilityKnown = true;
+    HudHiddenForStash = hideHud;
+    if (Context != nullptr) {
+        Context->LogInfo(hideHud
+            ? "Buff HUD: hidden while the stash panel is open."
+            : "Buff HUD: shown because the stash panel is closed.");
+    }
+}
+
 void __cdecl PollOnUiThread(const D2RL::PluginContext* context, void*) noexcept {
     PollScheduled.store(false, std::memory_order_release);
     if (context == nullptr || context != Context
@@ -929,6 +968,7 @@ void __cdecl PollOnUiThread(const D2RL::PluginContext* context, void*) noexcept 
     }
 
     RenderSnapshot();
+    SyncHudVisibilityWithStash();
     QueuePoll();
 }
 
@@ -958,6 +998,8 @@ void OpenPanel() noexcept {
     if (result != D2RL::Panels::Result::Success) {
         return;
     }
+    HudVisibilityKnown = false;
+    HudHiddenForStash = false;
     InvalidateWidgetHandles();
     if (ResolveWidgetHandles()) {
         for (std::size_t i = 0; i < SlotCount; ++i) {
@@ -975,6 +1017,8 @@ void ClosePanel() noexcept {
         (void)Panels->closePanel(Context, RegisteredPanel);
     }
     InvalidateWidgetHandles();
+    HudVisibilityKnown = false;
+    HudHiddenForStash = false;
 }
 
 void __cdecl RebuildIconsOnGameThread(const D2RL::PluginContext*, void*) noexcept {
@@ -1076,7 +1120,7 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     const auto icons = Internal::SkillIconStatus();
     char line[512]{};
     std::snprintf(line, sizeof(line),
-        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
+        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled stashAutoHide=enabled.",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
@@ -1239,7 +1283,7 @@ bool Initialize(const D2RL::PluginContext* context) noexcept {
         Context->LogWarn("Buff HUD: console command 'buff-panel' could not be registered.");
     }
     Context->LogInfo(
-        "Buff HUD 1.1.0 BuffHud initialized: 21 display-only slots, companion-resource layout, fixed gameplay input isolation, timer/resource rendering, and runtime skill icon/name resolution.");
+        "Buff HUD 1.1.0 BuffHud initialized: 21 display-only slots, companion-resource layout, fixed gameplay input isolation, stash auto-hide, timer/resource rendering, and runtime skill icon/name resolution.");
     return true;
 }
 

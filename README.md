@@ -12,6 +12,7 @@ Huge thank you also goes to [Collin](https://github.com/CollinHerber) for contri
 ## What it provides
 
 - 21 reusable display-only buff slots in a 3×7, lower-left-fill panel.
+- Automatically hides the HUD while the active stash panel is open and restores it when the stash closes.
 - Timed entries with countdowns based on the game's authoritative 25-frame-per-second clock.
 - Resource entries with an optional current/max stat counter (e.g. Bone Armor), independent of time remaining.
 - Automatic icon and localized name discovery using game Skills/SkillDesc and original skill icon atlases (Amazon through Warlock and Global).

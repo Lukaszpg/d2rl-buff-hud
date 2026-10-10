@@ -91,6 +91,8 @@ inline constexpr std::array<std::uint8_t, 22> FindTopLevelPanelExpected{
 
 inline constexpr std::uintptr_t FindTopLevelPanelRva = 0x846170;
 
+inline constexpr std::size_t WidgetVisibleOffset = 0x51;
+
 inline constexpr std::size_t GameFrameOffset = 0x170;
 
 inline constexpr std::array<std::uint8_t, 5> GenericCurseStateLookupCallExpected{
