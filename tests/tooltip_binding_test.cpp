@@ -10,6 +10,12 @@
 namespace H = BuffPanel::Systems::BuffHud;
 namespace {
 alignas(8) std::array<std::byte, 0x1000> Widget{};
+std::array<bool, 400> Visibility{};
+D2RL::Widgets::Result __cdecl SetVisibility(const D2RL::PluginContext*,
+    D2RL::Widgets::WidgetHandle handle, bool visible) noexcept {
+    if (handle < Visibility.size()) Visibility[handle] = visible;
+    return D2RL::Widgets::Result::Success;
+}
 constexpr std::size_t TextField = 0x88; // Observed FocusableWidget field on 93847.
 void* __fastcall FindPanel(const char*) noexcept { return Widget.data(); }
 void* __fastcall FindChild(void*, const char*) noexcept { return Widget.data(); }
@@ -80,6 +86,67 @@ int main() {
     std::memcpy(Widget.data() + 0x180, Widget.data() + TextField, 24);
     assert(!H::WriteTooltipText(0, "Ambiguous"));
     assert(std::memcmp(exact, reserve, sizeof(reserve)) == 0);
+    // Both input directions are represented by replacing the current native
+    // tree, then returning to a freshly reconstructed original allocation.
+    H::InvalidateWidgetHandles();
+    std::array<char, H::TimerReserveBytes> timer{};
+    std::memcpy(timer.data(), H::TimerReserve, timer.size());
+    Widget = {};
+    Field(BuffPanel::Native::Contract::HudTextPointerOffset,
+        reinterpret_cast<std::uintptr_t>(timer.data()));
+    H::ReconcileNativeWidgets();
+    assert(H::NativeCountdownWidgets[0] == Widget.data());
+    H::RenderStates[0].visible = true;
+    H::RenderStates[0].timerVisible = true;
+    H::RenderStates[0].key = 42;
+    // Marker restored in the same allocation: must bypass same-second caches.
+    H::ReconcileNativeWidgets();
+    assert(!H::RenderStates[0].visible && H::RenderStates[0].key == 0);
+    std::memcpy(timer.data(), "2:23", 5);
+    H::RenderStates[0].visible = true;
+    H::RenderStates[0].timerVisible = true;
+    H::RenderStates[0].key = 42;
+    H::ReconcileNativeWidgets();
+    assert(H::RenderStates[0].key == 42); // ordinary polling preserves state
+    std::array<char, H::TimerReserveBytes> other{};
+    for (int transition = 0; transition < 6; ++transition) {
+        auto* next = transition % 2 == 0 ? other.data() : timer.data();
+        std::memcpy(next, H::TimerReserve, H::TimerReserveBytes);
+        Field(BuffPanel::Native::Contract::HudTextPointerOffset,
+            reinterpret_cast<std::uintptr_t>(next));
+        H::ReconcileNativeWidgets();
+        assert(!H::RenderStates[0].visible);
+        assert(H::NativeCountdownBuffers[0] == reinterpret_cast<std::uintptr_t>(next));
+        H::RenderStates[0].visible = true;
+        H::RenderStates[0].qualifiedTimerBuffer = reinterpret_cast<std::uintptr_t>(next);
+    }
+    // Unavailable tree must drop native qualifications without touching old data.
+    H::FindTopLevelPanel = nullptr;
+    H::ReconcileNativeWidgets();
+    assert(H::RenderStates[0].qualifiedTimerBuffer == 0);
+    assert(std::memcmp(other.data(), H::TimerReserve, other.size()) == 0);
+    D2RL::PluginContext context{};
+    D2RL::WidgetService widgets{};
+    widgets.setWidgetVisible = &SetVisibility;
+    H::Context = &context;
+    H::Widgets = &widgets;
+    H::RenderStates = {};
+    for (std::size_t i = 0; i < H::SlotCount; ++i) {
+        H::Handles[i].slot = 100 + i;
+        H::Handles[i].countdown = 200 + i;
+        H::Handles[i].tooltip = 300 + i;
+    }
+    for (int transition = 0; transition < 6; ++transition) {
+        Visibility.fill(true); // input switch resets native flags in place
+        H::ReconcileNativeWidgets();
+        for (std::size_t i = 0; i < H::SlotCount; ++i) {
+            assert(!Visibility[100 + i]);
+            assert(!Visibility[200 + i]);
+            assert(!Visibility[300 + i]);
+        }
+    }
+    H::Context = nullptr;
+    H::Widgets = nullptr;
     VirtualFree(pages, 0, MEM_RELEASE);
     std::cout << "PASS: production tooltip binding, all slots, exact allocation, native length, reuse, restore and rejection\n";
 }

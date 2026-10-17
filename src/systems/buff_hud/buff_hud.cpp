@@ -122,6 +122,8 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
+std::array<void*, SlotCount> NativeCountdownWidgets{};
+std::array<std::uintptr_t, SlotCount> NativeCountdownBuffers{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -373,6 +375,8 @@ void InvalidateWidgetHandles() noexcept {
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
+    NativeCountdownWidgets = {};
+    NativeCountdownBuffers = {};
     LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
 }
 
@@ -420,6 +424,53 @@ void InvalidateWidgetHandles() noexcept {
     std::snprintf(slotName, sizeof(slotName), "BuffSlot%02zu", slotIndex);
     void* slot = grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
     return slot != nullptr ? FindChildWidgetByName(slot, childName) : nullptr;
+}
+
+// SDK handles are paths and survive UI reconstruction; rendered state and
+// qualified native buffers do not. Inspect only the current tree on the UI thread.
+// Never restore/write a buffer retained from a tree that has been replaced.
+void ReconcileNativeWidgets() noexcept {
+    bool changed = false;
+    for (std::size_t i = 0; i < SlotCount; ++i) {
+        void* widget = ResolveNativeSlotChild(i, "Countdown");
+        std::uintptr_t buffer{};
+        if (widget != nullptr) {
+            (void)ReadNativeField(widget, Native::Contract::HudTextPointerOffset, buffer);
+        }
+        auto& state = RenderStates[i];
+        const bool replaced = widget != NativeCountdownWidgets[i]
+            || buffer != NativeCountdownBuffers[i];
+        const bool reset = state.timerVisible && buffer != 0
+            && IsReadableRange(reinterpret_cast<const void*>(buffer), TimerReserveBytes)
+            && IsTimerReserve(reinterpret_cast<const char*>(buffer));
+        if (replaced || reset) {
+            const auto old = state;
+            state = {};
+            auto* tooltip = ResolveNativeSlotChild(i, "Tooltip");
+            std::uintptr_t tooltipBuffer{};
+            if (old.qualifiedTooltipWidget != 0
+                && reinterpret_cast<std::uintptr_t>(tooltip) == old.qualifiedTooltipWidget
+                && old.qualifiedTooltipFieldOffset != std::numeric_limits<std::size_t>::max()
+                && ReadNativeField(tooltip, old.qualifiedTooltipFieldOffset, tooltipBuffer)
+                && tooltipBuffer == old.qualifiedTooltipBuffer) {
+                state.qualifiedTooltipWidget = old.qualifiedTooltipWidget;
+                state.qualifiedTooltipBuffer = old.qualifiedTooltipBuffer;
+                state.qualifiedTooltipFieldOffset = old.qualifiedTooltipFieldOffset;
+                state.qualifiedTooltipEncoding = old.qualifiedTooltipEncoding;
+            }
+            NativeCountdownWidgets[i] = widget;
+            NativeCountdownBuffers[i] = buffer;
+            changed = true;
+        }
+        // Native input-mode switching can also reset visibility in place.
+        // Empty slots must be hidden even when the render cache says hidden.
+        if (!state.visible) {
+            (void)SetVisible(Handles[i].slot, false);
+            (void)SetVisible(Handles[i].countdown, false);
+            (void)SetVisible(Handles[i].tooltip, false);
+        }
+    }
+    if (changed) (void)ApplyInputIsolation();
 }
 
 [[nodiscard]] bool WriteCountdownText(std::size_t slotIndex, const char* text) noexcept {
@@ -808,6 +859,14 @@ void RenderSlot(
         (void)SetVisible(Handles[slotIndex].slot, true);
     }
 
+    (void)SetVisible(Handles[slotIndex].slot, true);
+    for (std::size_t atlas = 0; atlas < AtlasCount; ++atlas) {
+        (void)SetVisible(Handles[slotIndex].icons[atlas], atlas == AtlasIndex(icon.atlas));
+        (void)SetEnabled(Handles[slotIndex].icons[atlas], false);
+    }
+    (void)SetVisible(Handles[slotIndex].countdown, state.timerVisible);
+    (void)SetVisible(Handles[slotIndex].tooltip, state.tooltipVisible);
+
     if (entry.displayMode == Core::BuffDisplayMode::Resource) {
         if (state.timerVisible && state.currentValue == entry.currentValue) {
             return;
@@ -870,6 +929,7 @@ void RenderSlot(
 
 void RenderSnapshot() noexcept {
     if (!ResolveWidgetHandles()) return;
+    ReconcileNativeWidgets();
 
     auto snapshot = Core::BuffDisplays().Snapshot();
     std::uint32_t nowFrame{};
