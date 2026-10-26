@@ -26,36 +26,50 @@ ButtonRefreshFn ButtonRefresh{};
 
 [[nodiscard]] bool IsReadableRange(const void* address, std::size_t size) noexcept {
     if (address == nullptr || size == 0) return false;
-    MEMORY_BASIC_INFORMATION info{};
-    if (VirtualQuery(address, &info, sizeof(info)) == 0
-        || info.State != MEM_COMMIT
-        || (info.Protect & PAGE_GUARD) != 0
-        || (info.Protect & PAGE_NOACCESS) != 0) {
+    const auto start = reinterpret_cast<std::uintptr_t>(address);
+    const auto end = start + size;
+    if (start < 0x10000u || end < start) return false;
+    __try {
+        const auto* bytes = static_cast<const volatile std::uint8_t*>(address);
+        for (std::size_t offset = 0; offset < size; offset += 4096) {
+            (void)bytes[offset];
+        }
+        (void)bytes[size - 1];
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
         return false;
     }
-    const auto start = reinterpret_cast<std::uintptr_t>(address);
-    const auto regionStart = reinterpret_cast<std::uintptr_t>(info.BaseAddress);
-    const auto regionEnd = regionStart + info.RegionSize;
-    return start >= regionStart && start <= regionEnd && size <= regionEnd - start;
 }
 
 [[nodiscard]] bool IsWritableRange(void* address, std::size_t size) noexcept {
-    if (!IsReadableRange(address, size)) return false;
-    MEMORY_BASIC_INFORMATION info{};
-    if (VirtualQuery(address, &info, sizeof(info)) == 0) return false;
-    const DWORD protection = info.Protect & 0xFFU;
-    return protection == PAGE_READWRITE
-        || protection == PAGE_WRITECOPY
-        || protection == PAGE_EXECUTE_READWRITE
-        || protection == PAGE_EXECUTE_WRITECOPY;
+    if (address == nullptr || size == 0) return false;
+    const auto start = reinterpret_cast<std::uintptr_t>(address);
+    const auto end = start + size;
+    if (start < 0x10000u || end < start) return false;
+    __try {
+        auto* bytes = static_cast<volatile std::uint8_t*>(address);
+        for (std::size_t offset = 0; offset < size; offset += 4096) {
+            const std::uint8_t value = bytes[offset];
+            bytes[offset] = value;
+        }
+        const std::uint8_t last = bytes[size - 1];
+        bytes[size - 1] = last;
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 template <typename T>
 [[nodiscard]] bool ReadValue(std::uintptr_t address, T& value) noexcept {
+    if (address < 0x10000u) return false;
     const auto* source = reinterpret_cast<const void*>(address);
-    if (!IsReadableRange(source, sizeof(T))) return false;
-    std::memcpy(&value, source, sizeof(T));
-    return true;
+    __try {
+        std::memcpy(&value, source, sizeof(T));
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 template <typename T>

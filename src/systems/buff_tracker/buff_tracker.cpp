@@ -95,6 +95,7 @@ std::atomic<void*> AuthoritativeGame{};
 std::atomic<void*> AuthoritativePlayer{};
 std::atomic<bool> FramePumpScheduled{};
 
+std::atomic<std::uint32_t> LastPumpedGameFrame{}; // once per 25 Hz game frame
 std::atomic<std::uint32_t> LastTimerDiscoveryFrame{}; // once per game frame
 
 constexpr std::array<D2RL::CustomTables::ColumnDefinition, 8> BuffHudColumns{{
@@ -154,44 +155,31 @@ constexpr std::array<D2RL::CustomTables::ColumnDefinition, 8> BuffHudColumns{{
     if (address == nullptr || size == 0) return false;
     const auto start = reinterpret_cast<std::uintptr_t>(address);
     const auto end = start + size;
-    if (end < start) return false;
-
-    auto current = start;
-    while (current < end) {
-        MEMORY_BASIC_INFORMATION info{};
-        if (VirtualQuery(reinterpret_cast<const void*>(current), &info, sizeof(info)) == 0
-            || info.State != MEM_COMMIT
-            || (info.Protect & PAGE_GUARD) != 0
-            || (info.Protect & PAGE_NOACCESS) != 0) {
-            return false;
+    if (start < 0x10000u || end < start) return false;
+    __try {
+        const auto* bytes = static_cast<const volatile std::uint8_t*>(address);
+        for (std::size_t offset = 0; offset < size; offset += 4096) {
+            (void)bytes[offset];
         }
-        const DWORD basic = info.Protect & 0xFFu;
-        if (basic != PAGE_READONLY
-            && basic != PAGE_READWRITE
-            && basic != PAGE_WRITECOPY
-            && basic != PAGE_EXECUTE
-            && basic != PAGE_EXECUTE_READ
-            && basic != PAGE_EXECUTE_READWRITE
-            && basic != PAGE_EXECUTE_WRITECOPY) {
-            return false;
-        }
-        const auto regionBase = reinterpret_cast<std::uintptr_t>(info.BaseAddress);
-        const auto regionEnd = regionBase + info.RegionSize;
-        if (regionEnd <= current) return false;
-        current = regionEnd < end ? regionEnd : end;
+        (void)bytes[size - 1];
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
     }
-    return true;
 }
 
 template <typename T>
 [[nodiscard]] bool ReadField(const void* base, std::size_t offset, T& value) noexcept {
     if (base == nullptr) return false;
     const auto start = reinterpret_cast<std::uintptr_t>(base);
-    if (offset > static_cast<std::size_t>(UINTPTR_MAX - start)) return false;
+    if (start < 0x10000u || offset > static_cast<std::size_t>(UINTPTR_MAX - start)) return false;
     const auto* address = reinterpret_cast<const void*>(start + offset);
-    if (!IsReadableRange(address, sizeof(T))) return false;
-    std::memcpy(&value, address, sizeof(T));
-    return true;
+    __try {
+        std::memcpy(&value, address, sizeof(T));
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 [[nodiscard]] bool ReadGameFrame(void* game, std::uint32_t& frame) noexcept {
@@ -687,10 +675,12 @@ void __cdecl FramePumpOnGameThread(const D2RL::PluginContext* context, void*) no
     auto* game = AuthoritativeGame.load(std::memory_order_acquire);
     std::uint32_t frame{};
     if (ReadGameFrame(game, frame)) {
-        Core::BuffDisplays().PublishGameFrame(session, frame);
-        RefreshResourceBuffs();
-        RefreshTimerPresence(frame);
-        DiscoverAttachedTimers(frame);
+        if (LastPumpedGameFrame.exchange(frame, std::memory_order_acq_rel) != frame) {
+            Core::BuffDisplays().PublishGameFrame(session, frame);
+            RefreshResourceBuffs();
+            RefreshTimerPresence(frame);
+            DiscoverAttachedTimers(frame);
+        }
         QueueFramePump();
     }
 }
@@ -817,9 +807,11 @@ void OnStatListPost(
 
     // Resource-mode rows are not classified from StatList metadata. Some
     // absorb-pool skills (notably Bone Armor) do not expose a reliable
-    // state/skill/level tuple on the posted list. The frame pump therefore
-    // discovers resource buffs directly from their configured current/max unit
-    // stats and uses buff-hud.txt skill_id only to resolve the icon/name.
+    // state/skill/level tuple on the posted list. Refresh resource buffs once
+    // the native post completes and again on 25 Hz frame advances.
+    if (phase == Core::StatListPostPhase::AfterNative) {
+        RefreshResourceBuffs();
+    }
     return;
 
 }
@@ -832,11 +824,13 @@ void __cdecl OnGameplayEvent(
     switch (event->kind) {
     case D2RL::Lifecycle::GameplayEventKind::GameJoined:
         ClearTimerPresenceRecords();
+        LastPumpedGameFrame.store(0, std::memory_order_relaxed);
         LastTimerDiscoveryFrame.store(0, std::memory_order_relaxed);
         CurrentSessionGeneration.store(event->sessionGeneration, std::memory_order_release);
         QueueFramePump();
         break;
     case D2RL::Lifecycle::GameplayEventKind::LocalPlayerReady:
+        LastPumpedGameFrame.store(0, std::memory_order_relaxed);
         CurrentSessionGeneration.store(event->sessionGeneration, std::memory_order_release);
         QueueFramePump();
         break;
@@ -845,6 +839,8 @@ void __cdecl OnGameplayEvent(
         AuthoritativeGame.store(nullptr, std::memory_order_release);
         AuthoritativePlayer.store(nullptr, std::memory_order_release);
         FramePumpScheduled.store(false, std::memory_order_release);
+        LastPumpedGameFrame.store(0, std::memory_order_relaxed);
+        LastTimerDiscoveryFrame.store(0, std::memory_order_relaxed);
         ClearTimerPresenceRecords();
         break;
     default:
@@ -987,6 +983,8 @@ void Shutdown() noexcept {
     AuthoritativeGame.store(nullptr, std::memory_order_release);
     AuthoritativePlayer.store(nullptr, std::memory_order_release);
     FramePumpScheduled.store(false, std::memory_order_release);
+    LastPumpedGameFrame.store(0, std::memory_order_relaxed);
+    LastTimerDiscoveryFrame.store(0, std::memory_order_relaxed);
     Whitelist.store({}, std::memory_order_release);
     BuffHudTable = D2RL::CustomTables::InvalidHandle;
     DataTablesListener = D2RL::Lifecycle::InvalidHandle;

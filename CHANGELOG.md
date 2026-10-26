@@ -1,5 +1,8 @@
 # Buff HUD changelog
 
+## Unreleased
+- Keep buff icons and countdowns consistent when switching between controller and keyboard/mouse; hide empty slots after native UI resets.
+
 ## 1.0.11 — companion-MPQ reconciliation and production cleanup (2026-09-29)
 - Reconcile PR #1's companion MPQ/build/distribution architecture with the production runtime from main.
 - Keep native-skill-first timer resolution with configured Shout/Battle Orders/Battle Command fallbacks and finite native expiry.

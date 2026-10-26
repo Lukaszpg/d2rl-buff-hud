@@ -73,6 +73,30 @@ constexpr std::array<const char*, AtlasCount> AtlasWidgetNames{
     "IconGlobal",
 };
 
+constexpr std::array<const char*, SlotCount> SlotWidgetNames{
+    "BuffSlot00",
+    "BuffSlot01",
+    "BuffSlot02",
+    "BuffSlot03",
+    "BuffSlot04",
+    "BuffSlot05",
+    "BuffSlot06",
+    "BuffSlot07",
+    "BuffSlot08",
+    "BuffSlot09",
+    "BuffSlot10",
+    "BuffSlot11",
+    "BuffSlot12",
+    "BuffSlot13",
+    "BuffSlot14",
+    "BuffSlot15",
+    "BuffSlot16",
+    "BuffSlot17",
+    "BuffSlot18",
+    "BuffSlot19",
+    "BuffSlot20",
+};
+
 using FindTopLevelPanelFn = void*(__fastcall*)(const char* name) noexcept;
 using FindChildWidgetByNameFn = void*(__fastcall*)(void* parent, const char* name) noexcept;
 
@@ -122,7 +146,13 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
+void* NativeHudPanel{};
+bool EmptySlotsHidden{};
+std::array<void*, SlotCount> NativeCountdownWidgets{};
+std::array<std::uintptr_t, SlotCount> NativeCountdownBuffers{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
+std::uint32_t LastRenderedGameFrame{NoRenderedSeconds};
+bool LastRenderedHasClock{};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
     for (std::size_t i = 0; i < AtlasOrder.size(); ++i) {
@@ -133,39 +163,52 @@ std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] bool IsReadableRange(const void* address, std::size_t size) noexcept {
     if (address == nullptr || size == 0) return false;
-    MEMORY_BASIC_INFORMATION info{};
-    if (VirtualQuery(address, &info, sizeof(info)) == 0
-        || info.State != MEM_COMMIT
-        || (info.Protect & PAGE_GUARD) != 0
-        || (info.Protect & PAGE_NOACCESS) != 0) {
+    const auto start = reinterpret_cast<std::uintptr_t>(address);
+    const auto end = start + size;
+    if (start < 0x10000u || end < start) return false;
+    __try {
+        const auto* bytes = static_cast<const volatile std::uint8_t*>(address);
+        for (std::size_t offset = 0; offset < size; offset += 4096) {
+            (void)bytes[offset];
+        }
+        (void)bytes[size - 1];
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
         return false;
     }
-    const auto start = reinterpret_cast<std::uintptr_t>(address);
-    const auto regionStart = reinterpret_cast<std::uintptr_t>(info.BaseAddress);
-    const auto regionEnd = regionStart + info.RegionSize;
-    return start >= regionStart && start <= regionEnd && size <= regionEnd - start;
 }
 
 [[nodiscard]] bool IsWritableRange(void* address, std::size_t size) noexcept {
-    if (!IsReadableRange(address, size)) return false;
-    MEMORY_BASIC_INFORMATION info{};
-    if (VirtualQuery(address, &info, sizeof(info)) == 0) return false;
-    const DWORD baseProtection = info.Protect & 0xFFU;
-    return baseProtection == PAGE_READWRITE
-        || baseProtection == PAGE_WRITECOPY
-        || baseProtection == PAGE_EXECUTE_READWRITE
-        || baseProtection == PAGE_EXECUTE_WRITECOPY;
+    if (address == nullptr || size == 0) return false;
+    const auto start = reinterpret_cast<std::uintptr_t>(address);
+    const auto end = start + size;
+    if (start < 0x10000u || end < start) return false;
+    __try {
+        auto* bytes = static_cast<volatile std::uint8_t*>(address);
+        for (std::size_t offset = 0; offset < size; offset += 4096) {
+            const std::uint8_t value = bytes[offset];
+            bytes[offset] = value;
+        }
+        const std::uint8_t last = bytes[size - 1];
+        bytes[size - 1] = last;
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 template <typename T>
 [[nodiscard]] bool ReadNativeField(const void* base, std::size_t offset, T& value) noexcept {
     if (base == nullptr) return false;
     const auto baseValue = reinterpret_cast<std::uintptr_t>(base);
-    if (offset > static_cast<std::size_t>(UINTPTR_MAX - baseValue)) return false;
+    if (baseValue < 0x10000u || offset > static_cast<std::size_t>(UINTPTR_MAX - baseValue)) return false;
     const auto* address = reinterpret_cast<const void*>(baseValue + offset);
-    if (!IsReadableRange(address, sizeof(T))) return false;
-    std::memcpy(&value, address, sizeof(T));
-    return true;
+    __try {
+        std::memcpy(&value, address, sizeof(T));
+        return true;
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        return false;
+    }
 }
 
 [[nodiscard]] bool IsTimerReserve(const char* buffer) noexcept {
@@ -373,7 +416,13 @@ void InvalidateWidgetHandles() noexcept {
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
+    NativeHudPanel = nullptr;
+    EmptySlotsHidden = false;
+    NativeCountdownWidgets = {};
+    NativeCountdownBuffers = {};
     LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
+    LastRenderedGameFrame = NoRenderedSeconds;
+    LastRenderedHasClock = false;
 }
 
 [[nodiscard]] bool SetVisible(D2RL::Widgets::WidgetHandle handle, bool visible) noexcept {
@@ -409,6 +458,13 @@ void InvalidateWidgetHandles() noexcept {
     return allSucceeded;
 }
 
+[[nodiscard]] void* ResolveNativeSlotFromGrid(void* grid, std::size_t slotIndex) noexcept {
+    if (grid == nullptr || FindChildWidgetByName == nullptr || slotIndex >= SlotCount) {
+        return nullptr;
+    }
+    return FindChildWidgetByName(grid, SlotWidgetNames[slotIndex]);
+}
+
 [[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept {
     if (FindTopLevelPanel == nullptr || FindChildWidgetByName == nullptr
         || slotIndex >= SlotCount || childName == nullptr) {
@@ -416,10 +472,102 @@ void InvalidateWidgetHandles() noexcept {
     }
     void* panel = FindTopLevelPanel("buff-panel/BuffHud");
     void* grid = panel != nullptr ? FindChildWidgetByName(panel, "BuffGrid") : nullptr;
-    char slotName[24]{};
-    std::snprintf(slotName, sizeof(slotName), "BuffSlot%02zu", slotIndex);
-    void* slot = grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
+    void* slot = ResolveNativeSlotFromGrid(grid, slotIndex);
     return slot != nullptr ? FindChildWidgetByName(slot, childName) : nullptr;
+}
+
+// SDK handles are paths and survive UI reconstruction; rendered state and
+// qualified native buffers do not. Inspect only the current tree on the UI thread.
+// Never restore/write a buffer retained from a tree that has been replaced.
+bool ReconcileNativeWidgets() noexcept {
+    void* panel = FindTopLevelPanel != nullptr ? FindTopLevelPanel("buff-panel/BuffHud") : nullptr;
+    void* grid = (panel != nullptr && FindChildWidgetByName != nullptr)
+        ? FindChildWidgetByName(panel, "BuffGrid")
+        : nullptr;
+    void* slot0 = ResolveNativeSlotFromGrid(grid, 0);
+    void* widget0 = (slot0 != nullptr && FindChildWidgetByName != nullptr)
+        ? FindChildWidgetByName(slot0, "Countdown")
+        : nullptr;
+    std::uintptr_t buffer0{};
+    if (widget0 != nullptr) {
+        (void)ReadNativeField(widget0, Native::Contract::HudTextPointerOffset, buffer0);
+    }
+
+    const bool canaryReplaced = panel != NativeHudPanel
+        || widget0 != NativeCountdownWidgets[0]
+        || buffer0 != NativeCountdownBuffers[0];
+    bool canaryReset = RenderStates[0].timerVisible && buffer0 != 0
+        && IsTimerReserve(reinterpret_cast<const char*>(buffer0));
+    if (!canaryReplaced && !canaryReset && !RenderStates[0].timerVisible) {
+        for (std::size_t i = 1; i < SlotCount; ++i) {
+            if (!RenderStates[i].timerVisible) continue;
+            const auto buffer = NativeCountdownBuffers[i];
+            if (buffer != 0 && IsTimerReserve(reinterpret_cast<const char*>(buffer))) {
+                canaryReset = true;
+            }
+            break;
+        }
+    }
+
+    if (!canaryReplaced && !canaryReset && EmptySlotsHidden) {
+        return false;
+    }
+
+    bool changed = false;
+    for (std::size_t i = 0; i < SlotCount; ++i) {
+        void* slot = i == 0 ? slot0 : ResolveNativeSlotFromGrid(grid, i);
+        void* widget = i == 0
+            ? widget0
+            : ((slot != nullptr && FindChildWidgetByName != nullptr)
+                ? FindChildWidgetByName(slot, "Countdown")
+                : nullptr);
+        std::uintptr_t buffer = i == 0 ? buffer0 : 0;
+        if (i != 0 && widget != nullptr) {
+            (void)ReadNativeField(widget, Native::Contract::HudTextPointerOffset, buffer);
+        }
+        auto& state = RenderStates[i];
+        const bool replaced = widget != NativeCountdownWidgets[i]
+            || buffer != NativeCountdownBuffers[i];
+        const bool reset = state.timerVisible && buffer != 0
+            && IsTimerReserve(reinterpret_cast<const char*>(buffer));
+        if (replaced || reset) {
+            const auto old = state;
+            state = {};
+            void* tooltip = (slot != nullptr && FindChildWidgetByName != nullptr)
+                ? FindChildWidgetByName(slot, "Tooltip")
+                : nullptr;
+            std::uintptr_t tooltipBuffer{};
+            if (old.qualifiedTooltipWidget != 0
+                && reinterpret_cast<std::uintptr_t>(tooltip) == old.qualifiedTooltipWidget
+                && old.qualifiedTooltipFieldOffset != std::numeric_limits<std::size_t>::max()
+                && ReadNativeField(tooltip, old.qualifiedTooltipFieldOffset, tooltipBuffer)
+                && tooltipBuffer == old.qualifiedTooltipBuffer) {
+                state.qualifiedTooltipWidget = old.qualifiedTooltipWidget;
+                state.qualifiedTooltipBuffer = old.qualifiedTooltipBuffer;
+                state.qualifiedTooltipFieldOffset = old.qualifiedTooltipFieldOffset;
+                state.qualifiedTooltipEncoding = old.qualifiedTooltipEncoding;
+            }
+            NativeCountdownWidgets[i] = widget;
+            NativeCountdownBuffers[i] = buffer;
+            changed = true;
+        }
+        // Native input-mode switching can also reset visibility in place.
+        // Empty slots must be hidden when reconciling a replaced/reset tree.
+        if (!state.visible) {
+            (void)SetVisible(Handles[i].slot, false);
+            (void)SetVisible(Handles[i].countdown, false);
+            (void)SetVisible(Handles[i].tooltip, false);
+        }
+    }
+    NativeHudPanel = panel;
+    EmptySlotsHidden = (panel != nullptr);
+    if (changed) {
+        (void)ApplyInputIsolation();
+        LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
+        LastRenderedGameFrame = NoRenderedSeconds;
+        LastRenderedHasClock = false;
+    }
+    return changed;
 }
 
 [[nodiscard]] bool WriteCountdownText(std::size_t slotIndex, const char* text) noexcept {
@@ -427,7 +575,10 @@ void InvalidateWidgetHandles() noexcept {
     const auto length = std::strlen(text);
     if (length + 1 > TimerReserveBytes) return false;
 
-    void* widget = ResolveNativeSlotChild(slotIndex, "Countdown");
+    void* widget = NativeCountdownWidgets[slotIndex];
+    if (widget == nullptr) {
+        widget = ResolveNativeSlotChild(slotIndex, "Countdown");
+    }
     std::uintptr_t pointer{};
     if (widget == nullptr
         || !ReadNativeField(widget, Native::Contract::HudTextPointerOffset, pointer)
@@ -778,7 +929,7 @@ void RenderSlot(
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
     SkillIconDescriptor icon{};
-    const bool iconResolved = ResolveEntryIcon(entry, icon);
+    (void)ResolveEntryIcon(entry, icon);
     auto& state = RenderStates[slotIndex];
     const bool assignmentChanged = !state.visible
         || state.key != entry.key
@@ -789,6 +940,7 @@ void RenderSlot(
 
     if (assignmentChanged) {
         (void)SetVisible(Handles[slotIndex].slot, false);
+        (void)SetVisible(Handles[slotIndex].countdown, false);
         const bool iconApplied = ApplyIcon(slotIndex, icon);
         state.key = entry.key;
         state.atlas = icon.atlas;
@@ -816,8 +968,10 @@ void RenderSlot(
         char text[32]{};
         std::snprintf(text, sizeof(text), "%d", entry.currentValue);
         if (WriteCountdownText(slotIndex, text)) {
-            (void)SetVisible(Handles[slotIndex].countdown, true);
-            state.timerVisible = true;
+            if (!state.timerVisible) {
+                (void)SetVisible(Handles[slotIndex].countdown, true);
+                state.timerVisible = true;
+            }
             state.seconds = NoRenderedSeconds;
             state.currentValue = entry.currentValue;
             state.maximumValue = entry.maximumValue;
@@ -840,8 +994,10 @@ void RenderSlot(
     if (!hasClock) {
         if (state.seconds != NoRenderedSeconds || !state.timerVisible) {
             if (WriteCountdownText(slotIndex, "--")) {
-                (void)SetVisible(Handles[slotIndex].countdown, true);
-                state.timerVisible = true;
+                if (!state.timerVisible) {
+                    (void)SetVisible(Handles[slotIndex].countdown, true);
+                    state.timerVisible = true;
+                }
                 state.seconds = NoRenderedSeconds;
             }
         }
@@ -854,8 +1010,10 @@ void RenderSlot(
     char text[16]{};
     FormatSeconds(seconds, text);
     if (WriteCountdownText(slotIndex, text)) {
-        (void)SetVisible(Handles[slotIndex].countdown, true);
-        state.timerVisible = true;
+        if (!state.timerVisible) {
+            (void)SetVisible(Handles[slotIndex].countdown, true);
+            state.timerVisible = true;
+        }
         state.seconds = seconds;
     }
 }
@@ -870,10 +1028,18 @@ void RenderSlot(
 
 void RenderSnapshot() noexcept {
     if (!ResolveWidgetHandles()) return;
+    const bool reconciled = ReconcileNativeWidgets();
 
     auto snapshot = Core::BuffDisplays().Snapshot();
     std::uint32_t nowFrame{};
     const bool hasClock = EffectiveFrame(snapshot, nowFrame);
+
+    if (!reconciled
+        && snapshot.revision == LastRenderedRevision
+        && hasClock == LastRenderedHasClock
+        && (!hasClock || nowFrame == LastRenderedGameFrame)) {
+        return;
+    }
 
     // The display bus is not gameplay state. Once authoritative time says an
     // entry is over, removing it from the display registry is safe and keeps
@@ -917,6 +1083,8 @@ void RenderSnapshot() noexcept {
     for (std::size_t i = visibleCount; i < SlotCount; ++i) HideSlot(i);
 
     LastRenderedRevision = snapshot.revision;
+    LastRenderedGameFrame = nowFrame;
+    LastRenderedHasClock = hasClock;
 }
 
 void QueuePoll() noexcept;
