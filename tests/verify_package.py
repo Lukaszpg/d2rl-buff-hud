@@ -10,7 +10,9 @@ import mpyq
 def verify(source: Path, archive: Path) -> None:
     expected = {
         "data/global/ui/layouts/buff-panel/BuffHudhd.json",
+        "data/global/ui/layouts/buff-panel/BuffHud.json",
         "data/global/excel/d2rloader/buff-panel/buff-hud.txt",
+        "data/global/excel/d2rloader/buff-panel/buff-hud-display.txt",
     }
     # D2RLCompiler encrypts its listfile. mpyq can read the payloads and tables
     # but not encrypted files, so verify all live blocks by their known paths.

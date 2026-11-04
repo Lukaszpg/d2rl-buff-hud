@@ -1,0 +1,1 @@
+state_id	icon_atlas	icon_frame	name_key	name	item_code

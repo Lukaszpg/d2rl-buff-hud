@@ -2,6 +2,7 @@
 #include "tooltip_text.hpp"
 
 #include "core/buff_display_bus.hpp"
+#include "core/buff_presentation.hpp"
 #include "core/services.hpp"
 #include "icon_frame_backend.hpp"
 #include "native/native_contract.hpp"
@@ -31,6 +32,13 @@ using Internal::SkillIconDescriptor;
 
 constexpr std::size_t SlotCount = Core::MaximumDisplayedBuffs;
 constexpr std::size_t AtlasCount = 9;
+constexpr std::size_t ItemCodeBytes = 8;
+// Item_<code> pictures of the companion layouts. The game does not apply a
+// layout's "visible": false, and widgets cannot be enumerated, so these and
+// every item_code of buff-hud-display.txt are hidden by name.
+constexpr std::array<const char*, 15> LayoutItemCodes{
+    "hp1", "hp2", "hp3", "hp4", "hp5", "mp1", "mp2", "mp3", "mp4", "mp5", "rvs", "rvl", "vps", "yps", "wms",
+};
 constexpr std::uint32_t FramesPerSecond = 25;
 constexpr char TimerReserve[] = "__BUFF_PANEL_TIMER_RESERVE_00__";
 constexpr std::size_t TimerReserveBytes = sizeof(TimerReserve);
@@ -93,6 +101,8 @@ std::atomic<bool> PollScheduled{};
 struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
+    // Native Item_<code> picture currently shown instead of an atlas icon, if any.
+    void* item{};
     D2RL::Widgets::WidgetHandle countdown{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle tooltip{D2RL::Widgets::InvalidHandle};
 };
@@ -103,6 +113,7 @@ struct SlotRenderState final {
     Core::BuffIconAtlas atlas{Core::BuffIconAtlas::Global};
     std::uint16_t requestedFrame{};
     std::uint16_t renderedFrame{};
+    char itemCode[ItemCodeBytes]{};
     Core::BuffDisplayMode displayMode{Core::BuffDisplayMode::Timer};
     std::uint32_t seconds{NoRenderedSeconds};
     std::int32_t currentValue{NoRenderedValue};
@@ -122,6 +133,12 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
+std::uint64_t HiddenItemGeneration{std::numeric_limits<std::uint64_t>::max()};
+constexpr std::size_t VisibleFlagScanBytes = 0x200;
+bool VisibleFlagQualified{};
+std::size_t VisibleFlagOffset{};
+std::uint8_t VisibleFlagMask{};
+bool VisibleFlagSetWhenShown{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -256,6 +273,103 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 [[nodiscard]] bool SetEnabled(D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept;
 [[nodiscard]] bool ApplyInputIsolation() noexcept;
 
+[[nodiscard]] void* ResolveNativeSlot(std::size_t slotIndex) noexcept;
+[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept;
+
+// D2RLoader keeps a small table of widget handles (one per distinct path), and
+// the slots already use most of it, so Item_<code> pictures are switched on the
+// native widgets. The visibility bit is learned from a Countdown, whose
+// visibility the WidgetService does control: toggle it and keep the one bit
+// that follows. Without a single such bit, item pictures stay unqualified.
+[[nodiscard]] bool QualifyVisibleFlag() noexcept {
+    if (VisibleFlagQualified) return true;
+    const auto countdown = Handles[0].countdown;
+    const auto* native = static_cast<const std::uint8_t*>(ResolveNativeSlotChild(0, "Countdown"));
+    if (native == nullptr || !IsReadableRange(native, VisibleFlagScanBytes)) return false;
+
+    std::array<std::uint8_t, VisibleFlagScanBytes> shown{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> hidden{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> shownAgain{};
+    if (!SetVisible(countdown, true)) return false;
+    std::memcpy(shown.data(), native, shown.size());
+    const bool hiddenSet = SetVisible(countdown, false);
+    std::memcpy(hidden.data(), native, hidden.size());
+    const bool shownSet = SetVisible(countdown, true);
+    std::memcpy(shownAgain.data(), native, shownAgain.size());
+    // RenderSlot shows the countdown again where a slot needs it.
+    (void)SetVisible(countdown, false);
+    if (!hiddenSet || !shownSet) return false;
+
+    std::size_t candidates = 0;
+    for (std::size_t offset = 0; offset < shown.size(); ++offset) {
+        const auto difference = static_cast<std::uint8_t>(shown[offset] ^ hidden[offset]);
+        if (shown[offset] != shownAgain[offset] || difference == 0) continue;
+        if ((difference & (difference - 1)) != 0) return false;
+        ++candidates;
+        VisibleFlagOffset = offset;
+        VisibleFlagMask = difference;
+        VisibleFlagSetWhenShown = (shown[offset] & difference) != 0;
+    }
+    VisibleFlagQualified = candidates == 1;
+    return VisibleFlagQualified;
+}
+
+[[nodiscard]] bool SetNativeVisible(void* widget, bool visible) noexcept {
+    if (!VisibleFlagQualified || widget == nullptr) return false;
+    auto* flag = static_cast<std::uint8_t*>(widget) + VisibleFlagOffset;
+    if (!IsWritableRange(flag, 1)) return false;
+    *flag = visible == VisibleFlagSetWhenShown
+        ? static_cast<std::uint8_t>(*flag | VisibleFlagMask)
+        : static_cast<std::uint8_t>(*flag & ~VisibleFlagMask);
+    return true;
+}
+
+// Shows or hides an Item_<code> container together with its Picture.
+[[nodiscard]] bool SetItemPictureVisible(void* item, bool visible) noexcept {
+    void* picture = item != nullptr ? FindChildWidgetByName(item, "Picture") : nullptr;
+    return SetNativeVisible(picture, visible) && SetNativeVisible(item, visible);
+}
+
+[[nodiscard]] void* FindItemPicture(void* slot, const char* code) noexcept {
+    if (slot == nullptr || FindChildWidgetByName == nullptr) return nullptr;
+    char widgetName[16]{};
+    std::snprintf(widgetName, sizeof(widgetName), "Item_%s", code);
+    return FindChildWidgetByName(slot, widgetName);
+}
+
+// Hides every known Item_ picture of every slot, then lets RenderSnapshot
+// re-apply the pictures of occupied slots.
+void HideItemPictures() noexcept {
+    const auto generation = Core::BuffPresentations().Generation();
+    const auto tableCodes = Core::BuffPresentations().ItemCodes();
+    const bool qualified = QualifyVisibleFlag();
+    std::size_t found = 0;
+    std::size_t hidden = 0;
+    for (std::size_t i = 0; i < Handles.size(); ++i) {
+        void* slot = ResolveNativeSlot(i);
+        auto hide = [&](const char* code) noexcept {
+            void* item = FindItemPicture(slot, code);
+            if (item == nullptr) return;
+            ++found;
+            hidden += SetItemPictureVisible(item, false) ? 1 : 0;
+        };
+        for (const auto* code : LayoutItemCodes) hide(code);
+        for (const auto& code : tableCodes) hide(code.c_str());
+        Handles[i].item = nullptr;
+        RenderStates[i].visible = false;
+    }
+    if (generation != HiddenItemGeneration) {
+        char line[160]{};
+        std::snprintf(line, sizeof(line),
+            "Buff HUD: item pictures found=%zu hidden=%zu visibleFlag=%s offset=0x%zx mask=0x%02x.",
+            found, hidden, qualified ? "qualified" : "not-qualified", VisibleFlagOffset,
+            static_cast<unsigned>(VisibleFlagMask));
+        found == hidden ? Context->LogInfo(line) : Context->LogWarn(line);
+    }
+    HiddenItemGeneration = generation;
+    LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
+}
+
 [[nodiscard]] bool ResolveWidgetHandles() noexcept {
     if (HandlesResolved) return true;
     if (Context == nullptr || Widgets == nullptr) return false;
@@ -307,6 +421,7 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
     }
 
     HandlesResolved = true;
+    HideItemPictures();
     (void)ApplyInputIsolation();
     return true;
 }
@@ -409,16 +524,20 @@ void InvalidateWidgetHandles() noexcept {
     return allSucceeded;
 }
 
-[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept {
-    if (FindTopLevelPanel == nullptr || FindChildWidgetByName == nullptr
-        || slotIndex >= SlotCount || childName == nullptr) {
+[[nodiscard]] void* ResolveNativeSlot(std::size_t slotIndex) noexcept {
+    if (FindTopLevelPanel == nullptr || FindChildWidgetByName == nullptr || slotIndex >= SlotCount) {
         return nullptr;
     }
     void* panel = FindTopLevelPanel("buff-panel/BuffHud");
     void* grid = panel != nullptr ? FindChildWidgetByName(panel, "BuffGrid") : nullptr;
     char slotName[24]{};
     std::snprintf(slotName, sizeof(slotName), "BuffSlot%02zu", slotIndex);
-    void* slot = grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
+    return grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
+}
+
+[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept {
+    if (childName == nullptr) return nullptr;
+    void* slot = ResolveNativeSlot(slotIndex);
     return slot != nullptr ? FindChildWidgetByName(slot, childName) : nullptr;
 }
 
@@ -655,13 +774,15 @@ void ClearTooltip(std::size_t slotIndex) noexcept {
 
 void ApplyTooltip(
     std::size_t slotIndex,
-    std::int32_t sourceSkillId) noexcept {
+    const Core::BuffDisplayEntry& entry) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
     (void)SetVisible(Handles[slotIndex].tooltip, false);
+    // A buff-hud-display.txt name wins over the source skill's localized name.
     char localizedName[TooltipReserveBytes]{};
-    if (sourceSkillId == Core::NoSourceSkillId
-        || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))) {
+    if (!Core::BuffPresentations().FindName(entry.stateId, localizedName, sizeof(localizedName))
+        && (entry.sourceSkillId == Core::NoSourceSkillId
+            || !Internal::TryResolveSkillName(entry.sourceSkillId, localizedName, sizeof(localizedName)))) {
         ClearTooltip(slotIndex);
         return;
     }
@@ -741,6 +862,30 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
     return false;
 }
 
+void HideItemIcon(std::size_t slotIndex) noexcept {
+    auto& item = Handles[slotIndex].item;
+    if (item == nullptr) return;
+    (void)SetItemPictureVisible(item, false);
+    item = nullptr;
+}
+
+// Item pictures are optional hidden layout containers named Item_<code>. A
+// code without a container in this slot keeps the atlas icon.
+[[nodiscard]] bool ApplyItemIcon(std::size_t slotIndex, const char* itemCode) noexcept {
+    HideItemIcon(slotIndex);
+    if (itemCode == nullptr || itemCode[0] == '\0' || !VisibleFlagQualified) return false;
+    auto& handles = Handles[slotIndex];
+    void* item = FindItemPicture(ResolveNativeSlot(slotIndex), itemCode);
+    if (item == nullptr) return false;
+    for (const auto icon : handles.icons) {
+        (void)SetEnabled(icon, false);
+        (void)SetVisible(icon, false);
+    }
+    if (!SetItemPictureVisible(item, true)) return false;
+    handles.item = item;
+    return true;
+}
+
 void HideSlot(std::size_t slotIndex) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
     auto& state = RenderStates[slotIndex];
@@ -779,17 +924,21 @@ void RenderSlot(
 
     SkillIconDescriptor icon{};
     const bool iconResolved = ResolveEntryIcon(entry, icon);
+    char itemCode[ItemCodeBytes]{};
+    (void)Core::BuffPresentations().FindItemCode(entry.stateId, itemCode, sizeof(itemCode));
     auto& state = RenderStates[slotIndex];
     const bool assignmentChanged = !state.visible
         || state.key != entry.key
         || state.atlas != icon.atlas
         || state.requestedFrame != icon.frame
+        || std::strcmp(state.itemCode, itemCode) != 0
         || state.displayMode != entry.displayMode
         || state.sourceSkillId != entry.sourceSkillId;
 
     if (assignmentChanged) {
         (void)SetVisible(Handles[slotIndex].slot, false);
-        const bool iconApplied = ApplyIcon(slotIndex, icon);
+        const bool iconApplied = ApplyItemIcon(slotIndex, itemCode) || ApplyIcon(slotIndex, icon);
+        std::memcpy(state.itemCode, itemCode, sizeof(state.itemCode));
         state.key = entry.key;
         state.atlas = icon.atlas;
         state.requestedFrame = icon.frame;
@@ -803,7 +952,7 @@ void RenderSlot(
         state.maximumValue = NoRenderedValue;
         state.timerVisible = false;
         state.tooltipVisible = false;
-        ApplyTooltip(slotIndex, entry.sourceSkillId);
+        ApplyTooltip(slotIndex, entry);
         state.visible = true;
         (void)SetVisible(Handles[slotIndex].slot, true);
     }
@@ -870,6 +1019,8 @@ void RenderSlot(
 
 void RenderSnapshot() noexcept {
     if (!ResolveWidgetHandles()) return;
+    // A table reload can name item codes the last pass did not hide.
+    if (Core::BuffPresentations().Generation() != HiddenItemGeneration) HideItemPictures();
 
     auto snapshot = Core::BuffDisplays().Snapshot();
     std::uint32_t nowFrame{};
