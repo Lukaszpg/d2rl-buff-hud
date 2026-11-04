@@ -14,17 +14,24 @@ static std::string Read(const char* path) {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) return 2;
+    // <layout>... <buff-hud.txt>: every shipped layout (HD and legacy) must
+    // carry the full BuffHud widget contract.
+    if (argc < 3) return 2;
     try {
-        auto layout = Read(argv[1]);
-        auto table = Read(argv[2]);
         std::string error;
-        if (!BuffPanel::Systems::BuffHud::LooseLayout::Validate(layout, error)
-            || !BuffPanel::Systems::BuffTracker::LooseBuffHud::ValidateAndNormalize(table, error)) {
+        for (int i = 1; i + 1 < argc; ++i) {
+            const auto layout = Read(argv[i]);
+            if (!BuffPanel::Systems::BuffHud::LooseLayout::Validate(layout, error)) {
+                std::cerr << argv[i] << ": " << error << '\n';
+                return 1;
+            }
+        }
+        auto table = Read(argv[argc - 1]);
+        if (!BuffPanel::Systems::BuffTracker::LooseBuffHud::ValidateAndNormalize(table, error)) {
             std::cerr << error << '\n';
             return 1;
         }
-        std::cout << "PASS: companion layout and buff table\n";
+        std::cout << "PASS: companion layouts and buff table\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
