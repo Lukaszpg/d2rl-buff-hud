@@ -121,6 +121,10 @@ if(BUFF_PANEL_BUILD_TESTS)
         add_test(NAME layout_parity
             COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/layout_parity_test.py"
                 "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}")
+        add_test(NAME item_pictures
+            COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/item_pictures_test.py"
+                "${CMAKE_CURRENT_SOURCE_DIR}/src/systems/buff_hud/buff_hud.cpp" "${BUFF_PANEL_DISPLAY_TABLE}"
+                "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}")
     endif()
     add_executable(timer_metadata_test tests/timer_metadata_test.cpp)
     target_include_directories(timer_metadata_test PRIVATE src)

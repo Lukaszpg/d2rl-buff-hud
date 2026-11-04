@@ -37,6 +37,10 @@ public:
     // Same contract as FindName, for the item code whose picture replaces the icon.
     [[nodiscard]] bool FindItemCode(std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept;
     [[nodiscard]] std::size_t Count() const noexcept;
+    // Distinct item codes of the current set; empty on allocation failure.
+    [[nodiscard]] std::vector<std::string> ItemCodes() const noexcept;
+    // Changes on every Replace or Clear.
+    [[nodiscard]] std::uint64_t Generation() const noexcept;
 
 private:
     [[nodiscard]] const BuffPresentation* Find(std::uint32_t stateId) const noexcept;
@@ -48,6 +52,7 @@ private:
 
     mutable std::mutex mutex_;
     std::vector<BuffPresentation> presentations_;
+    std::uint64_t generation_{};
 };
 
 [[nodiscard]] BuffPresentationRegistry& BuffPresentations() noexcept;

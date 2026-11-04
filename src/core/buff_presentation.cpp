@@ -12,11 +12,13 @@ BuffPresentationRegistry Registry{};
 void BuffPresentationRegistry::Replace(std::vector<BuffPresentation> presentations) noexcept {
     std::lock_guard lock(mutex_);
     presentations_ = std::move(presentations);
+    ++generation_;
 }
 
 void BuffPresentationRegistry::Clear() noexcept {
     std::lock_guard lock(mutex_);
     presentations_.clear();
+    ++generation_;
 }
 
 const BuffPresentation* BuffPresentationRegistry::Find(std::uint32_t stateId) const noexcept {
@@ -71,6 +73,27 @@ bool BuffPresentationRegistry::FindItemCode(
 std::size_t BuffPresentationRegistry::Count() const noexcept {
     std::lock_guard lock(mutex_);
     return presentations_.size();
+}
+
+std::vector<std::string> BuffPresentationRegistry::ItemCodes() const noexcept {
+    try {
+        std::lock_guard lock(mutex_);
+        std::vector<std::string> codes;
+        for (const auto& presentation : presentations_) {
+            if (!presentation.itemCode.empty()
+                && std::find(codes.begin(), codes.end(), presentation.itemCode) == codes.end()) {
+                codes.push_back(presentation.itemCode);
+            }
+        }
+        return codes;
+    } catch (...) {
+        return {};
+    }
+}
+
+std::uint64_t BuffPresentationRegistry::Generation() const noexcept {
+    std::lock_guard lock(mutex_);
+    return generation_;
 }
 
 BuffPresentationRegistry& BuffPresentations() noexcept {

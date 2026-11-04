@@ -82,3 +82,6 @@ The shipped layouts cover the stock potions `hp1`-`hp5`, `mp1`-`mp5`, `rvs`, `rv
 `Items/misc/potion/greater_healing_potion`), the legacy widget at its inventory DC6 (for example
 `..\\items\\invhp5`). To use another item, add an `Item_<code>` container with the same name to all 21
 slots of both `BuffHudhd.json` and `BuffHud.json`; `layout_parity` checks that both layouts agree.
+The game does not apply a layout's `"visible": false`, so BuffHud hides every picture by name: the
+stock codes above and every `item_code` used in `buff-hud-display.txt`. A layout must not declare
+pictures for other codes (they would show in every slot); `item_pictures` checks this.
