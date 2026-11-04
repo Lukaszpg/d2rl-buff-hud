@@ -190,6 +190,13 @@ constexpr std::array<D2RL::CustomTables::ColumnDefinition, DisplayTable::ColumnC
         .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, name)),
         .length = sizeof(DisplayRow::name),
     },
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "item_code",
+        .type = D2RL::CustomTables::ColumnType::Ascii,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, itemCode)),
+        .length = sizeof(DisplayRow::itemCode),
+    },
 }};
 
 [[nodiscard]] bool IsReadableRange(const void* address, std::size_t size) noexcept {
