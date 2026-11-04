@@ -75,8 +75,7 @@ The companion ships a header-only default, which means no overrides.
 ### Item pictures
 
 Both layouts declare one hidden `Widget` per item code in every `BuffSlot`, named `Item_<code>`,
-holding one `ImageWidget` with the picture (an `ImageWidget` ignores `"visible": false`, so the
-container is what BuffHud shows and hides).
+holding one `ImageWidget` named `Picture`.
 The shipped layouts cover the stock potions `hp1`-`hp5`, `mp1`-`mp5`, `rvs`, `rvl`, `vps`, `yps` and
 `wms`. The HD widget points at the item's HD inventory sprite (for example
 `Items/misc/potion/greater_healing_potion`), the legacy widget at its inventory DC6 (for example
@@ -85,3 +84,8 @@ slots of both `BuffHudhd.json` and `BuffHud.json`; `layout_parity` checks that b
 The game does not apply a layout's `"visible": false`, so BuffHud hides every picture by name: the
 stock codes above and every `item_code` used in `buff-hud-display.txt`. A layout must not declare
 pictures for other codes (they would show in every slot); `item_pictures` checks this.
+D2RLoader has too few widget handles for hundreds of pictures, so BuffHud switches them on the
+native widgets. It learns the native visibility bit once by toggling a slot's
+`Countdown` through the WidgetService. The log line `item pictures found=... hidden=...
+visibleFlag=...` reports the result; if the bit is not qualified, slots keep their skill icons
+(the pictures then cannot be hidden either).

@@ -101,8 +101,8 @@ std::atomic<bool> PollScheduled{};
 struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
-    // Item_<code> picture currently shown instead of an atlas icon, if any.
-    D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
+    // Native Item_<code> picture currently shown instead of an atlas icon, if any.
+    void* item{};
     D2RL::Widgets::WidgetHandle countdown{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle tooltip{D2RL::Widgets::InvalidHandle};
 };
@@ -134,6 +134,11 @@ std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
 std::uint64_t HiddenItemGeneration{std::numeric_limits<std::uint64_t>::max()};
+constexpr std::size_t VisibleFlagScanBytes = 0x200;
+bool VisibleFlagQualified{};
+std::size_t VisibleFlagOffset{};
+std::uint8_t VisibleFlagMask{};
+bool VisibleFlagSetWhenShown{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -268,21 +273,68 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 [[nodiscard]] bool SetEnabled(D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept;
 [[nodiscard]] bool ApplyInputIsolation() noexcept;
 
-// Shows or hides an Item_<code> container together with its Picture: the
-// container's visibility alone does not stop the ImageWidget from drawing.
-[[nodiscard]] bool SetItemPictureVisible(D2RL::Widgets::WidgetHandle item, bool visible) noexcept {
-    D2RL::Widgets::WidgetHandle picture{D2RL::Widgets::InvalidHandle};
-    const bool pictureSet = Widgets->findWidget(Context, item, "Picture", &picture) == D2RL::Widgets::Result::Success
-        && SetVisible(picture, visible);
-    return SetVisible(item, visible) && pictureSet;
+[[nodiscard]] void* ResolveNativeSlot(std::size_t slotIndex) noexcept;
+[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept;
+
+// D2RLoader keeps a small table of widget handles (one per distinct path), and
+// the slots already use most of it, so Item_<code> pictures are switched on the
+// native widgets. The visibility bit is learned from a Countdown, whose
+// visibility the WidgetService does control: toggle it and keep the one bit
+// that follows. Without a single such bit, item pictures stay unqualified.
+[[nodiscard]] bool QualifyVisibleFlag() noexcept {
+    if (VisibleFlagQualified) return true;
+    const auto countdown = Handles[0].countdown;
+    const auto* native = static_cast<const std::uint8_t*>(ResolveNativeSlotChild(0, "Countdown"));
+    if (native == nullptr || !IsReadableRange(native, VisibleFlagScanBytes)) return false;
+
+    std::array<std::uint8_t, VisibleFlagScanBytes> shown{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> hidden{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> shownAgain{};
+    if (!SetVisible(countdown, true)) return false;
+    std::memcpy(shown.data(), native, shown.size());
+    const bool hiddenSet = SetVisible(countdown, false);
+    std::memcpy(hidden.data(), native, hidden.size());
+    const bool shownSet = SetVisible(countdown, true);
+    std::memcpy(shownAgain.data(), native, shownAgain.size());
+    // RenderSlot shows the countdown again where a slot needs it.
+    (void)SetVisible(countdown, false);
+    if (!hiddenSet || !shownSet) return false;
+
+    std::size_t candidates = 0;
+    for (std::size_t offset = 0; offset < shown.size(); ++offset) {
+        const auto difference = static_cast<std::uint8_t>(shown[offset] ^ hidden[offset]);
+        if (shown[offset] != shownAgain[offset] || difference == 0) continue;
+        if ((difference & (difference - 1)) != 0) return false;
+        ++candidates;
+        VisibleFlagOffset = offset;
+        VisibleFlagMask = difference;
+        VisibleFlagSetWhenShown = (shown[offset] & difference) != 0;
+    }
+    VisibleFlagQualified = candidates == 1;
+    return VisibleFlagQualified;
 }
 
-[[nodiscard]] bool HideItemPicture(D2RL::Widgets::WidgetHandle slot, const char* code) noexcept {
+[[nodiscard]] bool SetNativeVisible(void* widget, bool visible) noexcept {
+    if (!VisibleFlagQualified || widget == nullptr) return false;
+    auto* flag = static_cast<std::uint8_t*>(widget) + VisibleFlagOffset;
+    if (!IsWritableRange(flag, 1)) return false;
+    *flag = visible == VisibleFlagSetWhenShown
+        ? static_cast<std::uint8_t>(*flag | VisibleFlagMask)
+        : static_cast<std::uint8_t>(*flag & ~VisibleFlagMask);
+    return true;
+}
+
+// Shows or hides an Item_<code> container together with its Picture.
+[[nodiscard]] bool SetItemPictureVisible(void* item, bool visible) noexcept {
+    void* picture = item != nullptr ? FindChildWidgetByName(item, "Picture") : nullptr;
+    return SetNativeVisible(picture, visible) && SetNativeVisible(item, visible);
+}
+
+[[nodiscard]] void* FindItemPicture(void* slot, const char* code) noexcept {
+    if (slot == nullptr || FindChildWidgetByName == nullptr) return nullptr;
     char widgetName[16]{};
     std::snprintf(widgetName, sizeof(widgetName), "Item_%s", code);
-    D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
-    return Widgets->findWidget(Context, slot, widgetName, &item) == D2RL::Widgets::Result::Success
-        && SetItemPictureVisible(item, false);
+    return FindChildWidgetByName(slot, widgetName);
 }
 
 // Hides every known Item_ picture of every slot, then lets RenderSnapshot
@@ -290,19 +342,29 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 void HideItemPictures() noexcept {
     const auto generation = Core::BuffPresentations().Generation();
     const auto tableCodes = Core::BuffPresentations().ItemCodes();
+    const bool qualified = QualifyVisibleFlag();
+    std::size_t found = 0;
     std::size_t hidden = 0;
     for (std::size_t i = 0; i < Handles.size(); ++i) {
-        auto& slot = Handles[i];
-        if (slot.slot == D2RL::Widgets::InvalidHandle) continue;
-        for (const auto* code : LayoutItemCodes) hidden += HideItemPicture(slot.slot, code) ? 1 : 0;
-        for (const auto& code : tableCodes) hidden += HideItemPicture(slot.slot, code.c_str()) ? 1 : 0;
-        slot.item = D2RL::Widgets::InvalidHandle;
+        void* slot = ResolveNativeSlot(i);
+        auto hide = [&](const char* code) noexcept {
+            void* item = FindItemPicture(slot, code);
+            if (item == nullptr) return;
+            ++found;
+            hidden += SetItemPictureVisible(item, false) ? 1 : 0;
+        };
+        for (const auto* code : LayoutItemCodes) hide(code);
+        for (const auto& code : tableCodes) hide(code.c_str());
+        Handles[i].item = nullptr;
         RenderStates[i].visible = false;
     }
     if (generation != HiddenItemGeneration) {
-        char line[96]{};
-        std::snprintf(line, sizeof(line), "Buff HUD: %zu item pictures hidden.", hidden);
-        Context->LogInfo(line);
+        char line[160]{};
+        std::snprintf(line, sizeof(line),
+            "Buff HUD: item pictures found=%zu hidden=%zu visibleFlag=%s offset=0x%zx mask=0x%02x.",
+            found, hidden, qualified ? "qualified" : "not-qualified", VisibleFlagOffset,
+            static_cast<unsigned>(VisibleFlagMask));
+        found == hidden ? Context->LogInfo(line) : Context->LogWarn(line);
     }
     HiddenItemGeneration = generation;
     LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
@@ -462,16 +524,20 @@ void InvalidateWidgetHandles() noexcept {
     return allSucceeded;
 }
 
-[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept {
-    if (FindTopLevelPanel == nullptr || FindChildWidgetByName == nullptr
-        || slotIndex >= SlotCount || childName == nullptr) {
+[[nodiscard]] void* ResolveNativeSlot(std::size_t slotIndex) noexcept {
+    if (FindTopLevelPanel == nullptr || FindChildWidgetByName == nullptr || slotIndex >= SlotCount) {
         return nullptr;
     }
     void* panel = FindTopLevelPanel("buff-panel/BuffHud");
     void* grid = panel != nullptr ? FindChildWidgetByName(panel, "BuffGrid") : nullptr;
     char slotName[24]{};
     std::snprintf(slotName, sizeof(slotName), "BuffSlot%02zu", slotIndex);
-    void* slot = grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
+    return grid != nullptr ? FindChildWidgetByName(grid, slotName) : nullptr;
+}
+
+[[nodiscard]] void* ResolveNativeSlotChild(std::size_t slotIndex, const char* childName) noexcept {
+    if (childName == nullptr) return nullptr;
+    void* slot = ResolveNativeSlot(slotIndex);
     return slot != nullptr ? FindChildWidgetByName(slot, childName) : nullptr;
 }
 
@@ -798,24 +864,19 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
 
 void HideItemIcon(std::size_t slotIndex) noexcept {
     auto& item = Handles[slotIndex].item;
-    if (item == D2RL::Widgets::InvalidHandle) return;
+    if (item == nullptr) return;
     (void)SetItemPictureVisible(item, false);
-    item = D2RL::Widgets::InvalidHandle;
+    item = nullptr;
 }
 
 // Item pictures are optional hidden layout containers named Item_<code>. A
 // code without a container in this slot keeps the atlas icon.
 [[nodiscard]] bool ApplyItemIcon(std::size_t slotIndex, const char* itemCode) noexcept {
     HideItemIcon(slotIndex);
-    if (itemCode == nullptr || itemCode[0] == '\0') return false;
+    if (itemCode == nullptr || itemCode[0] == '\0' || !VisibleFlagQualified) return false;
     auto& handles = Handles[slotIndex];
-    char widgetName[16]{};
-    std::snprintf(widgetName, sizeof(widgetName), "Item_%s", itemCode);
-    D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
-    if (Widgets->findWidget(Context, handles.slot, widgetName, &item) != D2RL::Widgets::Result::Success
-        || item == D2RL::Widgets::InvalidHandle) {
-        return false;
-    }
+    void* item = FindItemPicture(ResolveNativeSlot(slotIndex), itemCode);
+    if (item == nullptr) return false;
     for (const auto icon : handles.icons) {
         (void)SetEnabled(icon, false);
         (void)SetVisible(icon, false);
