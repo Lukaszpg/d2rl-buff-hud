@@ -50,6 +50,7 @@ The companion contains exactly the plugin-owned resources:
 
 ```text
 data/global/ui/layouts/buff-panel/BuffHudhd.json
+data/global/ui/layouts/buff-panel/BuffHud.json
 data/global/excel/d2rloader/buff-panel/buff-hud.txt
 data/global/excel/d2rloader/buff-panel/buff-hud-display.txt
 ```
@@ -94,11 +95,11 @@ Optional archive verification (Python plus `mpyq==0.2.5`): run `python tests/ver
 
 Edit the files under `companion/data/` and rebuild the plugin target to repack the MPQ. Asset-only edits do not require C++ changes.
 
-- Layout: `companion/data/global/ui/layouts/buff-panel/BuffHudhd.json`.
+- Layout: `companion/data/global/ui/layouts/buff-panel/BuffHudhd.json` (HD graphics) and `BuffHud.json` (legacy graphics, toggled in game with G).
 - Buff selection: `companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt`.
 - Icon and name overrides: `companion/data/global/excel/d2rloader/buff-panel/buff-hud-display.txt` (see `CONFIGURING-BUFF-HUD.md`).
 
-Change `BuffGrid.fields.rect.x` and `.y` to move the whole panel. The default is `x: -150, y: -515`; increasing x moves right, and making y more negative moves up. Keep the outer anchor and the 21 child slots unchanged for a simple reposition. There is no drag-to-move UI.
+Change `BuffGrid.fields.rect.x` and `.y` to move the whole panel. The HD default is `x: -150, y: -515`; increasing x moves right, and making y more negative moves up. The legacy layout uses legacy screen pixels (800x600) and the classic `SPELLS\*Skillicon` DC6 icons; its default centres the grid above the control panel. Keep the outer anchor and the 21 child slots unchanged for a simple reposition, and keep both layouts' widget names, frames and reserve strings identical (`tests/layout_parity_test.py`). There is no drag-to-move UI.
 
 Install the rebuilt MPQ next to the matching DLL and restart D2R. Any pre-existing mod override at the same virtual path takes priority, so inspect that if your companion changes do not appear. Use `buff-panel status` for the compact production status line, then verify real buffs separately.
 

@@ -78,12 +78,13 @@ target_compile_options(buff_panel_validate_display PRIVATE /utf-8 /EHsc)
 set(BUFF_PANEL_SDK_LICENSE_FILE "${BUFF_PANEL_SDK_DIR}/LICENSE" CACHE FILEPATH "PluginSDK license to include in dist")
 set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/external/D2RLCompiler/D2RLCompiler.exe" CACHE FILEPATH "Repository-pinned D2RLCompiler.exe used to pack the companion MPQ")
 set(BUFF_PANEL_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHudhd.json")
+set(BUFF_PANEL_LEGACY_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHud.json")
 set(BUFF_PANEL_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt")
 set(BUFF_PANEL_DISPLAY_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2rloader/buff-panel/buff-hud-display.txt")
 # Run on every build so an asset-only edit (or deletion) cannot leave a stale MPQ.
 # Custom-table TXT is compiled by D2RLoader after registerTable; pack needs no game link.
 add_custom_target(buff_panel_companion
-    COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_TABLE}"
+    COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}" "${BUFF_PANEL_TABLE}"
     COMMAND buff_panel_validate_display "${BUFF_PANEL_DISPLAY_TABLE}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:buff_panel>"
     COMMAND "${CMAKE_COMMAND}"
@@ -117,6 +118,9 @@ if(BUFF_PANEL_BUILD_TESTS)
     if(Python3_Interpreter_FOUND)
         add_test(NAME production_surface_source
             COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/production_surface_source_test.py")
+        add_test(NAME layout_parity
+            COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/layout_parity_test.py"
+                "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}")
     endif()
     add_executable(timer_metadata_test tests/timer_metadata_test.cpp)
     target_include_directories(timer_metadata_test PRIVATE src)
@@ -145,6 +149,7 @@ if(BUFF_PANEL_BUILD_TESTS)
         if(kind STREQUAL "layout")
             target_sources(loose_${kind}_test PRIVATE src/systems/buff_hud/loose_layout.cpp)
             add_test(NAME loose_${kind} COMMAND loose_${kind}_test "${BUFF_PANEL_LAYOUT}")
+            add_test(NAME loose_${kind}_legacy COMMAND loose_${kind}_test "${BUFF_PANEL_LEGACY_LAYOUT}")
         else()
             target_sources(loose_${kind}_test PRIVATE src/systems/buff_tracker/loose_buff_hud.cpp)
             add_test(NAME loose_${kind} COMMAND loose_${kind}_test)
@@ -160,5 +165,5 @@ if(BUFF_PANEL_BUILD_TESTS)
     target_compile_options(buff_display_table_test PRIVATE /utf-8 /EHsc)
     add_test(NAME buff_display_table COMMAND buff_display_table_test "${BUFF_PANEL_DISPLAY_TABLE}")
     add_test(NAME companion_display_table COMMAND buff_panel_validate_display "${BUFF_PANEL_DISPLAY_TABLE}")
-    add_test(NAME companion_assets COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_TABLE}")
+    add_test(NAME companion_assets COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}" "${BUFF_PANEL_TABLE}")
 endif()
