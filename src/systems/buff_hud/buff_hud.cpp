@@ -2,6 +2,7 @@
 #include "tooltip_text.hpp"
 
 #include "core/buff_display_bus.hpp"
+#include "core/buff_presentation.hpp"
 #include "core/services.hpp"
 #include "icon_frame_backend.hpp"
 #include "native/native_contract.hpp"
@@ -655,13 +656,15 @@ void ClearTooltip(std::size_t slotIndex) noexcept {
 
 void ApplyTooltip(
     std::size_t slotIndex,
-    std::int32_t sourceSkillId) noexcept {
+    const Core::BuffDisplayEntry& entry) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
 
     (void)SetVisible(Handles[slotIndex].tooltip, false);
+    // A buff-hud-display.txt name wins over the source skill's localized name.
     char localizedName[TooltipReserveBytes]{};
-    if (sourceSkillId == Core::NoSourceSkillId
-        || !Internal::TryResolveSkillName(sourceSkillId, localizedName, sizeof(localizedName))) {
+    if (!Core::BuffPresentations().FindName(entry.stateId, localizedName, sizeof(localizedName))
+        && (entry.sourceSkillId == Core::NoSourceSkillId
+            || !Internal::TryResolveSkillName(entry.sourceSkillId, localizedName, sizeof(localizedName)))) {
         ClearTooltip(slotIndex);
         return;
     }
@@ -803,7 +806,7 @@ void RenderSlot(
         state.maximumValue = NoRenderedValue;
         state.timerVisible = false;
         state.tooltipVisible = false;
-        ApplyTooltip(slotIndex, entry.sourceSkillId);
+        ApplyTooltip(slotIndex, entry);
         state.visible = true;
         (void)SetVisible(Handles[slotIndex].slot, true);
     }

@@ -1,13 +1,17 @@
 #include "buff_tracker.hpp"
+#include "buff_display_table.hpp"
 #include "timer_metadata.hpp"
 
 #include "core/buff_display_bus.hpp"
+#include "core/buff_presentation.hpp"
 #include "core/services.hpp"
 #include "core/stat_read_bus.hpp"
 #include "core/stat_list_post_bus.hpp"
 #include "native/native_contract.hpp"
 
 #include <Windows.h>
+
+#include <D2RLPlugin/localization.h>
 
 #include <algorithm>
 #include <array>
@@ -49,6 +53,7 @@ const D2RL::LifecycleService* Lifecycle{};
 GetGameFromUnitFn GetGameFromUnit{};
 GetStatListFromUnitAndStateFn GetStatListFromUnitAndState{};
 D2RL::CustomTables::TableHandle BuffHudTable{D2RL::CustomTables::InvalidHandle};
+D2RL::CustomTables::TableHandle BuffHudDisplayTable{D2RL::CustomTables::InvalidHandle};
 D2RL::Lifecycle::ListenerHandle DataTablesListener{D2RL::Lifecycle::InvalidHandle};
 std::array<D2RL::Lifecycle::ListenerHandle, 3> GameplayListeners{};
 
@@ -147,6 +152,43 @@ constexpr std::array<D2RL::CustomTables::ColumnDefinition, 8> BuffHudColumns{{
         .name = "enabled",
         .type = D2RL::CustomTables::ColumnType::Byte,
         .offset = static_cast<std::uint32_t>(offsetof(BuffHudRow, enabled)),
+    },
+}};
+
+using DisplayRow = DisplayTable::Row;
+constexpr std::array<D2RL::CustomTables::ColumnDefinition, DisplayTable::ColumnCount> BuffHudDisplayColumns{{
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "state_id",
+        .type = D2RL::CustomTables::ColumnType::Dword,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, stateId)),
+    },
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "icon_atlas",
+        .type = D2RL::CustomTables::ColumnType::Ascii,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, iconAtlas)),
+        .length = sizeof(DisplayRow::iconAtlas),
+    },
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "icon_frame",
+        .type = D2RL::CustomTables::ColumnType::Word,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, iconFrame)),
+    },
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "name_key",
+        .type = D2RL::CustomTables::ColumnType::Ascii,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, nameKey)),
+        .length = sizeof(DisplayRow::nameKey),
+    },
+    {
+        .structSize = D2RL::CustomTables::ColumnDefinitionSize,
+        .name = "name",
+        .type = D2RL::CustomTables::ColumnType::Ascii,
+        .offset = static_cast<std::uint32_t>(offsetof(DisplayRow, name)),
+        .length = sizeof(DisplayRow::name),
     },
 }};
 
@@ -302,6 +344,101 @@ template <typename T>
     return cache;
 }
 
+[[nodiscard]] bool ResolveNameKey(
+    const D2RL::PluginContext* context, const std::string& key, std::string& output) {
+    output.clear();
+    const auto* localization = Core::LocalizationService();
+    if (key.empty() || localization == nullptr || localization->getStringByKey == nullptr) return false;
+    std::array<char, 256> buffer{};
+    std::uint32_t required{};
+    if (localization->getStringByKey(
+            context, key.c_str(), buffer.data(), static_cast<std::uint32_t>(buffer.size()), &required)
+            != D2RL::Localization::Result::Success
+        || buffer[0] == '\0') {
+        return false;
+    }
+    output.assign(buffer.data());
+    return output.find('\n') == std::string::npos && output.find('\r') == std::string::npos;
+}
+
+// buff-hud-display.txt is presentation only: a missing or invalid table clears
+// the overrides and logs why, but never disables buff tracking.
+void LoadPresentations(const D2RL::PluginContext* context) noexcept {
+    Core::BuffPresentations().Clear();
+    if (context == nullptr || CustomTables == nullptr
+        || BuffHudDisplayTable == D2RL::CustomTables::InvalidHandle) {
+        return;
+    }
+    try {
+        D2RL::CustomTables::TableInfo info{};
+        info.structSize = D2RL::CustomTables::TableInfoSize;
+        if (CustomTables->getTableInfo(
+                context, BuffHudDisplayTable, D2RL::CustomTables::TableBank::Rotw, &info)
+                != D2RL::CustomTables::Result::Success
+            || info.state != D2RL::CustomTables::TableState::Ready
+            || info.rowSize != sizeof(DisplayRow)
+            || info.byteCount != static_cast<std::uint64_t>(info.rowCount) * sizeof(DisplayRow)) {
+            context->LogWarn("Buff HUD: buff-hud-display.txt unavailable; icons and names come from skills only.");
+            return;
+        }
+        std::vector<DisplayRow> rows(info.rowCount);
+        if (info.rowCount != 0
+            && CustomTables->copyRows(
+                   context, BuffHudDisplayTable, D2RL::CustomTables::TableBank::Rotw,
+                   info.revision, rows.data(), info.byteCount)
+                != D2RL::CustomTables::Result::Success) {
+            context->LogWarn("Buff HUD: buff-hud-display.txt rows could not be copied; overrides disabled.");
+            return;
+        }
+        std::vector<DisplayTable::Definition> definitions;
+        std::string error;
+        if (!DisplayTable::BuildDefinitions(rows.data(), rows.size(), definitions, error)) {
+            const auto line = "Buff HUD: buff-hud-display.txt rejected (" + error + "); overrides disabled.";
+            context->LogError(line.c_str());
+            return;
+        }
+        std::vector<Core::BuffPresentation> presentations;
+        presentations.reserve(definitions.size());
+        std::size_t keyed{};
+        std::size_t unresolvedKeys{};
+        for (auto& definition : definitions) {
+            Core::BuffPresentation presentation{};
+            presentation.stateId = definition.stateId;
+            presentation.iconAtlas = definition.iconAtlas;
+            presentation.iconFrame = definition.iconFrame;
+            if (!definition.nameKey.empty()) {
+                ++keyed;
+                if (!ResolveNameKey(context, definition.nameKey, presentation.name)) {
+                    ++unresolvedKeys;
+                    presentation.name.clear();
+                }
+            }
+            if (presentation.name.empty()) presentation.name = std::move(definition.name);
+            presentations.push_back(std::move(presentation));
+        }
+        const auto count = presentations.size();
+        Core::BuffPresentations().Replace(std::move(presentations));
+        char line[256]{};
+        std::snprintf(line, sizeof(line),
+            "Buff HUD: buff-hud-display.txt ready; overrides=%zu nameKeys=%zu unresolvedNameKeys=%zu.",
+            count, keyed, unresolvedKeys);
+        context->LogInfo(line);
+    } catch (...) {
+        Core::BuffPresentations().Clear();
+        context->LogError("Buff HUD: exception while loading buff-hud-display.txt; overrides disabled.");
+    }
+}
+
+// Display-table icons override the skill icon. Names are looked up by BuffHud.
+void ApplyPresentation(Core::BuffDisplayEntry& entry) noexcept {
+    Core::BuffIconAtlas atlas{};
+    std::uint16_t frame{};
+    if (Core::BuffPresentations().FindIcon(entry.stateId, atlas, frame)) {
+        entry.iconAtlas = atlas;
+        entry.iconFrame = frame;
+    }
+}
+
 void __cdecl OnTablesLoaded(
     const D2RL::PluginContext* context,
     const D2RL::Lifecycle::DataTablesLoadedEvent* event,
@@ -311,6 +448,7 @@ void __cdecl OnTablesLoaded(
             event, D2RL::Lifecycle::DataTablesLoadedEventRequiredSize)) {
         return;
     }
+    LoadPresentations(context);
     const auto cache = BuildWhitelist();
     if (!cache) {
         Whitelist.store({}, std::memory_order_release);
@@ -590,6 +728,7 @@ void RefreshResourceBuffs() noexcept {
 
         Core::BuffDisplayEntry entry{};
         entry.key = key;
+        entry.stateId = definition.stateId;
         entry.sourceSkillId = definition.sourceSkillId;
         entry.displayMode = Core::BuffDisplayMode::Resource;
         entry.valueStatId = definition.valueStatId;
@@ -598,6 +737,7 @@ void RefreshResourceBuffs() noexcept {
         entry.maximumValue = maximum;
         entry.stacks = 1;
         entry.priority = 100;
+        ApplyPresentation(entry);
         if (!Core::BuffDisplays().Upsert(entry)) {
             continue;
         }
@@ -661,11 +801,13 @@ void DiscoverAttachedTimers(std::uint32_t currentFrame) noexcept {
         }
         Core::BuffDisplayEntry entry{};
         entry.key = witness.key;
+        entry.stateId = state;
         entry.sourceSkillId = static_cast<std::int32_t>(skill);
         entry.displayMode = Core::BuffDisplayMode::Timer;
         entry.expireGameFrame = expiry;
         entry.stacks = 1;
         entry.priority = 100;
+        ApplyPresentation(entry);
         if (!Core::BuffDisplays().Upsert(entry)) {
             continue;
         }
@@ -803,11 +945,13 @@ void OnStatListPost(
 
         Core::BuffDisplayEntry entry{};
         entry.key = AutomaticBuffKey(state, resolvedSkill);
+        entry.stateId = state;
         entry.sourceSkillId = static_cast<std::int32_t>(resolvedSkill);
         entry.displayMode = Core::BuffDisplayMode::Timer;
         entry.expireGameFrame = expireFrame;
         entry.stacks = 1;
         entry.priority = 100;
+        ApplyPresentation(entry);
         if (!Core::BuffDisplays().Upsert(entry)) {
             return;
         }
@@ -873,6 +1017,26 @@ void __cdecl OnGameplayEvent(
     }
     Context->LogInfo(
         "Buff HUD: registered buff-hud custom table from companion resources; active-mod overrides take priority.");
+
+    const D2RL::CustomTables::TableRegistration display{
+        .structSize = D2RL::CustomTables::TableRegistrationSize,
+        .name = "buff-hud-display",
+        .banks = D2RL::CustomTables::TableBank::Rotw,
+        .rowSize = sizeof(DisplayRow),
+        .columns = BuffHudDisplayColumns.data(),
+        .columnCount = static_cast<std::uint32_t>(BuffHudDisplayColumns.size()),
+        .columnStride = D2RL::CustomTables::ColumnDefinitionSize,
+    };
+    const auto displayResult = CustomTables->registerTable(Context, &display, &BuffHudDisplayTable);
+    if (displayResult != D2RL::CustomTables::Result::Success
+        || BuffHudDisplayTable == D2RL::CustomTables::InvalidHandle) {
+        BuffHudDisplayTable = D2RL::CustomTables::InvalidHandle;
+        char line[160]{};
+        std::snprintf(line, sizeof(line),
+            "Buff HUD: unable to register buff-hud-display custom table (result=%u); icon/name overrides disabled.",
+            static_cast<unsigned>(displayResult));
+        Context->LogWarn(line);
+    }
     return true;
 }
 
@@ -989,6 +1153,8 @@ void Shutdown() noexcept {
     FramePumpScheduled.store(false, std::memory_order_release);
     Whitelist.store({}, std::memory_order_release);
     BuffHudTable = D2RL::CustomTables::InvalidHandle;
+    BuffHudDisplayTable = D2RL::CustomTables::InvalidHandle;
+    Core::BuffPresentations().Clear();
     DataTablesListener = D2RL::Lifecycle::InvalidHandle;
     GameplayListeners = {};
     ClearTimerPresenceRecords();

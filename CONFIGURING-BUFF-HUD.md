@@ -31,3 +31,40 @@ shout	26	timer	0	0	138	0	1
 battle_orders	32	timer	0	0	149	0	1
 battle_command	51	timer	0	0	155	0	1
 ```
+
+## buff-hud-display.txt — icon and name overrides
+
+Buff HUD normally takes a buff's icon and tooltip name from its source skill. When a state has no
+usable skill (a custom state, or a skill whose description has no icon), add a row to the optional
+presentation table:
+
+```text
+<game>/mods/<mod>/<mod>.mpq/data/global/excel/d2rloader/buff-panel/buff-hud-display.txt
+```
+
+The exact tab-separated columns are:
+
+```text
+state_id	icon_atlas	icon_frame	name_key	name
+```
+
+- `state_id` is a state already tracked through `buff-hud.txt` (1-4095). Each state appears at most once.
+- `icon_atlas` is one of `amazon`, `sorceress`, `necromancer`, `paladin`, `barbarian`, `druid`,
+  `assassin`, `warlock` or `global` (any case). Empty keeps the automatic icon.
+- `icon_frame` is the frame inside that atlas. It needs `icon_atlas`; `65535` is reserved.
+- `name_key` is an optional localization string key. When it resolves, it is the tooltip name.
+- `name` is the literal tooltip name used when `name_key` is empty or does not resolve (up to 63 ASCII characters).
+
+Rows that leave a field empty keep the automatic value for that field, so a state without a row
+behaves exactly as before. The table is presentation only: it never adds or removes tracked buffs,
+and an invalid table is logged and ignored instead of disabling the HUD.
+
+Example (stock states; every row has all five columns, empty fields included):
+
+```text
+state_id	icon_atlas	icon_frame	name_key	name
+32	barbarian	26		
+51			MyBattleCommandName	Battle Command
+```
+
+The companion ships a header-only default, which means no overrides.
