@@ -16,6 +16,7 @@ Huge thank you also goes to [Collin](https://github.com/CollinHerber) for contri
 - Resource entries with an optional current/max stat counter (e.g. Bone Armor), independent of time remaining.
 - Automatic icon and localized name discovery using game Skills/SkillDesc and original skill icon atlases (Amazon through Warlock and Global).
 - Table-driven whitelist from `buff-hud.txt`: `name`, `state_id`, `display_type`, `value_stat`, `max_stat`, `skill_id`, `value_shift`, `enabled`.
+- Optional per-state icon and name overrides from `buff-hud-display.txt` for states whose skill has no usable icon or name.
 - Excludes curses and shared-stash proxy states; built-in semantic checks on native buff metadata.
 
 ### Default table
@@ -50,6 +51,7 @@ The companion contains exactly the plugin-owned resources:
 ```text
 data/global/ui/layouts/buff-panel/BuffHudhd.json
 data/global/excel/d2rloader/buff-panel/buff-hud.txt
+data/global/excel/d2rloader/buff-panel/buff-hud-display.txt
 ```
 
 D2RLoader resolves these from the companion. Its normal active-mod overrides still take priority, including packed mod MPQs. The DLL does not register an embedded resource that could hide edits to the companion. D2RLoader compiles the custom TXT table during table loading; this package does not contain precompiled BINs and needs no `-txt` flag.
@@ -94,6 +96,7 @@ Edit the files under `companion/data/` and rebuild the plugin target to repack t
 
 - Layout: `companion/data/global/ui/layouts/buff-panel/BuffHudhd.json`.
 - Buff selection: `companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt`.
+- Icon and name overrides: `companion/data/global/excel/d2rloader/buff-panel/buff-hud-display.txt` (see `CONFIGURING-BUFF-HUD.md`).
 
 Change `BuffGrid.fields.rect.x` and `.y` to move the whole panel. The default is `x: -150, y: -515`; increasing x moves right, and making y more negative moves up. Keep the outer anchor and the 21 child slots unchanged for a simple reposition. There is no drag-to-move UI.
 

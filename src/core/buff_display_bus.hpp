@@ -33,6 +33,9 @@ enum class BuffIconAtlas : std::uint8_t {
 
 struct BuffDisplayEntry final {
     std::uint64_t key{};
+    // Native state the entry was published for; 0 for producers without one.
+    // BuffHud looks up buff-hud-display.txt names by it.
+    std::uint32_t stateId{};
     std::int32_t sourceSkillId{NoSourceSkillId};
     BuffIconAtlas iconAtlas{BuffIconAtlas::Auto};
     std::uint16_t iconFrame{AutoIconFrame};
