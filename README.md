@@ -121,6 +121,7 @@ Version 1.0.11 reconciles the companion-MPQ packaging work with the production-c
 ## Known limitations / verification
 
 - It is not a generic arbitrary-D2R-build plugin: qualified low-level offsets and bridge signatures are used and fail closed on mismatch.
+- When the game rebuilds its UI (for example when switching between HD and legacy graphics), the old widgets are released. Buff HUD notices the new BuffHud panel, re-resolves its widgets and hides all slots until the next snapshot; it never writes to widgets of the previous panel.
 - `buff-panel` owns native patching; do not run it alongside another uncoordinated plugin that changes the same bridge without safe chaining.
 
 ## Source provenance
