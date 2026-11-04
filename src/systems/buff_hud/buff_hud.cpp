@@ -268,13 +268,21 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
 [[nodiscard]] bool SetEnabled(D2RL::Widgets::WidgetHandle handle, bool enabled) noexcept;
 [[nodiscard]] bool ApplyInputIsolation() noexcept;
 
-void HideItemPicture(D2RL::Widgets::WidgetHandle slot, const char* code) noexcept {
+// Shows or hides an Item_<code> container together with its Picture: the
+// container's visibility alone does not stop the ImageWidget from drawing.
+[[nodiscard]] bool SetItemPictureVisible(D2RL::Widgets::WidgetHandle item, bool visible) noexcept {
+    D2RL::Widgets::WidgetHandle picture{D2RL::Widgets::InvalidHandle};
+    const bool pictureSet = Widgets->findWidget(Context, item, "Picture", &picture) == D2RL::Widgets::Result::Success
+        && SetVisible(picture, visible);
+    return SetVisible(item, visible) && pictureSet;
+}
+
+[[nodiscard]] bool HideItemPicture(D2RL::Widgets::WidgetHandle slot, const char* code) noexcept {
     char widgetName[16]{};
     std::snprintf(widgetName, sizeof(widgetName), "Item_%s", code);
     D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
-    if (Widgets->findWidget(Context, slot, widgetName, &item) == D2RL::Widgets::Result::Success) {
-        (void)SetVisible(item, false);
-    }
+    return Widgets->findWidget(Context, slot, widgetName, &item) == D2RL::Widgets::Result::Success
+        && SetItemPictureVisible(item, false);
 }
 
 // Hides every known Item_ picture of every slot, then lets RenderSnapshot
@@ -282,13 +290,19 @@ void HideItemPicture(D2RL::Widgets::WidgetHandle slot, const char* code) noexcep
 void HideItemPictures() noexcept {
     const auto generation = Core::BuffPresentations().Generation();
     const auto tableCodes = Core::BuffPresentations().ItemCodes();
+    std::size_t hidden = 0;
     for (std::size_t i = 0; i < Handles.size(); ++i) {
         auto& slot = Handles[i];
         if (slot.slot == D2RL::Widgets::InvalidHandle) continue;
-        for (const auto* code : LayoutItemCodes) HideItemPicture(slot.slot, code);
-        for (const auto& code : tableCodes) HideItemPicture(slot.slot, code.c_str());
+        for (const auto* code : LayoutItemCodes) hidden += HideItemPicture(slot.slot, code) ? 1 : 0;
+        for (const auto& code : tableCodes) hidden += HideItemPicture(slot.slot, code.c_str()) ? 1 : 0;
         slot.item = D2RL::Widgets::InvalidHandle;
         RenderStates[i].visible = false;
+    }
+    if (generation != HiddenItemGeneration) {
+        char line[96]{};
+        std::snprintf(line, sizeof(line), "Buff HUD: %zu item pictures hidden.", hidden);
+        Context->LogInfo(line);
     }
     HiddenItemGeneration = generation;
     LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
@@ -785,7 +799,7 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
 void HideItemIcon(std::size_t slotIndex) noexcept {
     auto& item = Handles[slotIndex].item;
     if (item == D2RL::Widgets::InvalidHandle) return;
-    (void)SetVisible(item, false);
+    (void)SetItemPictureVisible(item, false);
     item = D2RL::Widgets::InvalidHandle;
 }
 
@@ -806,7 +820,7 @@ void HideItemIcon(std::size_t slotIndex) noexcept {
         (void)SetEnabled(icon, false);
         (void)SetVisible(icon, false);
     }
-    if (!SetVisible(item, true)) return false;
+    if (!SetItemPictureVisible(item, true)) return false;
     handles.item = item;
     return true;
 }
