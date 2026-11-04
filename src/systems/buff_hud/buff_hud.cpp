@@ -41,6 +41,10 @@ static_assert(TooltipReserveCodepoints * 3 == TooltipReserveLength);
 constexpr std::size_t TooltipNativeScanBytes = 0x1000;
 constexpr std::uint32_t NoRenderedSeconds = std::numeric_limits<std::uint32_t>::max();
 constexpr std::int32_t NoRenderedValue = std::numeric_limits<std::int32_t>::min();
+constexpr char PanelName[] = "buff-panel/BuffHud";
+// While the panel is missing (D2R is rebuilding its UI), ask D2RLoader to open it
+// again at most this often instead of on every UI poll.
+constexpr std::uint32_t ReopenPollInterval = 30;
 
 enum class TooltipStorageEncoding : std::uint8_t {
     Unknown = 0,
@@ -122,6 +126,11 @@ D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
+// Native BuffHud panel the handles and qualified buffers belong to. D2R
+// destroys and rebuilds every UI panel when the graphics mode changes (G) or the
+// UI reloads; a different or missing pointer means all cached widget state is stale.
+void* ResolvedNativePanel{};
+std::uint32_t PollsWithoutPanel{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
@@ -264,7 +273,10 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
     GridWidget = D2RL::Widgets::InvalidHandle;
     Handles = {};
 
-    if (Widgets->findPanel(Context, "buff-panel/BuffHud", &HudPanel) != D2RL::Widgets::Result::Success
+    void* nativePanel = FindTopLevelPanel != nullptr ? FindTopLevelPanel(PanelName) : nullptr;
+    if (nativePanel == nullptr) return false;
+
+    if (Widgets->findPanel(Context, PanelName, &HudPanel) != D2RL::Widgets::Result::Success
         || Widgets->findWidget(Context, HudPanel, "BuffGrid", &GridWidget) != D2RL::Widgets::Result::Success) {
         return false;
     }
@@ -307,6 +319,7 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
     }
 
     HandlesResolved = true;
+    ResolvedNativePanel = nativePanel;
     (void)ApplyInputIsolation();
     return true;
 }
@@ -367,7 +380,16 @@ void RestoreQualifiedTooltipBuffers() noexcept {
     }
 }
 
+// The cached widget tree is the live one only while D2R still returns the same
+// native panel. Qualified buffers of a destroyed panel must never be written.
+[[nodiscard]] bool IsResolvedPanelLive() noexcept {
+    return ResolvedNativePanel != nullptr
+        && FindTopLevelPanel != nullptr
+        && FindTopLevelPanel(PanelName) == ResolvedNativePanel;
+}
+
 void InvalidateWidgetHandles() noexcept {
+    ResolvedNativePanel = nullptr;
     HudPanel = D2RL::Widgets::InvalidHandle;
     GridWidget = D2RL::Widgets::InvalidHandle;
     Handles = {};
@@ -414,7 +436,7 @@ void InvalidateWidgetHandles() noexcept {
         || slotIndex >= SlotCount || childName == nullptr) {
         return nullptr;
     }
-    void* panel = FindTopLevelPanel("buff-panel/BuffHud");
+    void* panel = FindTopLevelPanel(PanelName);
     void* grid = panel != nullptr ? FindChildWidgetByName(panel, "BuffGrid") : nullptr;
     char slotName[24]{};
     std::snprintf(slotName, sizeof(slotName), "BuffSlot%02zu", slotIndex);
@@ -547,7 +569,8 @@ void InvalidateWidgetHandles() noexcept {
         return true;
     }
 
-    RestoreQualifiedTooltipBuffer(slotIndex, state);
+    // A different native widget means the old one was destroyed with its panel
+    // (UI rebuild). Restoring the reserve into it would write freed memory.
     state.qualifiedTooltipWidget = 0;
     state.qualifiedTooltipBuffer = 0;
     state.qualifiedTooltipFieldOffset = std::numeric_limits<std::size_t>::max();
@@ -868,8 +891,45 @@ void RenderSlot(
     return true;
 }
 
+void HideAllSlots() noexcept {
+    for (std::size_t i = 0; i < SlotCount; ++i) {
+        (void)SetVisible(Handles[i].slot, false);
+        (void)SetVisible(Handles[i].countdown, false);
+        ClearTooltip(i);
+    }
+}
+
+void OpenPanel() noexcept;
+
+// Returns false while the panel is missing. A rebuilt panel starts from its
+// JSON defaults, so drop every handle, render state and qualified buffer of the
+// old one without touching its memory, then resolve and hide the new slots.
+[[nodiscard]] bool EnsureLivePanel() noexcept {
+    if (FindTopLevelPanel == nullptr) return false;
+    void* live = FindTopLevelPanel(PanelName);
+    if (HandlesResolved && live == ResolvedNativePanel) return true;
+
+    if (HandlesResolved && Context != nullptr) {
+        Context->LogInfo(live != nullptr
+            ? "Buff HUD: BuffHud panel was rebuilt by the game UI; re-resolving its widgets."
+            : "Buff HUD: BuffHud panel was removed by the game UI; waiting for it to return.");
+    }
+    InvalidateWidgetHandles();
+    if (live == nullptr) {
+        if (++PollsWithoutPanel >= ReopenPollInterval) {
+            PollsWithoutPanel = 0;
+            OpenPanel();
+        }
+        return false;
+    }
+    PollsWithoutPanel = 0;
+    if (!ResolveWidgetHandles()) return false;
+    HideAllSlots();
+    return true;
+}
+
 void RenderSnapshot() noexcept {
-    if (!ResolveWidgetHandles()) return;
+    if (!EnsureLivePanel()) return;
 
     auto snapshot = Core::BuffDisplays().Snapshot();
     std::uint32_t nowFrame{};
@@ -959,17 +1019,14 @@ void OpenPanel() noexcept {
         return;
     }
     InvalidateWidgetHandles();
-    if (ResolveWidgetHandles()) {
-        for (std::size_t i = 0; i < SlotCount; ++i) {
-            (void)SetVisible(Handles[i].slot, false);
-            ClearTooltip(i);
-        }
-    }
+    if (ResolveWidgetHandles()) HideAllSlots();
 }
 
 void ClosePanel() noexcept {
-    RestoreQualifiedCountdownBuffers();
-    RestoreQualifiedTooltipBuffers();
+    if (IsResolvedPanelLive()) {
+        RestoreQualifiedCountdownBuffers();
+        RestoreQualifiedTooltipBuffers();
+    }
     if (Context != nullptr && Panels != nullptr
         && RegisteredPanel != D2RL::Panels::InvalidHandle) {
         (void)Panels->closePanel(Context, RegisteredPanel);
@@ -1255,6 +1312,7 @@ void Shutdown() noexcept {
     RestoreQualifiedCountdownBuffers();
     RestoreQualifiedTooltipBuffers();
     InvalidateWidgetHandles();
+    PollsWithoutPanel = 0;
 
     RegisteredPanel = D2RL::Panels::InvalidHandle;
     DataTablesListener = D2RL::Lifecycle::InvalidHandle;
