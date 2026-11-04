@@ -74,9 +74,11 @@ The companion ships a header-only default, which means no overrides.
 
 ### Item pictures
 
-Both layouts declare one hidden `ImageWidget` per item code in every `BuffSlot`, named `Item_<code>`.
+Both layouts declare one hidden `Widget` per item code in every `BuffSlot`, named `Item_<code>`,
+holding one `ImageWidget` with the picture (an `ImageWidget` ignores `"visible": false`, so the
+container is what BuffHud shows and hides).
 The shipped layouts cover the stock potions `hp1`-`hp5`, `mp1`-`mp5`, `rvs`, `rvl`, `vps`, `yps` and
 `wms`. The HD widget points at the item's HD inventory sprite (for example
 `Items/misc/potion/greater_healing_potion`), the legacy widget at its inventory DC6 (for example
-`..\\items\\invhp5`). To use another item, add an `Item_<code>` widget with the same name to all 21
+`..\\items\\invhp5`). To use another item, add an `Item_<code>` container with the same name to all 21
 slots of both `BuffHudhd.json` and `BuffHud.json`; `layout_parity` checks that both layouts agree.

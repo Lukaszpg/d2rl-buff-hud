@@ -755,8 +755,8 @@ void HideItemIcon(std::size_t slotIndex) noexcept {
     item = D2RL::Widgets::InvalidHandle;
 }
 
-// Item pictures are optional layout widgets named Item_<code>. A code without
-// a widget in this slot keeps the atlas icon.
+// Item pictures are optional hidden layout containers named Item_<code>. A
+// code without a container in this slot keeps the atlas icon.
 [[nodiscard]] bool ApplyItemIcon(std::size_t slotIndex, const char* itemCode) noexcept {
     HideItemIcon(slotIndex);
     if (itemCode == nullptr || itemCode[0] == '\0') return false;
