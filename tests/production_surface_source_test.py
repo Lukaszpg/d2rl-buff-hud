@@ -26,4 +26,11 @@ assert sources.count('RegisterConsoleCommand(\n            "buff-panel"') == 1
 assert "ApplyInputIsolation" in sources
 assert "StatListBuffMetadataBytes = 0x30" in sources
 assert "TooltipReserveBytes = TooltipReserveLength + 1" in sources
+# A UI rebuild (graphics switch) destroys the native panel. Cached widget state
+# must be dropped, never restored into the destroyed widgets.
+assert "EnsureLivePanel()" in sources
+ensure = sources.split("bool EnsureTooltipQualified(", 1)[1].split("\n}\n", 1)[0]
+assert "RestoreQualifiedTooltipBuffer(" not in ensure, "tooltip reserve restored into a replaced widget"
+close = sources.split("void ClosePanel() noexcept {", 1)[1].split("\n}\n", 1)[0]
+assert "IsResolvedPanelLive()" in close, "qualified buffers restored without a live-panel check"
 print("PASS: production runtime surface contains no known probe/debug/telemetry remnants")
