@@ -44,4 +44,34 @@ for path, node in hd_nodes.items():
         assert 1 <= len(code) <= 4 and code.isalnum(), f"{path}: item code must be 1-4 letters or digits"
         assert node["type"] == "Widget" and node["fields"].get("visible") is False, path
         assert [c["type"] for c in node.get("children", [])] == ["ImageWidget"], path
+
+# No slot may draw into another: each slot's box and its Countdown stay apart.
+# Legacy DC6 skill icons draw at their own 48 px whatever their "scale", so the
+# legacy slot box must hold a full icon.
+def footprints(layout):
+    grid = next(c for c in layout["children"] if c["name"] == "BuffGrid")
+    for slot in grid["children"]:
+        r = slot["fields"]["rect"]
+        boxes = [(r["x"], r["y"], r["width"], r["height"])]
+        for child in slot["children"]:
+            c = child["fields"].get("rect", {})
+            if "width" in c:
+                boxes.append((r["x"] + c["x"], r["y"] + c["y"], c["width"], c["height"]))
+        yield slot["name"], boxes
+
+
+def overlaps(a, b):
+    return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
+
+
+for name, layout in (("HD", hd), ("legacy", legacy)):
+    slots = list(footprints(layout))
+    for i, (first, first_boxes) in enumerate(slots):
+        for second, second_boxes in slots[i + 1:]:
+            assert not any(overlaps(a, b) for a in first_boxes for b in second_boxes), \
+                f"{name}: {first} overlaps {second}"
+for path, node in legacy_nodes.items():
+    if node["name"].startswith("Icon"):
+        slot = legacy_nodes[path.rsplit("/", 1)[0]]["fields"]["rect"]
+        assert slot["width"] >= 48 and slot["height"] >= 48, f"{path}: legacy slot smaller than a 48 px icon"
 print("PASS: legacy layout matches the HD widget contract")
