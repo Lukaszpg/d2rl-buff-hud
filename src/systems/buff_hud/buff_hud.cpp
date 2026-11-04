@@ -32,6 +32,7 @@ using Internal::SkillIconDescriptor;
 
 constexpr std::size_t SlotCount = Core::MaximumDisplayedBuffs;
 constexpr std::size_t AtlasCount = 9;
+constexpr std::size_t ItemCodeBytes = 8;
 constexpr std::uint32_t FramesPerSecond = 25;
 constexpr char TimerReserve[] = "__BUFF_PANEL_TIMER_RESERVE_00__";
 constexpr std::size_t TimerReserveBytes = sizeof(TimerReserve);
@@ -94,6 +95,8 @@ std::atomic<bool> PollScheduled{};
 struct SlotHandles final {
     D2RL::Widgets::WidgetHandle slot{D2RL::Widgets::InvalidHandle};
     std::array<D2RL::Widgets::WidgetHandle, AtlasCount> icons{};
+    // Item_<code> picture currently shown instead of an atlas icon, if any.
+    D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle countdown{D2RL::Widgets::InvalidHandle};
     D2RL::Widgets::WidgetHandle tooltip{D2RL::Widgets::InvalidHandle};
 };
@@ -104,6 +107,7 @@ struct SlotRenderState final {
     Core::BuffIconAtlas atlas{Core::BuffIconAtlas::Global};
     std::uint16_t requestedFrame{};
     std::uint16_t renderedFrame{};
+    char itemCode[ItemCodeBytes]{};
     Core::BuffDisplayMode displayMode{Core::BuffDisplayMode::Timer};
     std::uint32_t seconds{NoRenderedSeconds};
     std::int32_t currentValue{NoRenderedValue};
@@ -744,6 +748,35 @@ void FormatSeconds(std::uint32_t seconds, char (&output)[16]) noexcept {
     return false;
 }
 
+void HideItemIcon(std::size_t slotIndex) noexcept {
+    auto& item = Handles[slotIndex].item;
+    if (item == D2RL::Widgets::InvalidHandle) return;
+    (void)SetVisible(item, false);
+    item = D2RL::Widgets::InvalidHandle;
+}
+
+// Item pictures are optional layout widgets named Item_<code>. A code without
+// a widget in this slot keeps the atlas icon.
+[[nodiscard]] bool ApplyItemIcon(std::size_t slotIndex, const char* itemCode) noexcept {
+    HideItemIcon(slotIndex);
+    if (itemCode == nullptr || itemCode[0] == '\0') return false;
+    auto& handles = Handles[slotIndex];
+    char widgetName[16]{};
+    std::snprintf(widgetName, sizeof(widgetName), "Item_%s", itemCode);
+    D2RL::Widgets::WidgetHandle item{D2RL::Widgets::InvalidHandle};
+    if (Widgets->findWidget(Context, handles.slot, widgetName, &item) != D2RL::Widgets::Result::Success
+        || item == D2RL::Widgets::InvalidHandle) {
+        return false;
+    }
+    for (const auto icon : handles.icons) {
+        (void)SetEnabled(icon, false);
+        (void)SetVisible(icon, false);
+    }
+    if (!SetVisible(item, true)) return false;
+    handles.item = item;
+    return true;
+}
+
 void HideSlot(std::size_t slotIndex) noexcept {
     if (slotIndex >= SlotCount || !ResolveWidgetHandles()) return;
     auto& state = RenderStates[slotIndex];
@@ -782,17 +815,21 @@ void RenderSlot(
 
     SkillIconDescriptor icon{};
     const bool iconResolved = ResolveEntryIcon(entry, icon);
+    char itemCode[ItemCodeBytes]{};
+    (void)Core::BuffPresentations().FindItemCode(entry.stateId, itemCode, sizeof(itemCode));
     auto& state = RenderStates[slotIndex];
     const bool assignmentChanged = !state.visible
         || state.key != entry.key
         || state.atlas != icon.atlas
         || state.requestedFrame != icon.frame
+        || std::strcmp(state.itemCode, itemCode) != 0
         || state.displayMode != entry.displayMode
         || state.sourceSkillId != entry.sourceSkillId;
 
     if (assignmentChanged) {
         (void)SetVisible(Handles[slotIndex].slot, false);
-        const bool iconApplied = ApplyIcon(slotIndex, icon);
+        const bool iconApplied = ApplyItemIcon(slotIndex, itemCode) || ApplyIcon(slotIndex, icon);
+        std::memcpy(state.itemCode, itemCode, sizeof(state.itemCode));
         state.key = entry.key;
         state.atlas = icon.atlas;
         state.requestedFrame = icon.frame;

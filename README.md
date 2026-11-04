@@ -16,7 +16,7 @@ Huge thank you also goes to [Collin](https://github.com/CollinHerber) for contri
 - Resource entries with an optional current/max stat counter (e.g. Bone Armor), independent of time remaining.
 - Automatic icon and localized name discovery using game Skills/SkillDesc and original skill icon atlases (Amazon through Warlock and Global).
 - Table-driven whitelist from `buff-hud.txt`: `name`, `state_id`, `display_type`, `value_stat`, `max_stat`, `skill_id`, `value_shift`, `enabled`.
-- Optional per-state icon and name overrides from `buff-hud-display.txt` for states whose skill has no usable icon or name.
+- Optional per-state icon, name and item-picture overrides from `buff-hud-display.txt` for states whose skill has no usable icon or name (stock potion pictures are included in both layouts).
 - Excludes curses and shared-stash proxy states; built-in semantic checks on native buff metadata.
 
 ### Default table

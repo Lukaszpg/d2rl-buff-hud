@@ -406,6 +406,7 @@ void LoadPresentations(const D2RL::PluginContext* context) noexcept {
             presentation.stateId = definition.stateId;
             presentation.iconAtlas = definition.iconAtlas;
             presentation.iconFrame = definition.iconFrame;
+            presentation.itemCode = std::move(definition.itemCode);
             if (!definition.nameKey.empty()) {
                 ++keyed;
                 if (!ResolveNameKey(context, definition.nameKey, presentation.name)) {
@@ -429,7 +430,8 @@ void LoadPresentations(const D2RL::PluginContext* context) noexcept {
     }
 }
 
-// Display-table icons override the skill icon. Names are looked up by BuffHud.
+// Display-table icons override the skill icon. Names and item pictures are
+// looked up by BuffHud.
 void ApplyPresentation(Core::BuffDisplayEntry& entry) noexcept {
     Core::BuffIconAtlas atlas{};
     std::uint16_t frame{};

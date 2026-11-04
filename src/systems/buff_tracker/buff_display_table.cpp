@@ -61,6 +61,13 @@ constexpr std::array<AtlasName, 9> AtlasNames{{
     return true;
 }
 
+[[nodiscard]] bool ValidItemCode(std::string_view value) noexcept {
+    return value.size() <= 4
+        && std::all_of(value.begin(), value.end(), [](char ch) noexcept {
+               return std::isalnum(static_cast<unsigned char>(ch)) != 0;
+           });
+}
+
 template <std::size_t N>
 void Copy(std::string_view value, char (&output)[N]) noexcept {
     const auto count = std::min(value.size(), N - 1);
@@ -128,8 +135,14 @@ bool BuildDefinitions(
                 error = where + "name_key/name must be printable ASCII (name_key without spaces)";
                 return false;
             }
+            const auto itemCode = Field(row.itemCode, sizeof(row.itemCode));
+            if (!ValidItemCode(itemCode)) {
+                error = where + "item_code must be 1-4 letters or digits";
+                return false;
+            }
             definition.nameKey.assign(nameKey);
             definition.name.assign(name);
+            definition.itemCode.assign(itemCode);
             definitions.push_back(std::move(definition));
         }
         std::sort(definitions.begin(), definitions.end(),
@@ -178,7 +191,7 @@ bool ValidateAndNormalize(std::string& bytes, std::string& error) noexcept {
         }
         const auto headerEnd = normalized.find('\n');
         if (std::string_view(normalized).substr(0, headerEnd) != Header) {
-            error = "buff-hud-display.txt header must exactly match its five columns";
+            error = "buff-hud-display.txt header must exactly match its six columns";
             return false;
         }
 
@@ -196,7 +209,7 @@ bool ValidateAndNormalize(std::string& bytes, std::string& error) noexcept {
             for (std::size_t column = 0; column + 1 < ColumnCount; ++column) {
                 const auto separator = line.find('\t', cellStart);
                 if (separator == std::string_view::npos) {
-                    error = where + "fewer than five columns";
+                    error = where + "fewer than six columns";
                     return false;
                 }
                 cells[column] = line.substr(cellStart, separator - cellStart);
@@ -204,7 +217,7 @@ bool ValidateAndNormalize(std::string& bytes, std::string& error) noexcept {
             }
             cells[ColumnCount - 1] = line.substr(cellStart);
             if (cells[ColumnCount - 1].find('\t') != std::string_view::npos) {
-                error = where + "more than five columns";
+                error = where + "more than six columns";
                 return false;
             }
 
@@ -216,14 +229,16 @@ bool ValidateAndNormalize(std::string& bytes, std::string& error) noexcept {
             }
             if (cells[1].size() >= sizeof(row.iconAtlas)
                 || cells[3].size() >= sizeof(row.nameKey)
-                || cells[4].size() >= sizeof(row.name)) {
-                error = where + "icon_atlas/name_key/name too long";
+                || cells[4].size() >= sizeof(row.name)
+                || cells[5].size() >= sizeof(row.itemCode)) {
+                error = where + "icon_atlas/name_key/name/item_code too long";
                 return false;
             }
             row.iconFrame = static_cast<std::uint16_t>(frame);
             Copy(cells[1], row.iconAtlas);
             Copy(cells[3], row.nameKey);
             Copy(cells[4], row.name);
+            Copy(cells[5], row.itemCode);
             rows.push_back(row);
         }
 

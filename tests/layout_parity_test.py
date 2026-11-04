@@ -27,9 +27,19 @@ for path, node in hd_nodes.items():
     other = legacy_nodes[path]
     assert node["type"] == other["type"], path
     fields, legacy_fields = node.get("fields", {}), other.get("fields", {})
-    for key in ("normalFrame", "pressedFrame", "text", "tooltipString", "visible", "focusOnMouseOver"):
+    for key in ("normalFrame", "pressedFrame", "frame", "text", "tooltipString", "visible", "focusOnMouseOver"):
         assert fields.get(key) == legacy_fields.get(key), f"{path}: {key} differs"
     if "filename" in legacy_fields:
         name = legacy_fields["filename"]
         assert "/" not in name and "\\" in name, f"{path}: not a legacy DC6 path: {name}"
+
+# Item_<code> pictures are hidden ImageWidgets that every slot declares alike.
+slots = [node for node in hd_nodes.values() if node["name"].startswith("BuffSlot")]
+item_sets = {tuple(c["name"] for c in slot["children"] if c["name"].startswith("Item_")) for slot in slots}
+assert len(slots) == 21 and len(item_sets) == 1, "every slot must declare the same Item_ widgets"
+for path, node in hd_nodes.items():
+    if node["name"].startswith("Item_"):
+        code = node["name"][len("Item_"):]
+        assert 1 <= len(code) <= 4 and code.isalnum(), f"{path}: item code must be 1-4 letters or digits"
+        assert node["type"] == "ImageWidget" and node["fields"].get("visible") is False, path
 print("PASS: legacy layout matches the HD widget contract")

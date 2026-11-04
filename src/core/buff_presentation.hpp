@@ -18,6 +18,7 @@ struct BuffPresentation final {
     BuffIconAtlas iconAtlas{BuffIconAtlas::Auto};
     std::uint16_t iconFrame{AutoIconFrame};
     std::string name{};
+    std::string itemCode{};
 };
 
 class BuffPresentationRegistry final {
@@ -33,10 +34,17 @@ public:
         std::uint32_t stateId, BuffIconAtlas& atlas, std::uint16_t& frame) const noexcept;
     // Copies the name including its NUL; false when there is none or it does not fit.
     [[nodiscard]] bool FindName(std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept;
+    // Same contract as FindName, for the item code whose picture replaces the icon.
+    [[nodiscard]] bool FindItemCode(std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept;
     [[nodiscard]] std::size_t Count() const noexcept;
 
 private:
     [[nodiscard]] const BuffPresentation* Find(std::uint32_t stateId) const noexcept;
+    [[nodiscard]] bool CopyText(
+        std::uint32_t stateId,
+        std::string BuffPresentation::*field,
+        char* output,
+        std::size_t outputSize) const noexcept;
 
     mutable std::mutex mutex_;
     std::vector<BuffPresentation> presentations_;

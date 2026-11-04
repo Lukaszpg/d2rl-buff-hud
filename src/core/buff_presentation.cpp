@@ -41,19 +41,31 @@ bool BuffPresentationRegistry::FindIcon(
     return true;
 }
 
-bool BuffPresentationRegistry::FindName(
-    std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept {
+bool BuffPresentationRegistry::CopyText(
+    std::uint32_t stateId,
+    std::string BuffPresentation::*field,
+    char* output,
+    std::size_t outputSize) const noexcept {
     if (output == nullptr || outputSize == 0) return false;
     output[0] = '\0';
     if (stateId == 0) return false;
     std::lock_guard lock(mutex_);
     const auto* presentation = Find(stateId);
-    if (presentation == nullptr || presentation->name.empty()
-        || presentation->name.size() + 1 > outputSize) {
-        return false;
-    }
-    std::memcpy(output, presentation->name.c_str(), presentation->name.size() + 1);
+    if (presentation == nullptr) return false;
+    const auto& text = presentation->*field;
+    if (text.empty() || text.size() + 1 > outputSize) return false;
+    std::memcpy(output, text.c_str(), text.size() + 1);
     return true;
+}
+
+bool BuffPresentationRegistry::FindName(
+    std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept {
+    return CopyText(stateId, &BuffPresentation::name, output, outputSize);
+}
+
+bool BuffPresentationRegistry::FindItemCode(
+    std::uint32_t stateId, char* output, std::size_t outputSize) const noexcept {
+    return CopyText(stateId, &BuffPresentation::itemCode, output, outputSize);
 }
 
 std::size_t BuffPresentationRegistry::Count() const noexcept {

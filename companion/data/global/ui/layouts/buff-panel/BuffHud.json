@@ -179,6 +179,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -375,6 +585,216 @@
                 "normalFrame": 2,
                 "pressedFrame": 3,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -577,6 +997,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -773,6 +1403,216 @@
                 "normalFrame": 6,
                 "pressedFrame": 7,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -975,6 +1815,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1171,6 +2221,216 @@
                 "normalFrame": 10,
                 "pressedFrame": 11,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -1373,6 +2633,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1569,6 +3039,216 @@
                 "normalFrame": 14,
                 "pressedFrame": 15,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -1771,6 +3451,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1967,6 +3857,216 @@
                 "normalFrame": 18,
                 "pressedFrame": 19,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -2169,6 +4269,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -2365,6 +4675,216 @@
                 "normalFrame": 22,
                 "pressedFrame": 23,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -2567,6 +5087,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -2763,6 +5493,216 @@
                 "normalFrame": 26,
                 "pressedFrame": 27,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -2965,6 +5905,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3161,6 +6311,216 @@
                 "normalFrame": 30,
                 "pressedFrame": 31,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -3363,6 +6723,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3559,6 +7129,216 @@
                 "normalFrame": 34,
                 "pressedFrame": 35,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {
@@ -3761,6 +7541,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3960,6 +7950,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -4156,6 +8356,216 @@
                 "normalFrame": 40,
                 "pressedFrame": 41,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invhp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp1",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp3",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp4",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invmp5",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invvpl",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invwps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invnps",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 2,
+                  "y": 2,
+                  "scale": 1.0
+                },
+                "filename": "..\\items\\invyps",
+                "frame": 0
               }
             },
             {

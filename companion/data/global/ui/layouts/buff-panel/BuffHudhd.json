@@ -179,6 +179,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -376,6 +586,216 @@
                 "normalFrame": 2,
                 "pressedFrame": 3,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -579,6 +999,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -776,6 +1406,216 @@
                 "normalFrame": 6,
                 "pressedFrame": 7,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -979,6 +1819,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1176,6 +2226,216 @@
                 "normalFrame": 10,
                 "pressedFrame": 11,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -1379,6 +2639,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1576,6 +3046,216 @@
                 "normalFrame": 14,
                 "pressedFrame": 15,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -1779,6 +3459,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -1976,6 +3866,216 @@
                 "normalFrame": 18,
                 "pressedFrame": 19,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -2179,6 +4279,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -2376,6 +4686,216 @@
                 "normalFrame": 22,
                 "pressedFrame": 23,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -2579,6 +5099,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -2776,6 +5506,216 @@
                 "normalFrame": 26,
                 "pressedFrame": 27,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -2979,6 +5919,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3176,6 +6326,216 @@
                 "normalFrame": 30,
                 "pressedFrame": 31,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -3379,6 +6739,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3576,6 +7146,216 @@
                 "normalFrame": 34,
                 "pressedFrame": 35,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
@@ -3779,6 +7559,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -3979,6 +7969,216 @@
               }
             },
             {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
+              }
+            },
+            {
               "type": "TextBoxWidget",
               "name": "Countdown",
               "fields": {
@@ -4176,6 +8376,216 @@
                 "normalFrame": 40,
                 "pressedFrame": 41,
                 "focusOnMouseOver": false
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/healing_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_hp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_healing_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp1",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/lesser_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp2",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/light_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp3",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/mana_potion2",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp4",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/strong_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_mp5",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/greater_mana_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvs",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_rvl",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/full_rejuv_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_vps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/stamina_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_yps",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/antidote_potion",
+                "frame": 0
+              }
+            },
+            {
+              "type": "ImageWidget",
+              "name": "Item_wms",
+              "fields": {
+                "visible": false,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "scale": 0.6
+                },
+                "filename": "Items/misc/potion/thawing_potion",
+                "frame": 0
               }
             },
             {
