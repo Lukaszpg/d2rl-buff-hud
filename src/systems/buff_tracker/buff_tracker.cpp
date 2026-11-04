@@ -1027,11 +1027,15 @@ void __cdecl OnGameplayEvent(
         .columnCount = static_cast<std::uint32_t>(BuffHudDisplayColumns.size()),
         .columnStride = D2RL::CustomTables::ColumnDefinitionSize,
     };
-    if (CustomTables->registerTable(Context, &display, &BuffHudDisplayTable)
-            != D2RL::CustomTables::Result::Success
+    const auto displayResult = CustomTables->registerTable(Context, &display, &BuffHudDisplayTable);
+    if (displayResult != D2RL::CustomTables::Result::Success
         || BuffHudDisplayTable == D2RL::CustomTables::InvalidHandle) {
         BuffHudDisplayTable = D2RL::CustomTables::InvalidHandle;
-        Context->LogWarn("Buff HUD: unable to register buff-hud-display custom table; icon/name overrides disabled.");
+        char line[160]{};
+        std::snprintf(line, sizeof(line),
+            "Buff HUD: unable to register buff-hud-display custom table (result=%u); icon/name overrides disabled.",
+            static_cast<unsigned>(displayResult));
+        Context->LogWarn(line);
     }
     return true;
 }
