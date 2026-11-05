@@ -4,6 +4,7 @@
 #include "core/buff_display_bus.hpp"
 #include "core/services.hpp"
 #include "icon_frame_backend.hpp"
+#include "panel_overlap.hpp"
 #include "native/native_contract.hpp"
 #include "skill_icon_resolver.hpp"
 
@@ -39,6 +40,36 @@ using Internal::TooltipReserveLength;
 constexpr std::size_t TooltipReserveCodepoints = TooltipReserveLength / 3;
 static_assert(TooltipReserveCodepoints * 3 == TooltipReserveLength);
 constexpr std::size_t TooltipNativeScanBytes = 0x1000;
+// hide_with_panels. The stash and the Horadric Cube hide the icons whenever
+// one is open.
+constexpr std::array<const char*, 3> HidingPanels{
+    "BankExpansionLayout",
+    "BankOriginalLayout",
+    "HoradricCubeLayout",
+};
+// Side panels hide them only while an occupied slot overlaps the panel: a
+// player fights with the inventory or the character panel open. Only the top
+// row reaches a right panel (panel_overlap.hpp).
+struct SidePanel final {
+    const char* name;
+    Internal::PanelSide side;
+};
+constexpr std::array<SidePanel, 12> SidePanels{{
+    {"CharacterStatsPanel", Internal::PanelSide::Left},
+    {"QuestLogPanelExpansion", Internal::PanelSide::Left},
+    {"QuestLogPanelOriginal", Internal::PanelSide::Left},
+    {"WaypointsPanelExpansion", Internal::PanelSide::Left},
+    {"WaypointsPanelOriginal", Internal::PanelSide::Left},
+    {"VendorPanelLayout", Internal::PanelSide::Left},
+    {"TradeLayout", Internal::PanelSide::Left},
+    {"HirelingInventoryPanel", Internal::PanelSide::Left},
+    {"PartyPanel", Internal::PanelSide::Left},
+    {"PlayerInventoryExpansionLayout", Internal::PanelSide::Right},
+    {"PlayerInventoryOriginalLayout", Internal::PanelSide::Right},
+    {"SkillsTreePanel", Internal::PanelSide::Right},
+}};
+// Bytes of a native widget searched for its visibility bit.
+constexpr std::size_t VisibleFlagScanBytes = 0x200;
 constexpr std::uint32_t NoRenderedSeconds = std::numeric_limits<std::uint32_t>::max();
 constexpr std::int32_t NoRenderedValue = std::numeric_limits<std::int32_t>::min();
 
@@ -123,6 +154,19 @@ std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
 std::uint64_t LastRenderedRevision{std::numeric_limits<std::uint64_t>::max()};
+bool HideWithPanels{true};
+// The native visibility bit, learned once by toggling a Countdown through the
+// WidgetService (QualifyVisibleFlag); tried once per opened BuffHud panel.
+bool VisibleFlagQualified{};
+bool VisibleFlagTried{};
+std::size_t VisibleFlagOffset{};
+std::uint8_t VisibleFlagMask{};
+bool VisibleFlagSetWhenShown{};
+// The open panel the icons are hidden for, or null. HudShownApplied is the last
+// visibility given to HudPanel while HudShownKnown (reset with the handles).
+const char* HidingPanel{};
+bool HudShownKnown{};
+bool HudShownApplied{};
 
 [[nodiscard]] std::size_t AtlasIndex(Core::BuffIconAtlas atlas) noexcept {
     for (std::size_t i = 0; i < AtlasOrder.size(); ++i) {
@@ -373,6 +417,8 @@ void InvalidateWidgetHandles() noexcept {
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
+    HudShownKnown = false;
+    VisibleFlagTried = false;
     LastRenderedRevision = std::numeric_limits<std::uint64_t>::max();
 }
 
@@ -868,8 +914,157 @@ void RenderSlot(
     return true;
 }
 
+// Learns which bit of a native widget the WidgetService flips for visibility:
+// toggles slot 0's Countdown and keeps the one bit that follows it. Leaves the
+// Countdown hidden; the caller lets RenderSlot show it again.
+void QualifyVisibleFlag() noexcept {
+    if (VisibleFlagQualified || VisibleFlagTried) return;
+    const auto countdown = Handles[0].countdown;
+    const auto* native = static_cast<const std::uint8_t*>(ResolveNativeSlotChild(0, "Countdown"));
+    if (native == nullptr || !IsReadableRange(native, VisibleFlagScanBytes)) return;
+    VisibleFlagTried = true;
+
+    std::array<std::uint8_t, VisibleFlagScanBytes> shown{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> hidden{};
+    std::array<std::uint8_t, VisibleFlagScanBytes> shownAgain{};
+    const bool firstShown = SetVisible(countdown, true);
+    std::memcpy(shown.data(), native, shown.size());
+    const bool hiddenSet = SetVisible(countdown, false);
+    std::memcpy(hidden.data(), native, hidden.size());
+    const bool shownSet = SetVisible(countdown, true);
+    std::memcpy(shownAgain.data(), native, shownAgain.size());
+    (void)SetVisible(countdown, false);
+
+    std::size_t candidates = 0;
+    bool singleBits = firstShown && hiddenSet && shownSet;
+    for (std::size_t offset = 0; singleBits && offset < shown.size(); ++offset) {
+        const auto difference = static_cast<std::uint8_t>(shown[offset] ^ hidden[offset]);
+        if (shown[offset] != shownAgain[offset] || difference == 0) continue;
+        if ((difference & (difference - 1)) != 0) singleBits = false;
+        ++candidates;
+        VisibleFlagOffset = offset;
+        VisibleFlagMask = difference;
+        VisibleFlagSetWhenShown = (shown[offset] & difference) != 0;
+    }
+    VisibleFlagQualified = singleBits && candidates == 1;
+    if (Context == nullptr) return;
+    char line[160]{};
+    std::snprintf(line, sizeof(line),
+        "Buff HUD: native visibility bit %s offset=0x%zx mask=0x%02x; hide_with_panels %s.",
+        VisibleFlagQualified ? "qualified" : "not-qualified", VisibleFlagOffset,
+        static_cast<unsigned>(VisibleFlagMask), VisibleFlagQualified ? "active" : "inactive");
+    VisibleFlagQualified ? Context->LogInfo(line) : Context->LogWarn(line);
+}
+
+// Reads the visibility bit QualifyVisibleFlag learned on a native widget. false
+// when the bit is unknown or the widget's memory is not readable.
+[[nodiscard]] bool IsNativeShown(const void* widget) noexcept {
+    if (!VisibleFlagQualified || widget == nullptr) return false;
+    const auto* flag = static_cast<const std::uint8_t*>(widget) + VisibleFlagOffset;
+    if (!IsReadableRange(flag, 1)) return false;
+    return ((*flag & VisibleFlagMask) != 0) == VisibleFlagSetWhenShown;
+}
+
+[[nodiscard]] bool IsNativePanelOpen(const char* name) noexcept {
+    return IsNativeShown(FindTopLevelPanel(name));
+}
+
+// The game's own top-level window, also while another application has the
+// focus. Cached until the window goes away.
+[[nodiscard]] HWND GameWindow() noexcept {
+    static HWND cached{};
+    if (cached != nullptr && IsWindow(cached)) return cached;
+    cached = nullptr;
+    EnumWindows(
+        [](HWND window, LPARAM) -> BOOL {
+            DWORD processId{};
+            GetWindowThreadProcessId(window, &processId);
+            char title[64]{};
+            if (processId == GetCurrentProcessId() && IsWindowVisible(window)
+                && GetWindowTextA(window, title, sizeof(title)) > 0
+                && std::strncmp(title, "Diablo II: Resurrected", 22) == 0) {
+                cached = window;
+                return FALSE;
+            }
+            return TRUE;
+        },
+        0);
+    return cached;
+}
+
+// True when an occupied slot's box on the UI screen overlaps the side panel.
+[[nodiscard]] bool OccupiedSlotOverlaps(Internal::PanelSide side) noexcept {
+    D2RL::Widgets::Rect rootRect{};
+    D2RL::Widgets::Rect grid{};
+    if (Widgets->getWidgetRect(Context, HudPanel, &rootRect) != D2RL::Widgets::Result::Success
+        || Widgets->getWidgetRect(Context, GridWidget, &grid) != D2RL::Widgets::Result::Success) {
+        return false;
+    }
+    double screenWidth = rootRect.width;
+    double screenHeight = rootRect.height;
+    if (rootRect.width <= 0 || rootRect.height <= 0) {
+        // The fit-to-parent root can report its authored 0x0 rect. It is then
+        // the game's UI screen: 2160 units high at the client's aspect.
+        HWND window = GameWindow();
+        RECT client{};
+        if (window == nullptr || !GetClientRect(window, &client)
+            || client.right <= client.left || client.bottom <= client.top) {
+            return false;
+        }
+        screenHeight = Internal::UiScreenHeight;
+        screenWidth = screenHeight * (client.right - client.left) / (client.bottom - client.top);
+    }
+    // BuffGrid's rect may be resolved already or authored against the
+    // panel's (0.5, 1.0) anchor; apply the anchor only to the authored form.
+    const bool resolved = grid.x >= 0 && grid.y >= 0
+        && grid.x + grid.width <= screenWidth && grid.y + grid.height <= screenHeight;
+    const double gridLeft = resolved ? grid.x : screenWidth * 0.5 + grid.x;
+    const double gridTop = resolved ? grid.y : screenHeight + grid.y;
+    // The side panel boxes are measured on a 2160-high UI screen.
+    const double scale = Internal::UiScreenHeight / screenHeight;
+    const auto panel = Internal::SidePanelBox(side, screenWidth * scale);
+
+    for (std::size_t i = 0; i < Handles.size(); ++i) {
+        if (!RenderStates[i].visible) continue;
+        D2RL::Widgets::Rect slot{};
+        if (Widgets->getWidgetRect(Context, Handles[i].slot, &slot) != D2RL::Widgets::Result::Success) continue;
+        const Internal::UiBox box{(gridLeft + slot.x) * scale, (gridTop + slot.y) * scale,
+                                  (gridLeft + slot.x + slot.width) * scale,
+                                  (gridTop + slot.y + slot.height) * scale};
+        if (Internal::Overlaps(box, panel)) return true;
+    }
+    return false;
+}
+
+// The open native panel the icons hide for, or null: a HidingPanels entry, or
+// a SidePanels entry an occupied slot overlaps. A panel counts as open when it
+// exists and its own visibility bit says shown.
+[[nodiscard]] const char* OpenHidingPanel() noexcept {
+    if (FindTopLevelPanel == nullptr || !VisibleFlagQualified || Widgets == nullptr) return nullptr;
+    for (const auto* name : HidingPanels) {
+        if (IsNativePanelOpen(name)) return name;
+    }
+    for (const auto& panel : SidePanels) {
+        if (IsNativePanelOpen(panel.name) && OccupiedSlotOverlaps(panel.side)) return panel.name;
+    }
+    return nullptr;
+}
+
+// Shows or hides the whole BuffHud panel; calls the WidgetService only when the
+// wanted state changes or the panel was rebuilt.
+void ApplyHudShown(bool shown) noexcept {
+    if (HudShownKnown && HudShownApplied == shown) return;
+    if (!SetVisible(HudPanel, shown)) return;
+    HudShownKnown = true;
+    HudShownApplied = shown;
+}
+
 void RenderSnapshot() noexcept {
     if (!ResolveWidgetHandles()) return;
+    if (HideWithPanels && !VisibleFlagQualified && !VisibleFlagTried) {
+        QualifyVisibleFlag();
+        RenderStates[0].timerVisible = false;
+    }
 
     auto snapshot = Core::BuffDisplays().Snapshot();
     std::uint32_t nowFrame{};
@@ -916,6 +1111,17 @@ void RenderSnapshot() noexcept {
     }
     for (std::size_t i = visibleCount; i < SlotCount; ++i) HideSlot(i);
 
+    const char* hiding = HideWithPanels ? OpenHidingPanel() : nullptr;
+    if (hiding != HidingPanel && Context != nullptr) {
+        char line[160]{};
+        std::snprintf(line, sizeof(line), hiding != nullptr
+            ? "Buff HUD: %s is open over the icons; icons hidden."
+            : "Buff HUD: %s closed or clear of the icons; icons shown again.",
+            hiding != nullptr ? hiding : HidingPanel);
+        Context->LogInfo(line);
+    }
+    HidingPanel = hiding;
+    ApplyHudShown(hiding == nullptr);
     LastRenderedRevision = snapshot.revision;
 }
 
@@ -1074,13 +1280,15 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     if (context == nullptr) return;
     const auto snapshot = Core::BuffDisplays().Snapshot();
     const auto icons = Internal::SkillIconStatus();
-    char line[512]{};
+    char line[640]{};
     std::snprintf(line, sizeof(line),
-        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
+        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s hideWithPanels=%s hiddenBy=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu inputIsolation=enabled.",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
         RegisteredPanel != D2RL::Panels::InvalidHandle ? "registered" : "missing",
+        !HideWithPanels ? "off" : VisibleFlagQualified ? "on" : "not-qualified",
+        HidingPanel != nullptr ? HidingPanel : "none",
         icons.ready ? "ready" : "not-qualified",
         icons.namesReady ? "ready" : "not-qualified",
         static_cast<unsigned long long>(icons.tableRevision));
@@ -1178,10 +1386,11 @@ D2RL::ConsoleCommandResult __cdecl BuffCommand(
 
 } // namespace
 
-bool Initialize(const D2RL::PluginContext* context) noexcept {
+bool Initialize(const D2RL::PluginContext* context, const Core::PluginConfig& config) noexcept {
     Shutdown();
     if (context == nullptr) return false;
     Context = context;
+    HideWithPanels = config.hideWithPanels;
 
     const auto& services = Core::Services();
     Panels = services.panels;
@@ -1255,6 +1464,7 @@ void Shutdown() noexcept {
     RestoreQualifiedCountdownBuffers();
     RestoreQualifiedTooltipBuffers();
     InvalidateWidgetHandles();
+    HidingPanel = nullptr;
 
     RegisteredPanel = D2RL::Panels::InvalidHandle;
     DataTablesListener = D2RL::Lifecycle::InvalidHandle;
