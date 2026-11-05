@@ -22,6 +22,17 @@ int main() {
     check(ParsePluginConfig("[buff_panel]\nhide_with_panels = 0\n").hideWithPanels, "a bad value keeps the default");
     check(ParsePluginConfig("[buff_panel]\nhide_with_panels_x = false\n").hideWithPanels, "another key does not count");
     check(ParsePluginConfig("hide_with_panels = false\n").hideWithPanels, "a key outside any section does not count");
+    check(ParsePluginConfig(nullptr).enabled, "no config keeps the panel on");
+    check(ParsePluginConfig("").enabled, "an empty config keeps the panel on");
+    check(!ParsePluginConfig("[buff_panel]\nenabled = false\n").enabled, "enabled = false turns it off");
+    check(!ParsePluginConfig("# c\r\n[buff_panel]\r\n  enabled=false   # off\r\n").enabled, "enabled: CRLF, comments and spacing");
+    check(ParsePluginConfig("[buff_panel]\nenabled = true\n").enabled, "enabled = true");
+    check(ParsePluginConfig("[other]\nenabled = false\n").enabled, "enabled: another section does not count");
+    check(ParsePluginConfig("[buff_panel]\nenabled = no\n").enabled, "enabled: a bad value keeps the default");
+    check(ParsePluginConfig("[buff_panel]\nenabled_x = false\n").enabled, "enabled: another key does not count");
+    check(ParsePluginConfig("enabled = false\n").enabled, "enabled: a key outside any section does not count");
+    check(!ParsePluginConfig("[buff_panel]\nenabled = false\nhide_with_panels = false\n").hideWithPanels, "both keys in one file");
+    check(ParsePluginConfig("[buff_panel]\nenabled = false\n").hideWithPanels, "enabled does not change hide_with_panels");
     if (failures == 0) std::printf("PASS: plugin config\n");
     return failures == 0 ? 0 : 1;
 }

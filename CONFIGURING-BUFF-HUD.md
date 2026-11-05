@@ -32,15 +32,18 @@ battle_orders	32	timer	0	0	149	0	1
 battle_command	51	timer	0	0	155	0	1
 ```
 
-## buff-panel.toml — hiding the icons behind game panels
+## buff-panel.toml — turning the panel off, hiding it behind game panels
 
 D2RLoader writes the plugin's default settings to `d2rloader\config\buff-panel.toml` (next to the plugin's own
 `d2rloader` folder: the game folder, or the mod folder for a mod-scoped install) the first time it loads:
 
 ```toml
 [buff_panel]
+enabled = true
 hide_with_panels = true
 ```
+
+Set `enabled = false` and start the game again: the plugin still loads, but shows no panel and installs nothing.
 
 `hide_with_panels = true` (the default; a file without the key keeps it) hides the icons while the stash or the
 Horadric Cube is open, and shows them again when it closes. A side panel (character, quests, waypoints, a vendor, trade,

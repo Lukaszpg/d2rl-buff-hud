@@ -4,10 +4,13 @@
 
 namespace BuffPanel::Core {
 
-// buff-panel.toml is small: [buff_panel] hide_with_panels = true|false. A
-// missing key, or a value that is neither true nor false, keeps the default.
-// Only lines inside [buff_panel] count; # starts a comment.
+// buff-panel.toml is small: [buff_panel] enabled = true|false and
+// hide_with_panels = true|false. A missing key, or a value that is neither true
+// nor false, keeps the default. Only lines inside [buff_panel] count; # starts a
+// comment.
 struct PluginConfig final {
+    // false: the plugin loads but starts nothing (no panel, no hooks).
+    bool enabled{true};
     // Hide the icons while the stash, the cube or a side panel over them is open.
     bool hideWithPanels{true};
 };
@@ -37,10 +40,13 @@ struct PluginConfig final {
                 while (value < e && (*value == ' ' || *value == '\t')) ++value;
                 const auto keyLength = static_cast<std::size_t>(keyEnd - s);
                 const auto valueLength = static_cast<std::size_t>(e - value);
-                if (keyLength == 16 && std::strncmp(s, "hide_with_panels", 16) == 0) {
-                    if (valueLength == 4 && std::strncmp(value, "true", 4) == 0) config.hideWithPanels = true;
-                    if (valueLength == 5 && std::strncmp(value, "false", 5) == 0) config.hideWithPanels = false;
-                }
+                auto setBool = [&](const char* key, bool& target) noexcept {
+                    if (keyLength != std::strlen(key) || std::strncmp(s, key, keyLength) != 0) return;
+                    if (valueLength == 4 && std::strncmp(value, "true", 4) == 0) target = true;
+                    if (valueLength == 5 && std::strncmp(value, "false", 5) == 0) target = false;
+                };
+                setBool("enabled", config.enabled);
+                setBool("hide_with_panels", config.hideWithPanels);
             }
         }
         line = *end == '\n' ? end + 1 : end;

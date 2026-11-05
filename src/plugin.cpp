@@ -35,6 +35,8 @@ constexpr D2RL::PluginInfo Info{
     return Core::ParsePluginConfig(text);
 }
 
+bool Started{};
+
 void ShutdownRuntime() noexcept {
     Systems::BuffTracker::Shutdown();
     Systems::BuffHud::Shutdown();
@@ -55,8 +57,15 @@ D2RL_PLUGIN_EXPORT const D2RL::PluginInfo* __cdecl D2RLoaderGetPluginInfo() noex
 D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
     const D2RL::PluginContext* context) noexcept {
     using namespace BuffPanel;
-    if (context == nullptr || !Core::InitializeServices(context)) return false;
-    if (!Systems::BuffHud::Initialize(context, ReadPluginConfig(context))) {
+    if (context == nullptr) return false;
+    const auto config = ReadPluginConfig(context);
+    if (!config.enabled) {
+        context->LogInfo("Buff HUD: enabled = false in buff-panel.toml; no panel, nothing installed.");
+        return true;
+    }
+    if (!Core::InitializeServices(context)) return false;
+    Started = true;
+    if (!Systems::BuffHud::Initialize(context, config)) {
         ShutdownRuntime();
         return false;
     }
@@ -79,5 +88,7 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
 }
 
 D2RL_PLUGIN_EXPORT void __cdecl D2RLoaderUnloadPlugin() noexcept {
+    if (!BuffPanel::Started) return;
+    BuffPanel::Started = false;
     BuffPanel::ShutdownRuntime();
 }
