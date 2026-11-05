@@ -50,6 +50,10 @@ target_link_libraries(buff_panel PRIVATE ${BUFF_PANEL_SDK_TARGET})
 target_compile_features(buff_panel PRIVATE cxx_std_20)
 target_compile_definitions(buff_panel PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
 target_compile_options(buff_panel PRIVATE /W4 /permissive- /utf-8 /EHsc)
+# buff-panel.toml: D2RLoader writes this default into <scope>\d2rloader\config\ when it is missing.
+if(COMMAND d2rlplugin_embed_config)
+    d2rlplugin_embed_config(TARGET buff_panel FILE "${CMAKE_CURRENT_SOURCE_DIR}/buff-panel.toml")
+endif()
 set_target_properties(buff_panel PROPERTIES
     OUTPUT_NAME "d2rl-buff-panel"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/stage/$<CONFIG>/d2rloader/plugins"
@@ -116,6 +120,14 @@ if(BUFF_PANEL_BUILD_TESTS)
     target_include_directories(tooltip_text_test PRIVATE src)
     target_compile_features(tooltip_text_test PRIVATE cxx_std_20)
     add_test(NAME tooltip_text COMMAND tooltip_text_test)
+    add_executable(plugin_config_test tests/plugin_config_test.cpp)
+    target_include_directories(plugin_config_test PRIVATE src)
+    target_compile_features(plugin_config_test PRIVATE cxx_std_20)
+    add_test(NAME plugin_config COMMAND plugin_config_test)
+    add_executable(panel_overlap_test tests/panel_overlap_test.cpp)
+    target_include_directories(panel_overlap_test PRIVATE src)
+    target_compile_features(panel_overlap_test PRIVATE cxx_std_20)
+    add_test(NAME panel_overlap COMMAND panel_overlap_test)
     add_executable(tooltip_binding_test tests/tooltip_binding_test.cpp
         src/core/services.cpp src/core/buff_display_bus.cpp
         src/systems/buff_hud/skill_icon_resolver.cpp src/systems/buff_hud/icon_frame_backend.cpp)
