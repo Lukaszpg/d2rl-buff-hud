@@ -135,6 +135,9 @@ struct SlotRenderState final {
 
 D2RL::Widgets::WidgetHandle HudPanel{D2RL::Widgets::InvalidHandle};
 D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
+// The hidden "UiSpace" widget of a layout names the height of the UI space it
+// is authored in (HD: 2160); 0 means the classic screen.
+D2RL::Widgets::WidgetHandle UiSpaceWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
@@ -285,6 +288,9 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         || Widgets->findWidget(Context, HudPanel, "BuffGrid", &GridWidget) != D2RL::Widgets::Result::Success) {
         return false;
     }
+    if (Widgets->findWidget(Context, HudPanel, "UiSpace", &UiSpaceWidget) != D2RL::Widgets::Result::Success) {
+        UiSpaceWidget = D2RL::Widgets::InvalidHandle;
+    }
 
     for (std::size_t i = 0; i < Handles.size(); ++i) {
         char slotName[24]{};
@@ -382,6 +388,7 @@ void RestoreQualifiedTooltipBuffers() noexcept {
 void InvalidateWidgetHandles() noexcept {
     HudPanel = D2RL::Widgets::InvalidHandle;
     GridWidget = D2RL::Widgets::InvalidHandle;
+    UiSpaceWidget = D2RL::Widgets::InvalidHandle;
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
@@ -831,6 +838,31 @@ void ApplyTooltip(
     return cached;
 }
 
+// The size of the game's UI screen in layout units: the UiSpace height at the
+// client's aspect (HD), else ScreenSizeX x ScreenSizeY (classic: 800x600 or
+// 640x480, wider with a widescreen classic plugin). False until the game has
+// set a plausible classic size.
+[[nodiscard]] bool GameUiScreen(LONG clientWidth, LONG clientHeight, D2RL::Widgets::Rect& screen) noexcept {
+    D2RL::Widgets::Rect space{};
+    if (UiSpaceWidget != D2RL::Widgets::InvalidHandle
+        && Widgets->getWidgetRect(Context, UiSpaceWidget, &space) == D2RL::Widgets::Result::Success
+        && space.height > 0) {
+        screen = {.x = 0, .y = 0,
+                  .width = static_cast<std::int32_t>(
+                      static_cast<double>(space.height) * clientWidth / clientHeight + 0.5),
+                  .height = space.height};
+        return true;
+    }
+    if (Context == nullptr || Context->exeBase == 0) return false;
+    const auto width = *reinterpret_cast<const volatile std::int32_t*>(
+        Context->exeBase + Native::Contract::ScreenSizeXRva);
+    const auto height = *reinterpret_cast<const volatile std::int32_t*>(
+        Context->exeBase + Native::Contract::ScreenSizeYRva);
+    if (width < 320 || width > 16384 || height < 200 || height > 16384) return false;
+    screen = {.x = 0, .y = 0, .width = width, .height = height};
+    return true;
+}
+
 void UpdateHoverNamePresentation() noexcept {
     ClearHoverOverlay();
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return;
@@ -848,15 +880,28 @@ void UpdateHoverNamePresentation() noexcept {
     D2RL::Widgets::Rect panelRect{};
     D2RL::Widgets::Rect gridRect{};
     if (Widgets->getWidgetRect(Context, HudPanel, &panelRect) != D2RL::Widgets::Result::Success
-        || Widgets->getWidgetRect(Context, GridWidget, &gridRect) != D2RL::Widgets::Result::Success
-        || panelRect.width <= 0 || panelRect.height <= 0) {
+        || Widgets->getWidgetRect(Context, GridWidget, &gridRect) != D2RL::Widgets::Result::Success) {
         return;
     }
+    // D2RLoader 1.3.1 returns the authored rect of the fit-to-parent root (0x0).
+    // The root is then the game's UI screen, which D2R fits to the client
+    // height and centres (classic graphics get side bars).
+    const bool rootFromScreen = panelRect.width <= 0 || panelRect.height <= 0;
+    if (rootFromScreen && !GameUiScreen(clientWidth, clientHeight, panelRect)) return;
 
-    const double uiX = static_cast<double>(point.x) * static_cast<double>(panelRect.width)
-        / static_cast<double>(clientWidth);
-    const double uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
-        / static_cast<double>(clientHeight);
+    double uiX{};
+    double uiY{};
+    if (rootFromScreen) {
+        const double scale = static_cast<double>(clientHeight) / static_cast<double>(panelRect.height);
+        const double left = (static_cast<double>(clientWidth) - static_cast<double>(panelRect.width) * scale) * 0.5;
+        uiX = (static_cast<double>(point.x) - left) / scale;
+        uiY = static_cast<double>(point.y) / scale;
+    } else {
+        uiX = static_cast<double>(point.x) * static_cast<double>(panelRect.width)
+            / static_cast<double>(clientWidth);
+        uiY = static_cast<double>(point.y) * static_cast<double>(panelRect.height)
+            / static_cast<double>(clientHeight);
+    }
 
     // WidgetService guarantees parent-local coordinates but does not specify
     // whether a JSON anchor is already baked into x/y. Accept either form:
@@ -884,7 +929,7 @@ void UpdateHoverNamePresentation() noexcept {
                 std::snprintf(
                     line, sizeof(line),
                     "BUFF_HOVER_GEOMETRY rectMode=%s panel=(%d,%d %dx%d) grid=(%d,%d %dx%d) origin=(%.1f,%.1f) slot=%zu:(%d,%d %dx%d) client=%ldx%ld",
-                    gridRectAlreadyResolved ? "resolved" : "anchored",
+                    rootFromScreen ? "screen" : gridRectAlreadyResolved ? "resolved" : "anchored",
                     panelRect.x, panelRect.y, panelRect.width, panelRect.height,
                     gridRect.x, gridRect.y, gridRect.width, gridRect.height,
                     gridLeft, gridTop,
@@ -1318,17 +1363,25 @@ void PrintStatus(const D2RL::PluginContext* context) noexcept {
     if (context == nullptr) return;
     const auto snapshot = Core::BuffDisplays().Snapshot();
     const auto icons = Internal::SkillIconStatus();
-    char line[512]{};
+    HoverOverlayState hover{};
+    {
+        std::lock_guard lock(HoverOverlayMutex);
+        hover = HoverOverlay;
+    }
+    char line[640]{};
     std::snprintf(line, sizeof(line),
-        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu hoverLabels=click-through.",
+        "Buff HUD 1.1.0: displayed=%zu/%zu session=%llu frame=%u panel=%s companion=enabled skillIcons=%s skillNames=%s tableRevision=%llu hoverLabels=click-through hover=\"%s\".",
         snapshot.count, SlotCount,
         static_cast<unsigned long long>(snapshot.sessionGeneration),
         snapshot.currentGameFrame,
         RegisteredPanel != D2RL::Panels::InvalidHandle ? "registered" : "missing",
         icons.ready ? "ready" : "not-qualified",
         icons.namesReady ? "ready" : "not-qualified",
-        static_cast<unsigned long long>(icons.tableRevision));
+        static_cast<unsigned long long>(icons.tableRevision),
+        hover.visible ? hover.text.data() : "");
     context->WriteConsoleMessage(line);
+    // The console panel is not always open (or not readable): the log keeps it.
+    context->LogInfo(line);
 }
 
 D2RL::ConsoleCommandResult __cdecl BuffCommand(
