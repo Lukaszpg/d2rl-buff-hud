@@ -807,15 +807,36 @@ void ApplyTooltip(
     state.tooltipVisible = state.hoverText[0] != '\0';
 }
 
+// The game's own top-level window, also while another application has the
+// focus (a windowed game behind other windows still draws its UI and reads the
+// cursor). Cached until the window goes away.
+[[nodiscard]] HWND GameWindow() noexcept {
+    static HWND cached{};
+    if (cached != nullptr && IsWindow(cached)) return cached;
+    cached = nullptr;
+    EnumWindows(
+        [](HWND window, LPARAM) -> BOOL {
+            DWORD processId{};
+            GetWindowThreadProcessId(window, &processId);
+            char title[64]{};
+            if (processId == GetCurrentProcessId() && IsWindowVisible(window)
+                && GetWindowTextA(window, title, sizeof(title)) > 0
+                && std::strncmp(title, "Diablo II: Resurrected", 22) == 0) {
+                cached = window;
+                return FALSE;
+            }
+            return TRUE;
+        },
+        0);
+    return cached;
+}
+
 void UpdateHoverNamePresentation() noexcept {
     ClearHoverOverlay();
     if (!HandlesResolved || Context == nullptr || Widgets == nullptr) return;
 
-    HWND window = GetForegroundWindow();
-    DWORD processId{};
-    if (window == nullptr) return;
-    GetWindowThreadProcessId(window, &processId);
-    if (processId != GetCurrentProcessId()) return;
+    HWND window = GameWindow();
+    if (window == nullptr || IsIconic(window)) return;
 
     POINT point{};
     RECT client{};
