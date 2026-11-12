@@ -11,6 +11,13 @@
   "children": [
     {
       "type": "Widget",
+      "name": "UiSpace",
+      "fields": {
+        "visible": false
+      }
+    },
+    {
+      "type": "Widget",
       "name": "BuffGrid",
       "fields": {
         "rect": {

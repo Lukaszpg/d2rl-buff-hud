@@ -48,8 +48,10 @@ constexpr std::array<const char*, 3> HidingPanels{
     "HoradricCubeLayout",
 };
 // Side panels hide them only while an occupied slot overlaps the panel: a
-// player fights with the inventory or the character panel open. Only the top
-// row reaches a right panel (panel_overlap.hpp).
+// player fights with the inventory or the character panel open. In legacy
+// graphics a left panel always reaches the first slot and a right panel the
+// sixth or seventh; in HD only the top row reaches a right panel
+// (panel_overlap.hpp).
 struct SidePanel final {
     const char* name;
     Internal::PanelSide side;
@@ -150,6 +152,9 @@ struct SlotRenderState final {
 
 D2RL::Widgets::WidgetHandle HudPanel{D2RL::Widgets::InvalidHandle};
 D2RL::Widgets::WidgetHandle GridWidget{D2RL::Widgets::InvalidHandle};
+// The hidden "UiSpace" widget of a layout names the height of the UI space it
+// is authored in (HD: 2160); 0 means the classic (legacy graphics) screen.
+D2RL::Widgets::WidgetHandle UiSpaceWidget{D2RL::Widgets::InvalidHandle};
 std::array<SlotHandles, SlotCount> Handles{};
 std::array<SlotRenderState, SlotCount> RenderStates{};
 bool HandlesResolved{};
@@ -312,6 +317,9 @@ void MakeTooltipReserveUtf16(std::size_t slotIndex, std::array<std::uint16_t, To
         || Widgets->findWidget(Context, HudPanel, "BuffGrid", &GridWidget) != D2RL::Widgets::Result::Success) {
         return false;
     }
+    if (Widgets->findWidget(Context, HudPanel, "UiSpace", &UiSpaceWidget) != D2RL::Widgets::Result::Success) {
+        UiSpaceWidget = D2RL::Widgets::InvalidHandle;
+    }
 
     for (std::size_t i = 0; i < Handles.size(); ++i) {
         char slotName[24]{};
@@ -414,6 +422,7 @@ void RestoreQualifiedTooltipBuffers() noexcept {
 void InvalidateWidgetHandles() noexcept {
     HudPanel = D2RL::Widgets::InvalidHandle;
     GridWidget = D2RL::Widgets::InvalidHandle;
+    UiSpaceWidget = D2RL::Widgets::InvalidHandle;
     Handles = {};
     RenderStates = {};
     HandlesResolved = false;
@@ -992,6 +1001,21 @@ void QualifyVisibleFlag() noexcept {
     return cached;
 }
 
+// The classic (legacy graphics) UI screen: ScreenSizeX x ScreenSizeY (800x600
+// or 640x480, wider with a widescreen classic plugin). False until the game has
+// set a plausible size.
+[[nodiscard]] bool ClassicUiScreen(double& width, double& height) noexcept {
+    if (Context == nullptr || Context->exeBase == 0) return false;
+    const auto x = *reinterpret_cast<const volatile std::int32_t*>(
+        Context->exeBase + Native::Contract::ScreenSizeXRva);
+    const auto y = *reinterpret_cast<const volatile std::int32_t*>(
+        Context->exeBase + Native::Contract::ScreenSizeYRva);
+    if (x < 320 || x > 16384 || y < 200 || y > 16384) return false;
+    width = x;
+    height = y;
+    return true;
+}
+
 // True when an occupied slot's box on the UI screen overlaps the side panel.
 [[nodiscard]] bool OccupiedSlotOverlaps(Internal::PanelSide side) noexcept {
     D2RL::Widgets::Rect rootRect{};
@@ -1000,11 +1024,21 @@ void QualifyVisibleFlag() noexcept {
         || Widgets->getWidgetRect(Context, GridWidget, &grid) != D2RL::Widgets::Result::Success) {
         return false;
     }
+    // The legacy layout's UiSpace widget has no height; a layout without one
+    // counts as HD.
+    D2RL::Widgets::Rect space{};
+    const bool hd = UiSpaceWidget == D2RL::Widgets::InvalidHandle
+        || (Widgets->getWidgetRect(Context, UiSpaceWidget, &space) == D2RL::Widgets::Result::Success
+            && space.height > 0);
     double screenWidth = rootRect.width;
     double screenHeight = rootRect.height;
-    if (rootRect.width <= 0 || rootRect.height <= 0) {
-        // The fit-to-parent root can report its authored 0x0 rect. It is then
-        // the game's UI screen: 2160 units high at the client's aspect.
+    if ((rootRect.width <= 0 || rootRect.height <= 0) && !hd) {
+        // The fit-to-parent root can report its authored 0x0 rect. In legacy
+        // graphics it is then the classic screen.
+        if (!ClassicUiScreen(screenWidth, screenHeight)) return false;
+    } else if (rootRect.width <= 0 || rootRect.height <= 0) {
+        // In HD it is the game's UI screen: 2160 units high at the client's
+        // aspect.
         HWND window = GameWindow();
         RECT client{};
         if (window == nullptr || !GetClientRect(window, &client)
@@ -1020,9 +1054,10 @@ void QualifyVisibleFlag() noexcept {
         && grid.x + grid.width <= screenWidth && grid.y + grid.height <= screenHeight;
     const double gridLeft = resolved ? grid.x : screenWidth * 0.5 + grid.x;
     const double gridTop = resolved ? grid.y : screenHeight + grid.y;
-    // The side panel boxes are measured on a 2160-high UI screen.
-    const double scale = Internal::UiScreenHeight / screenHeight;
-    const auto panel = Internal::SidePanelBox(side, screenWidth * scale);
+    // The HD side panel boxes are measured on a 2160-high UI screen, the
+    // classic ones on the classic screen itself.
+    const double scale = hd ? Internal::UiScreenHeight / screenHeight : 1.0;
+    const auto panel = Internal::SidePanelBox(side, screenWidth * scale, screenHeight * scale, hd);
 
     for (std::size_t i = 0; i < Handles.size(); ++i) {
         if (!RenderStates[i].visible) continue;

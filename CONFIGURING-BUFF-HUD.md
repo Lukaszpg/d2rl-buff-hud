@@ -44,8 +44,9 @@ hide_with_panels = true
 
 `hide_with_panels = true` (the default; a file without the key keeps it) hides the icons while the stash or the
 Horadric Cube is open, and shows them again when it closes. A side panel (character, quests, waypoints, a vendor, trade,
-the mercenary, the party; inventory, skill tree) hides them only while it overlaps an icon on screen; only the top row of
-the grid reaches a right panel, so a player can fight with the inventory open. `false` keeps them shown always.
+the mercenary, the party; inventory, skill tree) hides them only while it overlaps an icon on screen: in legacy graphics
+a left panel always does, a right panel from the sixth or seventh icon; in HD only the top row of the grid reaches a right
+panel, so a player can fight with the inventory open. `false` keeps them shown always.
 
 The plugin reads the game's panel visibility through a bit it learns once by toggling a slot's `Countdown`
 through the WidgetService; the log line `native visibility bit qualified|not-qualified` reports the result (when it is
