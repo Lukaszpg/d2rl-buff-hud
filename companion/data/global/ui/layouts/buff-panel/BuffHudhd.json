@@ -8,6 +8,19 @@
   "children": [
     {
       "type": "Widget",
+      "name": "UiSpace",
+      "fields": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 2160
+        },
+        "visible": false
+      }
+    },
+    {
+      "type": "Widget",
       "name": "BuffGrid",
       "fields": {
         "rect": {

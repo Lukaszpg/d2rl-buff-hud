@@ -1,5 +1,6 @@
 #include "skill_icon_resolver.hpp"
 
+#include "core/display_text.hpp"
 #include "core/services.hpp"
 
 #include <D2RLPlugin/api.h>
@@ -141,6 +142,7 @@ State Cache{};
         return false;
     }
     output.assign(buffer.data());
+    Core::StripColourCodes(output);
     return !output.empty();
 }
 

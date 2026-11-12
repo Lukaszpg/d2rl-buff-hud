@@ -122,6 +122,11 @@ inline constexpr std::array<std::uint8_t, 10> PostStatListExpected{
 
 inline constexpr std::uintptr_t PostStatListRva = 0x2F2CB0;
 
+// int32 globals: the UI screen size (classic: 800x600 / 640x480, wider with a
+// widescreen classic plugin).
+inline constexpr std::uintptr_t ScreenSizeXRva = 0x22A0D68;
+inline constexpr std::uintptr_t ScreenSizeYRva = 0x22A0D6C;
+
 inline constexpr std::size_t StatListBuffExpireFrameFloatOffset = 0x24;
 
 inline constexpr std::size_t StatListBuffFlagsOffset = 0x1C;
