@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <D2RLPlugin/api.h>
+#include "core/plugin_config.hpp"
 #include "core/services.hpp"
 #include "core/hook_registry.hpp"
 #include "core/stat_read_bus.hpp"
@@ -27,6 +28,15 @@ constexpr D2RL::PluginInfo Info{
     .flags = D2RL::PluginFlags::Shared | D2RL::PluginFlags::NativeHooks,
 };
 
+[[nodiscard]] Core::PluginConfig ReadPluginConfig(const D2RL::PluginContext* context) noexcept {
+    char text[1024]{};
+    std::uint32_t required{};
+    if (!context->ReadConfig(text, sizeof(text), &required)) return {};
+    return Core::ParsePluginConfig(text);
+}
+
+bool Started{};
+
 void ShutdownRuntime() noexcept {
     Systems::BuffTracker::Shutdown();
     Systems::BuffHud::Shutdown();
@@ -47,8 +57,15 @@ D2RL_PLUGIN_EXPORT const D2RL::PluginInfo* __cdecl D2RLoaderGetPluginInfo() noex
 D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
     const D2RL::PluginContext* context) noexcept {
     using namespace BuffPanel;
-    if (context == nullptr || !Core::InitializeServices(context)) return false;
-    if (!Systems::BuffHud::Initialize(context)) {
+    if (context == nullptr) return false;
+    const auto config = ReadPluginConfig(context);
+    if (!config.enabled) {
+        context->LogInfo("Buff HUD: enabled = false in buff-panel.toml; no panel, nothing installed.");
+        return true;
+    }
+    if (!Core::InitializeServices(context)) return false;
+    Started = true;
+    if (!Systems::BuffHud::Initialize(context, config)) {
         ShutdownRuntime();
         return false;
     }
@@ -71,5 +88,7 @@ D2RL_PLUGIN_EXPORT bool __cdecl D2RLoaderLoadPlugin(
 }
 
 D2RL_PLUGIN_EXPORT void __cdecl D2RLoaderUnloadPlugin() noexcept {
+    if (!BuffPanel::Started) return;
+    BuffPanel::Started = false;
     BuffPanel::ShutdownRuntime();
 }

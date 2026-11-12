@@ -1,0 +1,7 @@
+# Buff HUD settings. D2RLoader writes this default to d2rloader\config\buff-panel.toml when it is missing.
+
+[buff_panel]
+# false: the plugin loads but shows no panel and installs nothing
+enabled = true
+# true: the icons hide while the stash or the Horadric Cube is open, or a side panel covers them; false: always shown
+hide_with_panels = true
