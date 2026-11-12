@@ -50,6 +50,10 @@ target_link_libraries(buff_panel PRIVATE ${BUFF_PANEL_SDK_TARGET})
 target_compile_features(buff_panel PRIVATE cxx_std_20)
 target_compile_definitions(buff_panel PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
 target_compile_options(buff_panel PRIVATE /W4 /permissive- /utf-8 /EHsc)
+# buff-panel.toml: D2RLoader writes this default into <scope>\d2rloader\config\ when it is missing.
+if(COMMAND d2rlplugin_embed_config)
+    d2rlplugin_embed_config(TARGET buff_panel FILE "${CMAKE_CURRENT_SOURCE_DIR}/buff-panel.toml")
+endif()
 set_target_properties(buff_panel PROPERTIES
     OUTPUT_NAME "d2rl-buff-panel"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/stage/$<CONFIG>/d2rloader/plugins"
@@ -70,11 +74,12 @@ target_compile_options(buff_panel_validate PRIVATE /utf-8 /EHsc)
 set(BUFF_PANEL_SDK_LICENSE_FILE "${BUFF_PANEL_SDK_DIR}/LICENSE" CACHE FILEPATH "PluginSDK license to include in dist")
 set(D2RL_COMPILER "${CMAKE_CURRENT_SOURCE_DIR}/external/D2RLCompiler/D2RLCompiler.exe" CACHE FILEPATH "Repository-pinned D2RLCompiler.exe used to pack the companion MPQ")
 set(BUFF_PANEL_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHudhd.json")
+set(BUFF_PANEL_LEGACY_LAYOUT "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/ui/layouts/buff-panel/BuffHud.json")
 set(BUFF_PANEL_TABLE "${CMAKE_CURRENT_SOURCE_DIR}/companion/data/global/excel/d2rloader/buff-panel/buff-hud.txt")
 # Run on every build so an asset-only edit (or deletion) cannot leave a stale MPQ.
 # Custom-table TXT is compiled by D2RLoader after registerTable; pack needs no game link.
 add_custom_target(buff_panel_companion
-    COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_TABLE}"
+    COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}" "${BUFF_PANEL_TABLE}"
     COMMAND "${CMAKE_COMMAND}" -E make_directory "$<TARGET_FILE_DIR:buff_panel>"
     COMMAND "${CMAKE_COMMAND}"
         "-DD2RL_COMPILER=${D2RL_COMPILER}"
@@ -107,6 +112,9 @@ if(BUFF_PANEL_BUILD_TESTS)
     if(Python3_Interpreter_FOUND)
         add_test(NAME production_surface_source
             COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/production_surface_source_test.py")
+        add_test(NAME layout_parity
+            COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/layout_parity_test.py"
+                "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}")
     endif()
     add_executable(timer_metadata_test tests/timer_metadata_test.cpp)
     target_include_directories(timer_metadata_test PRIVATE src)
@@ -116,6 +124,14 @@ if(BUFF_PANEL_BUILD_TESTS)
     target_include_directories(tooltip_text_test PRIVATE src)
     target_compile_features(tooltip_text_test PRIVATE cxx_std_20)
     add_test(NAME tooltip_text COMMAND tooltip_text_test)
+    add_executable(plugin_config_test tests/plugin_config_test.cpp)
+    target_include_directories(plugin_config_test PRIVATE src)
+    target_compile_features(plugin_config_test PRIVATE cxx_std_20)
+    add_test(NAME plugin_config COMMAND plugin_config_test)
+    add_executable(panel_overlap_test tests/panel_overlap_test.cpp)
+    target_include_directories(panel_overlap_test PRIVATE src)
+    target_compile_features(panel_overlap_test PRIVATE cxx_std_20)
+    add_test(NAME panel_overlap COMMAND panel_overlap_test)
     add_executable(tooltip_binding_test tests/tooltip_binding_test.cpp
         src/core/services.cpp src/core/buff_display_bus.cpp
         src/systems/buff_hud/skill_icon_resolver.cpp src/systems/buff_hud/icon_frame_backend.cpp)
@@ -135,6 +151,7 @@ if(BUFF_PANEL_BUILD_TESTS)
         if(kind STREQUAL "layout")
             target_sources(loose_${kind}_test PRIVATE src/systems/buff_hud/loose_layout.cpp)
             add_test(NAME loose_${kind} COMMAND loose_${kind}_test "${BUFF_PANEL_LAYOUT}")
+            add_test(NAME loose_${kind}_legacy COMMAND loose_${kind}_test "${BUFF_PANEL_LEGACY_LAYOUT}")
         else()
             target_sources(loose_${kind}_test PRIVATE src/systems/buff_tracker/loose_buff_hud.cpp)
             add_test(NAME loose_${kind} COMMAND loose_${kind}_test)
@@ -143,5 +160,5 @@ if(BUFF_PANEL_BUILD_TESTS)
         target_compile_features(loose_${kind}_test PRIVATE cxx_std_20)
         target_compile_options(loose_${kind}_test PRIVATE /utf-8 /EHsc)
     endforeach()
-    add_test(NAME companion_assets COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_TABLE}")
+    add_test(NAME companion_assets COMMAND buff_panel_validate "${BUFF_PANEL_LAYOUT}" "${BUFF_PANEL_LEGACY_LAYOUT}" "${BUFF_PANEL_TABLE}")
 endif()
